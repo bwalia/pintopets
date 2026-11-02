@@ -58,6 +58,11 @@ jobs:
       - name: Type-check
         run: pnpm typecheck
 
+      - name: Helm chart lints and renders
+        run: |
+          helm lint deploy/helm/pintopets -f deploy/helm/pintopets/values-int.yaml
+          helm template pintopets deploy/helm/pintopets -n int -f deploy/helm/pintopets/values-int.yaml --set image.tag=ci > /dev/null
+
       - name: Migrations are in sync with the schema
         run: pnpm db:check
 

@@ -1,0 +1,366 @@
+name: Build and deploy PintoPets to k3s1
+
+# Modelled on bwalia/workerra and bwalia/closeknitty deploy-k3s.yml.
+#
+#   push to main    → check → DNS → edge vhost → build & push image
+#                     → seed Ring Promoter int (https://rp.workstation.co.uk/?app=pintopets)
+#   Ring Promoter   → dispatches this workflow (DEPLOYMENT_TYPE=deploy,
+#                     IMAGE_TAG=<sha>, TARGET_ENV=<ring>) → DNS → edge → helm upgrade
+#   manual dispatch → any ring that has deploy/helm/pintopets/values-<ring>.yaml
+#
+# A push never runs helm itself: Ring Promoter owns every deploy, so the version
+# it shows for a ring is always the one running there and can be promoted on.
+#
+# Per ring the chain is:
+#   browser → <host> --(Cloudflare CNAME, DNS-only, TTL 60)--> lon1.pop0.uk
+#             (or lon2.pop0.uk after a DNS failover) → wslproxy (TLS, VPN access
+#             profile on non-prod) → k3s1 ingress → pintopets Service
+#
+# DNS failover: the nebula-dns-failover Cloudflare writer on ns1/ns2
+# (diy-tax-return-infra, instance pintopets-app) owns the CNAME target and flips
+# it lon1 ↔ lon2 on health. This workflow therefore only CREATES the record when
+# it is missing and never "corrects" its target.
+#
+# Runners: GitHub-hosted for anything that only needs the internet (tests,
+# Cloudflare, Docker Hub, Ring Promoter). Self-hosted (label `pintopets`) for the
+# wslproxy admin API and the k3s API, which only answer on the operator network.
+# This repo is public: this workflow has no pull_request trigger, so fork PRs
+# cannot reach the self-hosted runner through it.
+#
+# SAFETY SWITCH: every job that changes something outside this repo (dns, edge,
+# build, seed, deploy) runs only when the repository variable
+# PINTOPETS_DEPLOY_ENABLED is "true". Unset or anything else: only `ring`
+# (read-only validation) and `check` run. This also blocks Ring Promoter
+# dispatches and manual runs.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      TARGET_ENV:
+        type: choice
+        description: "Target ring"
+        default: int
+        required: true
+        options: [int, test, acc, prod]
+      DEPLOYMENT_TYPE:
+        type: choice
+        description: "Build only, deploy only, or both"
+        default: deploy
+        required: true
+        options: [build, deploy, build-and-deploy]
+      IMAGE_TAG:
+        type: string
+        description: "Image tag to deploy (short SHA, what Ring Promoter sends). Blank = this run's build / this commit."
+        default: ""
+        required: false
+
+permissions:
+  contents: read
+
+# Push runs and Ring Promoter-dispatched deploy runs must not share a group: the
+# push run's seed job waits for int to turn healthy, which only the dispatched
+# run can make happen.
+concurrency:
+  group: pintopets-${{ github.event_name }}-${{ github.event.inputs.TARGET_ENV || 'int' }}
+  cancel-in-progress: false
+
+env:
+  IMAGE: harneetk78/pintopets
+  CHART: deploy/helm/pintopets
+  RELEASE: pintopets
+  DNS_ZONE: pintopets.app
+  # Initial target only; the failover controller owns it afterwards.
+  DNS_TARGET: lon1.pop0.uk
+  RP_URL: https://rp.workstation.co.uk
+  TARGET_ENV: ${{ github.event.inputs.TARGET_ENV || 'int' }}
+  # A push is a build (plus seed); Ring Promoter does the deploy.
+  DEPLOYMENT_TYPE: ${{ github.event.inputs.DEPLOYMENT_TYPE || 'build' }}
+
+jobs:
+  # ─── 0. Resolve the ring's host from its values file ───────────────────────
+  ring:
+    name: Resolve ring (${{ github.event.inputs.TARGET_ENV || 'int' }})
+    runs-on: ubuntu-latest
+    outputs:
+      host: ${{ steps.r.outputs.host }}
+      values: ${{ steps.r.outputs.values }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: r
+        run: |
+          set -euo pipefail
+          VALUES="$CHART/values-${TARGET_ENV}.yaml"
+          [ -f "$VALUES" ] || { echo "::error::$VALUES does not exist: ring $TARGET_ENV is not set up yet"; exit 1; }
+          # Single source of truth: the host the chart's Ingress claims.
+          HOST="$(awk '/^host:/{print $2; exit}' "$VALUES")"
+          [ -n "$HOST" ] || { echo "::error::no top-level 'host:' in $VALUES"; exit 1; }
+          SPEC="deploy/edge/wslproxy-server-${TARGET_ENV}.json"
+          [ -f "$SPEC" ] || { echo "::error::$SPEC does not exist: no edge vhost for ring $TARGET_ENV"; exit 1; }
+          [ "$(jq -r .server_name "$SPEC")" = "$HOST" ] || { echo "::error::$SPEC is not for $HOST"; exit 1; }
+          # Only prod may be public. Refuse to publish a non-prod ring without a VPN profile.
+          if [ "$TARGET_ENV" != prod ] && [ -z "$(jq -r '.access_profile // empty' "$SPEC")" ]; then
+            echo "::error::$SPEC has no access_profile: $TARGET_ENV must stay VPN-only"; exit 1
+          fi
+          echo "host=$HOST" >> "$GITHUB_OUTPUT"
+          echo "values=$VALUES" >> "$GITHUB_OUTPUT"
+          echo "Ring $TARGET_ENV → $HOST ($VALUES)"
+          if [ "$(printf %s "$DEPLOY_ENABLED" | tr '[:upper:]' '[:lower:]')" != true ]; then
+            echo "::notice::Deploys are OFF (PINTOPETS_DEPLOY_ENABLED is not 'true'): dns, edge, build, seed and deploy will be skipped."
+          fi
+        env:
+          DEPLOY_ENABLED: ${{ vars.PINTOPETS_DEPLOY_ENABLED }}
+
+  # ─── 1. Lint, type-check, unit tests, chart ────────────────────────────────
+  # The full suite (DB integration + Playwright) runs in ci.yml on every PR; the
+  # Docker build below is the production build.
+  check:
+    name: Lint, type-check, unit tests, chart
+    if: github.event_name == 'push' || inputs.DEPLOYMENT_TYPE != 'deploy'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - uses: azure/setup-helm@v4
+      - run: helm lint "$CHART" -f "$CHART/values-${TARGET_ENV}.yaml"
+
+  # ─── 2. Cloudflare DNS: <host> CNAME → wslproxy edge, DNS-only ─────────────
+  # DNS-only (not proxied): wslproxy terminates TLS and solves ACME itself, and a
+  # proxied record would also hide the client IP the VPN access profile checks.
+  dns:
+    name: Ensure Cloudflare DNS
+    needs: [ring]
+    if: vars.PINTOPETS_DEPLOY_ENABLED == 'true' && (github.event_name == 'push' || inputs.DEPLOYMENT_TYPE != 'build')
+    runs-on: ubuntu-latest
+    env:
+      HOST: ${{ needs.ring.outputs.host }}
+    steps:
+      - name: Create CNAME if missing (never re-point it)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          [ -n "${CLOUDFLARE_API_TOKEN:-}" ] || { echo "::error::Secret CLOUDFLARE_API_TOKEN is not set (needs Zone:Read + DNS:Edit on $DNS_ZONE)"; exit 1; }
+          api=https://api.cloudflare.com/client/v4
+          auth=(-H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json")
+          zone_id=$(curl -fsS "${auth[@]}" "$api/zones?name=$DNS_ZONE" | jq -r '.result[0].id // empty')
+          [ -n "$zone_id" ] || { echo "::error::zone $DNS_ZONE is not visible to this token"; exit 1; }
+          records=$(curl -fsS "${auth[@]}" "$api/zones/$zone_id/dns_records?name=$HOST")
+          other=$(echo "$records" | jq -r '[.result[] | select(.type != "CNAME") | .type] | join(",")')
+          [ -z "$other" ] || { echo "::error::$HOST already has $other record(s); not touching it"; exit 1; }
+          rec=$(echo "$records" | jq -c '[.result[] | select(.type == "CNAME")][0] // empty')
+          if [ -z "$rec" ]; then
+            body=$(jq -nc --arg name "$HOST" --arg content "$DNS_TARGET" '{type:"CNAME",name:$name,content:$content,ttl:60,proxied:false}')
+            curl -fsS "${auth[@]}" -X POST "$api/zones/$zone_id/dns_records" --data "$body" >/dev/null
+            echo "created CNAME $HOST -> $DNS_TARGET (TTL 60, DNS-only)"
+            exit 0
+          fi
+          content=$(echo "$rec" | jq -r .content); proxied=$(echo "$rec" | jq -r .proxied)
+          case "$content" in
+            lon1.pop0.uk|lon2.pop0.uk) ;;
+            *) echo "::error::$HOST is a CNAME to $content, expected lon1.pop0.uk or lon2.pop0.uk; not touching it"; exit 1 ;;
+          esac
+          [ "$proxied" = false ] || { echo "::error::$HOST is proxied through Cloudflare; wslproxy needs it DNS-only"; exit 1; }
+          echo "CNAME $HOST -> $content in place (failover controller owns the target)"
+
+  # ─── 3. wslproxy vhost on pop0 (lon1, mirrored to lon2) ────────────────────
+  # Must exist before traffic arrives, else the host resolves to an edge with no
+  # config for it. lon2 follows lon1 (wslproxy-edge-sync) including certificates,
+  # so a DNS failover to lon2 serves the same vhost. Non-prod specs carry an
+  # access_profile (checked in `ring`); a missing profile fails closed (403).
+  edge:
+    name: Register wslproxy vhost
+    needs: [ring, dns]
+    if: vars.PINTOPETS_DEPLOY_ENABLED == 'true' && (github.event_name == 'push' || inputs.DEPLOYMENT_TYPE != 'build')
+    runs-on: [self-hosted, pintopets]
+    env:
+      HOST: ${{ needs.ring.outputs.host }}
+      SPEC: deploy/edge/wslproxy-server-${{ github.event.inputs.TARGET_ENV || 'int' }}.json
+    steps:
+      - uses: actions/checkout@v4
+      - name: Register vhost (idempotent)
+        env:
+          WSLPROXY_USERNAME: ${{ secrets.WSLPROXY_USERNAME }}
+          WSLPROXY_PASSWORD: ${{ secrets.WSLPROXY_PASSWORD }}
+          GW: ${{ secrets.WSLPROXY_BASE_URL }}
+        run: |
+          set -euo pipefail
+          [ -n "${WSLPROXY_USERNAME:-}" ] && [ -n "${WSLPROXY_PASSWORD:-}" ] && [ -n "${GW:-}" ] \
+            || { echo "::error::Secrets WSLPROXY_USERNAME / WSLPROXY_PASSWORD / WSLPROXY_BASE_URL must be set"; exit 1; }
+          TOKEN=$(curl -fsS --max-time 30 -X POST "$GW/api/user/login" -H "Content-Type: application/json" \
+            -d "$(jq -nc --arg e "$WSLPROXY_USERNAME" --arg p "$WSLPROXY_PASSWORD" '{email:$e,password:$p}')" \
+            | jq -r '.data.accessToken')
+          [ -n "$TOKEN" ] && [ "$TOKEN" != null ] || { echo "::error::wslproxy login failed"; exit 1; }
+          echo "::add-mask::$TOKEN"
+          existing=$(curl -fsS --max-time 30 "$GW/api/servers" -H "Authorization: Bearer $TOKEN" \
+            | jq -c --arg h "$HOST" '[.data[]? | select(.server_name==$h)][0] // empty')
+          if [ -n "$existing" ]; then
+            want=$(jq -r '.access_profile // ""' "$SPEC")
+            have=$(echo "$existing" | jq -r '.access_profile // ""')
+            [ "$want" = "$have" ] || { echo "::error::vhost $HOST exists with access_profile '$have', spec wants '$want'. Fix it in the wslproxy admin UI."; exit 1; }
+            echo "vhost for $HOST already exists (id=$(echo "$existing" | jq -r .id), access_profile='$have')"
+            exit 0
+          fi
+          resp=$(curl -fsS --max-time 60 -X POST "$GW/api/servers" -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" -d @"$SPEC")
+          sid=$(echo "$resp" | jq -r '.data.id // .id // empty')
+          [ -n "$sid" ] || { echo "::error::vhost create failed: $resp"; exit 1; }
+          echo "registered $HOST (id=$sid)"
+
+  # ─── 4. Build & push the image ─────────────────────────────────────────────
+  # One image for every ring, tagged with the short commit SHA. ubuntu-latest is
+  # amd64 like the k3s1 LAN nodes, so the build is native.
+  build:
+    name: Build & push image
+    needs: [check, dns, edge]
+    if: >-
+      always()
+      && vars.PINTOPETS_DEPLOY_ENABLED == 'true'
+      && (github.event_name == 'push' || inputs.DEPLOYMENT_TYPE != 'deploy')
+      && needs.check.result == 'success'
+      && (needs.dns.result == 'success' || needs.dns.result == 'skipped')
+      && (needs.edge.result == 'success' || needs.edge.result == 'skipped')
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: tag
+        run: echo "tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWD }}
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          # Attestations off: they turn the push into an OCI index that k3s
+          # containerd rejects ("no match for platform in manifest").
+          provenance: false
+          sbom: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: |
+            ${{ env.IMAGE }}:${{ steps.tag.outputs.tag }}
+            ${{ env.IMAGE }}:latest
+
+  # ─── 5. Hand the new version to Ring Promoter ──────────────────────────────
+  # Ring Promoter dispatches the deploy below for int and verifies
+  # /api/v1/health reports the tag. Promotion beyond int stays a human act.
+  seed:
+    name: Seed Ring Promoter (int)
+    needs: [build]
+    if: vars.PINTOPETS_DEPLOY_ENABLED == 'true' && github.event_name == 'push' && needs.build.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Seed int and wait until it is healthy
+        env:
+          RP_API_TOKEN: ${{ secrets.RP_API_TOKEN }}
+          TAG: ${{ needs.build.outputs.tag }}
+        run: |
+          set -euo pipefail
+          [ -n "${RP_API_TOKEN:-}" ] || { echo "::error::Secret RP_API_TOKEN is not set: $TAG is pushed but NOT deploying. Seed it by hand at $RP_URL/?app=pintopets"; exit 1; }
+          code=$(curl -sS -o seed.out -w '%{http_code}' -X POST "$RP_URL/api/apps/pintopets/seed?async=1" \
+            -H "Authorization: Bearer $RP_API_TOKEN" -H 'Content-Type: application/json' \
+            -d "{\"ring\":\"int\",\"version\":\"$TAG\"}") || code=000
+          echo "seed -> HTTP $code :: $(head -c 500 seed.out)"
+          case "$code" in 200|202) ;; *) echo "::error::Ring Promoter seed failed"; exit 1 ;; esac
+          echo "Track: $RP_URL/?app=pintopets"
+          for i in $(seq 1 100); do
+            state=$(curl -sS -H "Authorization: Bearer $RP_API_TOKEN" "$RP_URL/api/apps/pintopets/rings" \
+              | python3 -c 'import json,sys
+          for r in json.load(sys.stdin).get("rings") or []:
+              if (r.get("ring") or {}).get("name") == "int":
+                  print(r.get("current_version") or "", "healthy" if r.get("healthy") else "unhealthy")' || true)
+            echo "[$i] int: ${state:-unknown}"
+            [ "$state" = "$TAG healthy" ] && { echo "int is on $TAG and healthy"; exit 0; }
+            sleep 15
+          done
+          echo "::error::int did not reach $TAG and healthy within 25m"; exit 1
+
+  # ─── 6. Helm deploy (dispatched by Ring Promoter, or by hand) ──────────────
+  deploy:
+    name: Helm deploy (${{ github.event.inputs.TARGET_ENV }})
+    needs: [ring, dns, edge, build]
+    if: >-
+      always()
+      && vars.PINTOPETS_DEPLOY_ENABLED == 'true'
+      && github.event_name == 'workflow_dispatch'
+      && inputs.DEPLOYMENT_TYPE != 'build'
+      && needs.ring.result == 'success'
+      && needs.dns.result == 'success'
+      && needs.edge.result == 'success'
+      && (needs.build.result == 'success' || needs.build.result == 'skipped')
+    runs-on: [self-hosted, pintopets]
+    timeout-minutes: 20
+    env:
+      VALUES: ${{ needs.ring.outputs.values }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+      - uses: azure/setup-kubectl@v4
+      - name: Resolve image tag
+        run: |
+          set -euo pipefail
+          TAG="${{ inputs.IMAGE_TAG }}"
+          [ -n "$TAG" ] || TAG="${{ needs.build.outputs.tag }}"
+          [ -n "$TAG" ] || TAG="${GITHUB_SHA::7}"
+          # A tag the registry doesn't have would ImagePullBackOff the ring.
+          code=$(curl -sS -o /dev/null -w '%{http_code}' "https://hub.docker.com/v2/repositories/${IMAGE}/tags/${TAG}") || code=000
+          [ "$code" = 200 ] || { echo "::error::${IMAGE}:${TAG} is not in Docker Hub (HTTP $code); refusing to deploy it"; exit 1; }
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+      - name: Kubeconfig
+        env:
+          KUBECONFIG_BASE64: ${{ secrets.KUBE_CONFIG_DATA_K3S }}
+        run: |
+          set -euo pipefail
+          [ -n "${KUBECONFIG_BASE64:-}" ] || { echo "::error::Secret KUBE_CONFIG_DATA_K3S is not set"; exit 1; }
+          echo "$KUBECONFIG_BASE64" | base64 -d > "$RUNNER_TEMP/kubeconfig"
+          chmod 600 "$RUNNER_TEMP/kubeconfig"
+          echo "KUBECONFIG=$RUNNER_TEMP/kubeconfig" >> "$GITHUB_ENV"
+      - name: helm upgrade
+        run: |
+          set -euo pipefail
+          echo "Deploying $IMAGE:$TAG to $TARGET_ENV ($VALUES)"
+          helm upgrade --install "$RELEASE" "$CHART" \
+            --namespace "$TARGET_ENV" -f "$VALUES" \
+            --set image.tag="$TAG" \
+            --wait --timeout 10m
+          kubectl -n "$TARGET_ENV" get pods -l app.kubernetes.io/part-of=pintopets -o wide
+      - name: Diagnostics on failure
+        if: failure()
+        run: |
+          kubectl -n "$TARGET_ENV" get pods -l app.kubernetes.io/part-of=pintopets -o wide || true
+          kubectl -n "$TARGET_ENV" get externalsecret -l app.kubernetes.io/part-of=pintopets || true
+          kubectl -n "$TARGET_ENV" describe deploy/"$RELEASE" | tail -30 || true
+          kubectl -n "$TARGET_ENV" logs deploy/"$RELEASE" -c migrate --tail=60 || true
+          kubectl -n "$TARGET_ENV" logs deploy/"$RELEASE" -c web --tail=60 || true
+          kubectl -n "$TARGET_ENV" logs sts/pintopets-postgres --tail=30 || true
+      - name: Probe through the edge (informational)
+        env:
+          HOST: ${{ needs.ring.outputs.host }}
+        run: |
+          # From the LAN runner a VPN-only host is proxied; elsewhere it is a 403.
+          for i in $(seq 1 10); do
+            code=$(curl -sS -o /dev/null -m 10 -w '%{http_code}' "https://$HOST/api/v1/health") || code=000
+            echo "[$i] https://$HOST/api/v1/health -> $code"
+            [ "$code" = 200 ] && exit 0
+            sleep 10
+          done
+          echo "::warning::$HOST did not answer 200 yet (DNS/cert propagation can take a few minutes)"
+      - name: Remove kubeconfig
+        if: always()
+        run: rm -f "$RUNNER_TEMP/kubeconfig"
