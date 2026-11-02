@@ -24,9 +24,14 @@ export default defineConfig({
   ],
   webServer: {
     // CI runs against the production build; locally the dev server is fine.
-    command: process.env.CI ? "pnpm start" : "pnpm dev",
+    // Call the Next binary directly: a pnpm wrapper doesn't pass on SIGTERM,
+    // which left the server running and hung teardown.
+    command: process.env.CI
+      ? "./node_modules/.bin/next start --port 3000"
+      : "./node_modules/.bin/next dev --port 3000",
     url: `${baseURL}/api/v1/health`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
+    gracefulShutdown: { signal: "SIGTERM", timeout: 5_000 },
   },
 });
