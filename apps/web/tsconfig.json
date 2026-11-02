@@ -1,0 +1,17 @@
+{
+  "extends": "@pintopets/config/tsconfig/nextjs.json",
+  "compilerOptions": {
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": [
+    "next-env.d.ts",
+    "global.d.ts",
+    "src",
+    "e2e",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "*.ts",
+    "*.mjs"
+  ],
+  "exclude": ["node_modules"]
+}
