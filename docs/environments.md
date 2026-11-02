@@ -47,6 +47,13 @@ removing the hostname from the controller config.
 The deploy workflow only **creates** the CNAME when it is missing. It never
 re-points it, so it cannot fight the controller mid-failover.
 
+The controller only manages Cloudflare records whose comment contains
+`nebula-dns-failover`. An unmarked CNAME blocks it: it tries to add its own
+CNAME and Cloudflare rejects the duplicate. So the workflow creates the record
+with the comment `nebula-dns-failover | hostname=int.pintopets.app |
+policy=lon1-primary | v=1` (the same format as `int.workstation.co.uk`), and
+fails if it ever finds an unmarked one.
+
 ## Pipeline
 
 ```
