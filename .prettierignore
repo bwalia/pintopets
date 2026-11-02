@@ -1,0 +1,7 @@
+pnpm-lock.yaml
+**/.next
+**/dist
+**/coverage
+packages/db/migrations/meta
+apps/web/playwright-report
+apps/web/test-results
