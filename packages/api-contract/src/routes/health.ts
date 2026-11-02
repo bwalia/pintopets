@@ -5,7 +5,9 @@ import { registry } from "../registry";
 export const HealthResponse = z
   .object({
     status: z.enum(["ok", "degraded"]),
+    /** Image tag (short Git SHA). Ring Promoter checks this after each deploy. */
     version: z.string(),
+    env: z.enum(["local", "int", "test", "acc", "prod"]),
     time: z.iso.datetime(),
     checks: z.object({
       database: z.enum(["ok", "error"]),
