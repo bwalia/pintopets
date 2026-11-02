@@ -19,7 +19,8 @@ name: Build and deploy PintoPets to k3s1
 # DNS failover: the nebula-dns-failover Cloudflare writer on ns1/ns2
 # (diy-tax-return-infra, instance pintopets-app) owns the CNAME target and flips
 # it lon1 ↔ lon2 on health. This workflow therefore only CREATES the record when
-# it is missing and never "corrects" its target.
+# it is missing (with the controller's comment marker, so the controller adopts
+# it) and never "corrects" its target.
 #
 # Runners: GitHub-hosted for anything that only needs the internet (tests,
 # Cloudflare, Docker Hub, Ring Promoter). Self-hosted (label `pintopets`) for the
@@ -159,12 +160,21 @@ jobs:
           [ -z "$other" ] || { echo "::error::$HOST already has $other record(s); not touching it"; exit 1; }
           rec=$(echo "$records" | jq -c '[.result[] | select(.type == "CNAME")][0] // empty')
           if [ -z "$rec" ]; then
-            body=$(jq -nc --arg name "$HOST" --arg content "$DNS_TARGET" '{type:"CNAME",name:$name,content:$content,ttl:60,proxied:false}')
+            # The failover controller only manages records whose comment carries
+            # its marker; an unmarked CNAME would block it (Cloudflare rejects a
+            # second CNAME on the same name), so create it already marked.
+            comment="nebula-dns-failover | hostname=$HOST | policy=lon1-primary | v=1"
+            body=$(jq -nc --arg name "$HOST" --arg content "$DNS_TARGET" --arg comment "$comment" \
+              '{type:"CNAME",name:$name,content:$content,ttl:60,proxied:false,comment:$comment}')
             curl -fsS "${auth[@]}" -X POST "$api/zones/$zone_id/dns_records" --data "$body" >/dev/null
-            echo "created CNAME $HOST -> $DNS_TARGET (TTL 60, DNS-only)"
+            echo "created CNAME $HOST -> $DNS_TARGET (TTL 60, DNS-only, failover-managed)"
             exit 0
           fi
           content=$(echo "$rec" | jq -r .content); proxied=$(echo "$rec" | jq -r .proxied)
+          case "$(echo "$rec" | jq -r '.comment // ""')" in
+            *nebula-dns-failover*) ;;
+            *) echo "::error::$HOST CNAME has no nebula-dns-failover marker, so lon1/lon2 failover cannot manage it. Add the marker comment in Cloudflare (see docs/environments.md)."; exit 1 ;;
+          esac
           case "$content" in
             lon1.pop0.uk|lon2.pop0.uk) ;;
             *) echo "::error::$HOST is a CNAME to $content, expected lon1.pop0.uk or lon2.pop0.uk; not touching it"; exit 1 ;;
