@@ -115,6 +115,13 @@ stop all deploys.
 
 ## One-off setup (INT)
 
+**Status (2026-11-02): done.** Runner `BalindeacStudio-pintopets` (this Mac,
+`~/actions-runner-pintopets`, launchd); secrets copied from `bwalia/workerra`
+(same pipeline credentials); `PINTOPETS_DEPLOY_ENABLED=true`; Ring Promoter app
+registered (ring-promoter#186); failover instance applied on ns1 (ns2 runs an
+older controller binary whose Cloudflare writers are inactive: not applied
+there yet).
+
 1. Self-hosted runner on `bwalia/pintopets` with label `pintopets`, on the
    operator LAN (it must reach the wslproxy admin API and the k3s API). Fork PR
    workflows must require approval for all outside contributors (the repo is
