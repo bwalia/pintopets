@@ -1,0 +1,64 @@
+# Base defaults for the PintoPets chart. Per-ring overlays: values-<ring>.yaml.
+# Installed as release `pintopets` into the shared ring namespaces
+# (int/test/acc/prod), like workerra and closeknitty.
+#
+# No credential is ever set here (the repo is public). The Postgres password is
+# generated in-cluster on first install (see templates/postgres.yaml); app
+# secrets come from WSL Vault through External Secrets (vaultSecrets below).
+
+# Ring name, passed to the app as APP_ENV (local|int|test|acc|prod).
+env: int
+# Public host. Single source of truth for the deploy workflow's DNS and edge
+# jobs, which read it with awk: keep it a plain top-level `host: <fqdn>` line.
+host: int.pintopets.app
+
+image:
+  repository: harneetk78/pintopets
+  # Set by the deploy workflow: --set image.tag=<short sha>. Also exported as
+  # APP_VERSION, which /api/v1/health reports and Ring Promoter verifies.
+  tag: latest
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+port: 3000
+
+# Run migrations + idempotent reference-data seed before the web container starts.
+migrations:
+  enabled: true
+
+postgres:
+  # In-chart Postgres with pgvector (knowledge base embeddings, M6).
+  enabled: true
+  image: pgvector/pgvector:pg17
+  database: pintopets
+  user: pintopets
+  storage: 10Gi
+  # longhorn is replicated across nodes; local-path would pin the data to one node.
+  storageClass: longhorn
+  resources:
+    requests: { cpu: 50m, memory: 256Mi }
+    limits: { cpu: 500m, memory: 1Gi }
+
+# One ExternalSecret per entry; ESO copies every key under the Vault path into a
+# Secret named pintopets-<entry>, loaded into the web pod with envFrom. Vault key
+# names must equal env var names (see .env.example). Empty until the app has
+# secrets (M2: Google OAuth, Resend, TOTP key). Add an entry only once the Vault
+# path exists: a missing path keeps the ExternalSecret unready and fails
+# `helm --wait` (this is what blocked workerra's first deploy).
+vaultStore: wslvault-backend
+vaultSecrets: {}
+
+# Plain, non-secret env.
+extraEnv: {}
+
+ingress:
+  enabled: true
+  # TLS terminates on the wslproxy edge (lon1/lon2), which proxies plain HTTP to
+  # the cluster ingress by Host header, so no cert-manager/tls block here.
+  className: traefik
+
+resources:
+  requests: { cpu: 50m, memory: 192Mi }
+  limits: { cpu: 1000m, memory: 768Mi }
+
+nodeSelector: {}

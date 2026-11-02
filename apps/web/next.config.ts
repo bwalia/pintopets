@@ -31,6 +31,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Self-contained server bundle for the container image (k3s1). In a monorepo
+  // the trace root must be the repo root so workspace packages are included.
+  output: "standalone",
+  outputFileTracingRoot: repoRoot,
   poweredByHeader: false,
   typedRoutes: true,
   transpilePackages: ["@pintopets/ui", "@pintopets/api-contract", "@pintopets/db"],

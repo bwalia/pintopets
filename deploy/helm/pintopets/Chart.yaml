@@ -1,0 +1,6 @@
+apiVersion: v2
+name: pintopets
+description: PintoPets web app (Next.js) + Postgres/pgvector for k3s1, one release per ring namespace
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

@@ -1,0 +1,18 @@
+# ── PintoPets — INTEGRATION ────────────────────────────────────────────────
+# Release: pintopets   Namespace: int   Cluster: k3s1
+# Host: https://int.pintopets.app — Workstation VPN only (access profile on the
+# wslproxy vhost, deploy/edge/wslproxy-server-int.json). DNS: CNAME to
+# lon1.pop0.uk, flipped to lon2.pop0.uk by the nebula-dns-failover Cloudflare
+# writer when lon1 fails its health check (docs/environments.md).
+env: int
+host: int.pintopets.app
+
+extraEnv:
+  LOG_LEVEL: "debug"
+
+# Any healthy LAN amd64 node, as workerra/workstation-opsapi do: net-region=home
+# keeps it on the LAN next to the ring's services (the cloud<->LAN mesh is
+# unreliable); arch=amd64 keeps it off the arm64 Pi.
+nodeSelector:
+  net-region: home
+  kubernetes.io/arch: amd64

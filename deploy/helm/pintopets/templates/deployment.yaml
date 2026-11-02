@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pintopets
+  labels:
+    {{- include "pintopets.labels" . | nindent 4 }}
+    {{- include "pintopets.selector" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      {{- include "pintopets.selector" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "pintopets.labels" . | nindent 8 }}
+        {{- include "pintopets.selector" . | nindent 8 }}
+    spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        seccompProfile:
+          type: RuntimeDefault
+      {{- if .Values.migrations.enabled }}
+      initContainers:
+        # Waits for Postgres, applies migrations, re-seeds reference data
+        # (idempotent). A failure here stops the rollout before traffic moves.
+        - name: migrate
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["node", "db/db-tasks.mjs", "migrate-and-seed"]
+          env:
+            {{- include "pintopets.databaseEnv" . | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests: { cpu: 20m, memory: 64Mi }
+            limits: { cpu: 500m, memory: 256Mi }
+      {{- end }}
+      containers:
+        - name: web
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+          env:
+            - name: APP_ENV
+              value: {{ .Values.env | quote }}
+            - name: APP_VERSION
+              value: {{ .Values.image.tag | quote }}
+            - name: APP_URL
+              value: {{ printf "https://%s" .Values.host | quote }}
+            - name: PORT
+              value: {{ .Values.port | quote }}
+            {{- include "pintopets.databaseEnv" . | nindent 12 }}
+            {{- range $name, $value := .Values.extraEnv }}
+            - name: {{ $name }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- with .Values.vaultSecrets }}
+          envFrom:
+            {{- range $name, $path := . }}
+            - secretRef:
+                name: pintopets-{{ $name }}
+                optional: true
+            {{- end }}
+          {{- end }}
+          # Ready only when the database answers (the health endpoint returns 503
+          # otherwise). Liveness is a plain TCP check so a database outage does
+          # not restart-loop the web pods.
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pintopets
+  labels:
+    {{- include "pintopets.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  selector:
+    {{- include "pintopets.selector" . | nindent 4 }}
