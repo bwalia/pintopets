@@ -1,0 +1,70 @@
+{
+  "meta": {
+    "title": "PintoPets",
+    "description": "A friendly home for pet owners: keep your pets' records in one place, ask everyday questions and talk to other owners."
+  },
+  "a11y": {
+    "skipToContent": "Skip to main content",
+    "mainNav": "Main",
+    "mobileNav": "Main (tabs)",
+    "openAccount": "Your account",
+    "opensInNewTab": "(opens in a new tab)"
+  },
+  "nav": {
+    "home": "Home",
+    "pets": "My Pets",
+    "ask": "Ask AI",
+    "community": "Community",
+    "reminders": "Reminders",
+    "account": "Account",
+    "reviewQueue": "Review Queue",
+    "knowledgeBase": "Knowledge Base",
+    "moderation": "Moderation",
+    "admin": "Admin"
+  },
+  "home": {
+    "heading": "What's worrying you about your pet?",
+    "intro": "Ask in your own words. We'll check for urgent signs first, then explain common reasons and when to see a vet.",
+    "label": "Describe what's happening",
+    "placeholder": "For example: Why is my 8 month old dog sick straight after eating?",
+    "submit": "Ask",
+    "disclaimer": "PintoPets gives general information, not a diagnosis. Only a vet can diagnose and treat your pet.",
+    "urgentTitle": "If your pet seems very unwell right now",
+    "urgentBody": "Trouble breathing, collapse, heavy bleeding, a swollen belly with retching, or anything they may have swallowed or eaten that could be poisonous: contact a vet now.",
+    "findVet": "Find an emergency vet",
+    "featuresHeading": "Everything for your pets, in one place",
+    "featurePetsTitle": "My Pets",
+    "featurePetsBody": "Profiles, photos, health records, diet and microchip details for every pet you care for.",
+    "featureAskTitle": "Everyday questions",
+    "featureAskBody": "Plain-English answers based on articles reviewed by vets and vet nurses.",
+    "featureCommunityTitle": "Community",
+    "featureCommunityBody": "Talk to other owners about the same worries, with answers from verified vet professionals."
+  },
+  "ask": {
+    "title": "Ask AI",
+    "yourQuestion": "Your question",
+    "comingTitle": "The pet assistant is on its way",
+    "comingBody": "Soon you'll get an answer here, starting with a check for urgent signs. For now, if you're worried, please contact your vet."
+  },
+  "placeholder": {
+    "comingSoon": "Coming soon",
+    "pets": "Add your pets and keep their profiles, photos, health records and microchip details together.",
+    "community": "Forums for every kind of pet, with answers from verified vets and vet nurses.",
+    "reminders": "Vaccinations, flea and worm treatments, medicines and document expiry dates, all in one list.",
+    "account": "Sign-in, security (including authenticator app codes) and your plan will live here."
+  },
+  "notFound": {
+    "title": "We couldn't find that page",
+    "body": "It may have moved, or the link may be wrong.",
+    "home": "Go to the home page"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "body": "Sorry, that didn't work. Please try again. If your pet needs help urgently, contact a vet.",
+    "retry": "Try again"
+  },
+  "footer": {
+    "notVetAdvice": "Information on PintoPets is not a replacement for advice from your vet.",
+    "copyright": "© {year} PintoPets"
+  }
+}

@@ -1,0 +1,23 @@
+# Local development database: Postgres 17 + pgvector.
+# Start with `pnpm db:up`. Data persists in the `pintopets-db` volume.
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    container_name: pintopets-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: pintopets
+      POSTGRES_PASSWORD: pintopets
+      POSTGRES_DB: pintopets
+    ports:
+      - "5432:5432"
+    volumes:
+      - pintopets-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pintopets -d pintopets"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  pintopets-db:

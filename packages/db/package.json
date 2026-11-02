@@ -1,0 +1,36 @@
+{
+  "name": "@pintopets/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts",
+    "./seed-data": "./src/seed/data/index.ts"
+  },
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx src/migrate.ts",
+    "db:seed": "tsx src/seed/run.ts",
+    "db:check": "drizzle-kit check && drizzle-kit generate --name=ci_drift_check && git diff --exit-code --stat -- migrations && test -z \"$(git ls-files --others --exclude-standard -- migrations)\"",
+    "db:studio": "drizzle-kit studio",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.4",
+    "postgres": "^3.4.9",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@pintopets/config": "workspace:*",
+    "@types/node": "^24.0.0",
+    "dotenv": "^17.2.0",
+    "drizzle-kit": "^0.31.11",
+    "eslint": "^9.39.5",
+    "tsx": "^4.23.15",
+    "typescript": "6.0.3",
+    "vitest": "^5.0.5"
+  }
+}

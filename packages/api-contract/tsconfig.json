@@ -1,0 +1,4 @@
+{
+  "extends": "@pintopets/config/tsconfig/library.json",
+  "include": ["src", "eslint.config.js"]
+}
