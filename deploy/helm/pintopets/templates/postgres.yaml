@@ -1,0 +1,111 @@
+{{- if .Values.postgres.enabled }}
+{{- /*
+  Password generated once, on first install, and reused on every upgrade
+  (lookup reads the live Secret). resource-policy keep: uninstalling the release
+  never deletes the credentials for a database whose volume may still exist.
+  Alphanumeric only, so it is safe inside DATABASE_URL without escaping.
+*/}}
+{{- $existing := lookup "v1" "Secret" .Release.Namespace "pintopets-postgres" }}
+{{- $password := "" }}
+{{- if and $existing $existing.data (index $existing.data "POSTGRES_PASSWORD") }}
+{{- $password = index $existing.data "POSTGRES_PASSWORD" | b64dec }}
+{{- else }}
+{{- $password = randAlphaNum 40 }}
+{{- end }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pintopets-postgres
+  labels:
+    {{- include "pintopets.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/resource-policy: keep
+type: Opaque
+data:
+  POSTGRES_PASSWORD: {{ $password | b64enc | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pintopets-postgres
+  labels:
+    {{- include "pintopets.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: postgres
+  selector:
+    {{- include "pintopets.postgresSelector" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pintopets-postgres
+  labels:
+    {{- include "pintopets.labels" . | nindent 4 }}
+    {{- include "pintopets.postgresSelector" . | nindent 4 }}
+spec:
+  serviceName: pintopets-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "pintopets.postgresSelector" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "pintopets.labels" . | nindent 8 }}
+        {{- include "pintopets.postgresSelector" . | nindent 8 }}
+    spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        # postgres user in the official image; fsGroup makes the volume writable.
+        fsGroup: 999
+      containers:
+        - name: postgres
+          image: {{ .Values.postgres.image | quote }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: {{ .Values.postgres.database | quote }}
+            - name: POSTGRES_USER
+              value: {{ .Values.postgres.user | quote }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pintopets-postgres
+                  key: POSTGRES_PASSWORD
+            # Subdirectory: the volume root contains lost+found.
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            {{- toYaml .Values.postgres.resources | nindent 12 }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: {{ .Values.postgres.storageClass | quote }}
+        resources:
+          requests:
+            storage: {{ .Values.postgres.storage }}
+{{- end }}
