@@ -1,0 +1,129 @@
+/*
+ * PintoPets design tokens (Tailwind CSS v4).
+ * Calm and trustworthy: warm cream background, deep teal primary, sand and
+ * soft clay accents. All text/background pairs below meet WCAG 2.2 AA (4.5:1);
+ * the Playwright axe checks enforce this on every page.
+ */
+@import "tailwindcss";
+
+/* Shared components live outside the app, so Tailwind must be told to scan them. */
+@source "../components";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --radius: 0.75rem;
+
+  --background: oklch(0.985 0.008 85);
+  --foreground: oklch(0.24 0.03 210);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.24 0.03 210);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.24 0.03 210);
+
+  /* Deep teal: main actions, links, focus rings. */
+  --primary: oklch(0.45 0.08 195);
+  --primary-foreground: oklch(0.99 0.005 85);
+
+  /* Sand: secondary buttons, chips. */
+  --secondary: oklch(0.94 0.03 80);
+  --secondary-foreground: oklch(0.28 0.04 60);
+
+  --muted: oklch(0.96 0.012 85);
+  --muted-foreground: oklch(0.46 0.025 210);
+
+  /* Soft clay: highlights, the "pinto" second tone. */
+  --accent: oklch(0.93 0.04 50);
+  --accent-foreground: oklch(0.32 0.07 40);
+
+  /* Urgent: "Contact a vet now". Used only for real urgency. */
+  --urgent: oklch(0.5 0.19 27);
+  --urgent-foreground: oklch(0.99 0 0);
+  --urgent-soft: oklch(0.96 0.03 25);
+
+  /* "See a vet soon". */
+  --warning: oklch(0.96 0.05 85);
+  --warning-foreground: oklch(0.38 0.08 65);
+
+  /* "Vet reviewed" and success states. */
+  --success: oklch(0.45 0.1 155);
+  --success-foreground: oklch(0.99 0 0);
+  --success-soft: oklch(0.95 0.04 155);
+
+  --destructive: oklch(0.5 0.19 27);
+  --destructive-foreground: oklch(0.99 0 0);
+
+  --border: oklch(0.89 0.015 85);
+  --input: oklch(0.82 0.02 85);
+  --ring: oklch(0.45 0.08 195);
+}
+
+@theme inline {
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-urgent: var(--urgent);
+  --color-urgent-foreground: var(--urgent-foreground);
+  --color-urgent-soft: var(--urgent-soft);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-soft: var(--success-soft);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/60;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+  /* Visible focus for keyboard users everywhere (WCAG 2.4.7 / 2.4.11). */
+  :focus-visible {
+    @apply outline-ring outline-2 outline-offset-2;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
