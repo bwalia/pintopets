@@ -36,3 +36,6 @@ apps/web/playwright/.cache/
 
 # sentry
 .sentryclirc
+
+# local uploads
+apps/web/.data/
