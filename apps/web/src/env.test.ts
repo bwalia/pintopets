@@ -20,4 +20,23 @@ describe("parseServerEnv", () => {
       expect(String(e)).not.toContain("secret-password");
     }
   });
+
+  it("refuses demo sign-in on prod", () => {
+    expect(() =>
+      parseServerEnv({
+        DATABASE_URL: "postgres://u:p@localhost:5432/db",
+        APP_ENV: "prod",
+        DEMO_AUTH: "true",
+      }),
+    ).toThrow(/DEMO_AUTH must never be enabled on prod/);
+  });
+
+  it("allows demo sign-in on int", () => {
+    const env = parseServerEnv({
+      DATABASE_URL: "postgres://u:p@localhost:5432/db",
+      APP_ENV: "int",
+      DEMO_AUTH: "true",
+    });
+    expect(env.DEMO_AUTH).toBe(true);
+  });
 });

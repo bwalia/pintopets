@@ -1,5 +1,5 @@
 /*
- * PintoPets design tokens (Tailwind CSS v4).
+ * PintoPets design tokens (Tailwind CSS v4). Typography follows workstation.co.uk.
  * Calm and trustworthy: warm cream background, deep teal primary, sand and
  * soft clay accents. All text/background pairs below meet WCAG 2.2 AA (4.5:1);
  * the Playwright axe checks enforce this on every page.
@@ -54,14 +54,40 @@
   --destructive: oklch(0.5 0.19 27);
   --destructive-foreground: oklch(0.99 0 0);
 
+  /* Chart series colour: validated (dataviz validate_palette.js) for lightness,
+     chroma >= 0.10 and >= 3:1 contrast on the card surface. */
+  --chart-1: #008f88;
+
   --border: oklch(0.89 0.015 85);
   --input: oklch(0.82 0.02 85);
   --ring: oklch(0.45 0.08 195);
 }
 
 @theme inline {
-  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  /* Typefaces and type scale shared with workstation.co.uk (design/ws-theme.css). */
+  --font-sans: var(--ws-font-body, "Poppins"), "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--ws-font-display, "Unbounded"), var(--ws-font-body, "Poppins"), sans-serif;
+  --font-mono:
+    var(--ws-font-mono, "JetBrains Mono"), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --text-display: clamp(2rem, 1.2rem + 2.6vw, 3.25rem);
+  --text-display--line-height: 1.1;
+  --text-h1: clamp(1.75rem, 1.25rem + 2vw, 2.6rem);
+  --text-h1--line-height: 1.15;
+  --text-h2: clamp(1.4rem, 1.1rem + 1.2vw, 2rem);
+  --text-h2--line-height: 1.2;
+  --text-h3: clamp(1.1rem, 1rem + 0.45vw, 1.3rem);
+  --text-h3--line-height: 1.3;
+  --text-h4: 1.125rem;
+  --text-h4--line-height: 1.4;
+  --text-lead: clamp(1.05rem, 1rem + 0.3vw, 1.2rem);
+  --text-lead--line-height: 1.6;
+  --text-base: 1rem;
+  --text-base--line-height: 1.6;
+  --text-sm: 0.9rem;
+  --text-sm--line-height: 1.5;
+  --text-xs: 0.8rem;
+  --text-xs--line-height: 1.4;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -87,6 +113,7 @@
   --color-success-soft: var(--success-soft);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-chart-1: var(--chart-1);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -103,14 +130,35 @@
   }
   html {
     -webkit-text-size-adjust: 100%;
+    /* Keep scrolled-to and focused controls clear of the phone tab bar
+       (WCAG 2.2, 2.4.11 Focus Not Obscured). */
+    scroll-padding-bottom: 5.5rem;
+  }
+  @media (min-width: 48rem) {
+    html {
+      scroll-padding-bottom: 0;
+    }
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
   }
+  /* As on workstation.co.uk: Unbounded for h1/h2 (-0.02em), Poppins for the rest. */
   h1,
-  h2,
+  h2 {
+    @apply font-display;
+    letter-spacing: -0.02em;
+  }
+  h1 {
+    @apply text-h1;
+  }
+  h2 {
+    @apply text-h2;
+  }
   h3 {
-    @apply font-display tracking-tight;
+    @apply text-h3;
+  }
+  h4 {
+    @apply text-h4;
   }
   /* Visible focus for keyboard users everywhere (WCAG 2.4.7 / 2.4.11). */
   :focus-visible {

@@ -40,6 +40,36 @@ describe("apiRoute", () => {
   });
 });
 
+describe("CSRF origin check", () => {
+  const ok = apiRoute(async () => Response.json({ ok: true }));
+
+  it("refuses cross-site writes", async () => {
+    const res = await ok(
+      new Request("http://localhost/api/v1/pets", {
+        method: "POST",
+        headers: { origin: "https://evil.example" },
+      }),
+      {},
+    );
+    expect(res.status).toBe(403);
+  });
+
+  it("allows same-origin writes, reads and clients without Origin", async () => {
+    const same = new Request("http://localhost/api/v1/pets", {
+      method: "POST",
+      headers: { origin: "http://localhost" },
+    });
+    expect((await ok(same, {})).status).toBe(200);
+    expect(
+      (await ok(new Request("http://localhost/api/v1/pets", { method: "POST" }), {})).status,
+    ).toBe(200);
+    const read = new Request("http://localhost/api/v1/pets", {
+      headers: { origin: "https://evil.example" },
+    });
+    expect((await ok(read, {})).status).toBe(200);
+  });
+});
+
 describe("parseInput", () => {
   it("returns parsed data", () => {
     expect(parseInput(z.object({ n: z.coerce.number() }), { n: "3" })).toEqual({ n: 3 });

@@ -6,7 +6,7 @@ export async function ComingSoon({ title, body }: { title: string; body: string 
   const t = await getTranslations("placeholder");
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="text-3xl font-semibold">{title}</h1>
+      <h1 className="font-semibold">{title}</h1>
       <Card className="mt-6">
         <CardContent className="flex items-start gap-4">
           <Sparkles className="text-primary mt-0.5 size-6 shrink-0" aria-hidden />

@@ -31,14 +31,15 @@ export default function DesignPage() {
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-10">
       <header>
-        <h1 className="text-3xl font-semibold">Design system</h1>
+        <h1 className="font-semibold">Design system</h1>
         <p className="text-muted-foreground mt-2">
-          Figtree for text, Fraunces for headings. Every colour pair meets WCAG 2.2 AA contrast.
+          Poppins for text, Unbounded for h1/h2 and JetBrains Mono for data, as on
+          workstation.co.uk. Every colour pair meets WCAG 2.2 AA contrast.
         </p>
       </header>
 
       <section aria-labelledby="colours">
-        <h2 id="colours" className="text-2xl font-semibold">
+        <h2 id="colours" className="font-semibold">
           Colours
         </h2>
         <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -54,7 +55,7 @@ export default function DesignPage() {
       </section>
 
       <section aria-labelledby="buttons" className="flex flex-col gap-4">
-        <h2 id="buttons" className="text-2xl font-semibold">
+        <h2 id="buttons" className="font-semibold">
           Buttons and badges
         </h2>
         <div className="flex flex-wrap gap-3">
@@ -78,7 +79,7 @@ export default function DesignPage() {
       </section>
 
       <section aria-labelledby="alerts" className="flex flex-col gap-3">
-        <h2 id="alerts" className="text-2xl font-semibold">
+        <h2 id="alerts" className="font-semibold">
           Alerts
         </h2>
         <Alert variant="urgent" role="note">
@@ -115,7 +116,7 @@ export default function DesignPage() {
       </section>
 
       <section aria-labelledby="forms">
-        <h2 id="forms" className="text-2xl font-semibold">
+        <h2 id="forms" className="font-semibold">
           Forms and cards
         </h2>
         <Card className="mt-4 max-w-md">

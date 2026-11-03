@@ -15,7 +15,15 @@ import { NAV_ICONS } from "./nav-icons";
  */
 // Role-gated pages (Review Queue, Admin…) are built in later milestones, so nav
 // hrefs are plain strings rather than typed routes; the cast is only here.
-export function AppShell({ roles, children }: { roles: readonly AppRole[]; children: ReactNode }) {
+export function AppShell({
+  roles,
+  demo = false,
+  children,
+}: {
+  roles: readonly AppRole[];
+  demo?: boolean;
+  children: ReactNode;
+}) {
   const t = useTranslations();
   const pathname = usePathname();
   const items = navItemsFor(roles);
@@ -23,7 +31,7 @@ export function AppShell({ roles, children }: { roles: readonly AppRole[]; child
   const AccountIcon = NAV_ICONS.account;
 
   return (
-    <div className="min-h-dvh md:grid md:grid-cols-[15rem_1fr]">
+    <div className="min-h-dvh md:grid md:grid-cols-[15rem_1fr] print:block">
       <a
         href="#main"
         className="bg-primary text-primary-foreground sr-only z-50 rounded-lg px-4 py-2 focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
@@ -32,7 +40,7 @@ export function AppShell({ roles, children }: { roles: readonly AppRole[]; child
       </a>
 
       {/* Phone header */}
-      <header className="bg-background/95 sticky top-0 z-30 flex h-14 items-center justify-between border-b px-4 backdrop-blur md:hidden">
+      <header className="bg-background/95 sticky top-0 z-30 flex h-14 items-center justify-between border-b px-4 backdrop-blur md:hidden print:hidden">
         <Link href="/" className="rounded-lg">
           <Logo />
         </Link>
@@ -46,7 +54,7 @@ export function AppShell({ roles, children }: { roles: readonly AppRole[]; child
       </header>
 
       {/* Desktop sidebar */}
-      <aside className="bg-card sticky top-0 hidden h-dvh flex-col gap-6 border-r p-4 md:flex">
+      <aside className="bg-card sticky top-0 hidden h-dvh flex-col gap-6 border-r p-4 md:flex print:hidden">
         <Link href="/" className="rounded-lg px-2 py-1">
           <Logo />
         </Link>
@@ -78,10 +86,23 @@ export function AppShell({ roles, children }: { roles: readonly AppRole[]; child
       </aside>
 
       <div className="flex min-w-0 flex-col">
-        <main id="main" tabIndex={-1} className="flex-1 px-4 pt-6 pb-28 md:px-10 md:pb-10">
+        {demo ? (
+          <p
+            className="bg-warning text-warning-foreground border-b px-4 py-2 text-sm md:px-10 print:hidden"
+            role="note"
+          >
+            <strong>Demo mode:</strong> everyone on this test site shares one demo account, so
+            don&apos;t add anything private.
+          </p>
+        ) : null}
+        <main
+          id="main"
+          tabIndex={-1}
+          className="flex-1 px-4 pt-6 pb-28 md:px-10 md:pb-10 print:p-0"
+        >
           {children}
         </main>
-        <footer className="text-muted-foreground hidden border-t px-10 py-6 text-sm md:block">
+        <footer className="text-muted-foreground hidden border-t px-10 py-6 text-sm md:block print:hidden">
           <p>{t("footer.notVetAdvice")}</p>
           <p className="mt-1">{t("footer.copyright", { year: new Date().getFullYear() })}</p>
         </footer>
@@ -90,7 +111,7 @@ export function AppShell({ roles, children }: { roles: readonly AppRole[]; child
       {/* Phone tab bar */}
       <nav
         aria-label={t("a11y.mobileNav")}
-        className="bg-card fixed inset-x-0 bottom-0 z-30 border-t pb-[env(safe-area-inset-bottom)] md:hidden"
+        className="bg-card fixed inset-x-0 bottom-0 z-30 border-t pb-[env(safe-area-inset-bottom)] md:hidden print:hidden"
       >
         <ul className="grid grid-cols-5">
           {tabs.map((item) => {

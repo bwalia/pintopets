@@ -15,6 +15,13 @@
       "when": 1793632682622,
       "tag": "0001_reference_data",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793741366244,
+      "tag": "0002_pets_and_records",
+      "breakpoints": true
     }
   ]
 }
