@@ -1,0 +1,89 @@
+# Local OpsAPI for developing and testing PintoPets' plugin (opsapi/pintopets).
+# Throwaway database; nothing here talks to int or any shared OpsAPI.
+# Modelled on bwalia/workerra docker-compose.opsapi.yml.
+#
+#   pnpm opsapi:up      postgres → OpsAPI core migrations → plugin migrations
+#                       → OpsAPI on http://localhost:4042 → bootstrap (workspace
+#                       + API key, printed by `pnpm opsapi:key`)
+#   pnpm opsapi:down    stop (keeps data); add -v to wipe it
+name: pintopets-opsapi
+
+x-db-env: &db-env
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"
+  POSTGRES_USER: pguser
+  POSTGRES_PASSWORD: local-only-not-a-secret
+  POSTGRES_DB: opsapi
+  POSTGRES_SSL: "false"
+  LAPIS_ENVIRONMENT: production
+  JWT_SECRET_KEY: local-only-not-a-secret
+  PROJECT_CODE: all
+  OPENSSL_SECRET_KEY: local-only-not-a-secret-0123456789
+
+x-opsapi: &opsapi # Pin to the version int runs (kubectl -n int get deploy workstation-opsapi).
+  image: docker.io/bwalia/opsapi:${OPSAPI_TAG:-1.0.304}
+  # OpsAPI publishes amd64 only; Apple Silicon runs it under emulation.
+  platform: linux/amd64
+  working_dir: /app
+  volumes:
+    - ./opsapi/pintopets:/app/projects/pintopets:ro
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg14
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: local-only-not-a-secret
+      POSTGRES_DB: opsapi
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U pguser -d opsapi"]
+      interval: 2s
+      retries: 60
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # OpsAPI core migrations, then every plugin's (including pintopets).
+  migrate:
+    <<: *opsapi
+    depends_on:
+      postgres: { condition: service_healthy }
+    environment:
+      <<: *db-env
+    command: ["lapis", "migrate"]
+
+  opsapi:
+    <<: *opsapi
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    environment:
+      <<: *db-env
+      REDIS_ENABLED: "false"
+      # Reload the plugin's api/*.lua on save while developing it.
+      OPSAPI_DEV_RELOAD: "true"
+      OPSAPI_DEPLOY_ENV: local
+      # Serve /openapi.json locally so `pnpm opsapi:types` can generate types.
+      EXPOSE_API_DOCS: "true"
+    ports:
+      - "127.0.0.1:${OPSAPI_PORT:-4042}:80"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -fsS http://127.0.0.1/health >/dev/null || wget -qO- http://127.0.0.1/health >/dev/null",
+        ]
+      interval: 3s
+      retries: 60
+
+  bootstrap:
+    <<: *opsapi
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    environment:
+      <<: *db-env
+    volumes:
+      - ./opsapi/pintopets:/app/projects/pintopets:ro
+      - ./opsapi/dev:/app/pintopets-dev:ro
+    command: ["lapis", "exec", "assert(loadfile('/app/pintopets-dev/bootstrap.lua'))()"]
+
+volumes:
+  pgdata:

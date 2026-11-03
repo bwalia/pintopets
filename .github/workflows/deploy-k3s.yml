@@ -69,6 +69,7 @@ concurrency:
 
 env:
   IMAGE: harneetk78/pintopets
+  PLUGIN_IMAGE: harneetk78/pintopets-opsapi-plugin
   CHART: deploy/helm/pintopets
   RELEASE: pintopets
   DNS_ZONE: pintopets.app
@@ -265,6 +266,20 @@ jobs:
           tags: |
             ${{ env.IMAGE }}:${{ steps.tag.outputs.tag }}
             ${{ env.IMAGE }}:latest
+      # The OpsAPI plugin (opsapi/pintopets) as an overlay image. The shared
+      # workstation-opsapi loads it via pluginOverlays (bwalia/opsapi
+      # values-workstation-int.yaml) on its next deploy; see docs/environments.md.
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.opsapi-plugin
+          platforms: linux/amd64
+          push: true
+          provenance: false
+          sbom: false
+          tags: |
+            ${{ env.PLUGIN_IMAGE }}:${{ steps.tag.outputs.tag }}
+            ${{ env.PLUGIN_IMAGE }}:int
 
   # ─── 5. Hand the new version to Ring Promoter ──────────────────────────────
   # Ring Promoter dispatches the deploy below for int and verifies
@@ -356,9 +371,7 @@ jobs:
           kubectl -n "$TARGET_ENV" get pods -l app.kubernetes.io/part-of=pintopets -o wide || true
           kubectl -n "$TARGET_ENV" get externalsecret -l app.kubernetes.io/part-of=pintopets || true
           kubectl -n "$TARGET_ENV" describe deploy/"$RELEASE" | tail -30 || true
-          kubectl -n "$TARGET_ENV" logs deploy/"$RELEASE" -c migrate --tail=60 || true
           kubectl -n "$TARGET_ENV" logs deploy/"$RELEASE" -c web --tail=60 || true
-          kubectl -n "$TARGET_ENV" logs sts/pintopets-postgres --tail=30 || true
       - name: Probe through the edge (informational)
         env:
           HOST: ${{ needs.ring.outputs.host }}

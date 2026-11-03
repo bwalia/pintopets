@@ -37,25 +37,6 @@ spec:
         fsGroup: 1001
         seccompProfile:
           type: RuntimeDefault
-      {{- if .Values.migrations.enabled }}
-      initContainers:
-        # Waits for Postgres, applies migrations, re-seeds reference data
-        # (idempotent). A failure here stops the rollout before traffic moves.
-        - name: migrate
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["node", "db/db-tasks.mjs", "migrate-and-seed"]
-          env:
-            {{- include "pintopets.databaseEnv" . | nindent 12 }}
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop: ["ALL"]
-          resources:
-            requests: { cpu: 20m, memory: 64Mi }
-            limits: { cpu: 500m, memory: 256Mi }
-      {{- end }}
       containers:
         - name: web
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -76,7 +57,22 @@ spec:
               value: {{ .Values.demoAuth | quote }}
             - name: MEDIA_DIR
               value: {{ .Values.media.mountPath | quote }}
-            {{- include "pintopets.databaseEnv" . | nindent 12 }}
+            - name: OPSAPI_URL
+              value: {{ .Values.opsapi.url | quote }}
+            - name: OPSAPI_PUBLIC_URL
+              value: {{ .Values.opsapi.publicUrl | quote }}
+            - name: OPSAPI_NAMESPACE
+              value: {{ .Values.opsapi.namespace | quote }}
+            - name: OPSAPI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.opsapi.apiKeySecret }}
+                  key: OPSAPI_API_KEY
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: pintopets-session
+                  key: SESSION_SECRET
             {{- range $name, $value := .Values.extraEnv }}
             - name: {{ $name }}
               value: {{ $value | quote }}
@@ -89,8 +85,8 @@ spec:
                 optional: true
             {{- end }}
           {{- end }}
-          # Ready only when the database answers (the health endpoint returns 503
-          # otherwise). Liveness is a plain TCP check so a database outage does
+          # Ready only when OpsAPI answers (the health endpoint returns 503
+          # otherwise). Liveness is a plain TCP check so an OpsAPI outage does
           # not restart-loop the web pods.
           readinessProbe:
             httpGet:

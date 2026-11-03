@@ -1,7 +1,7 @@
 # PintoPets web image. One image is promoted int → test → acc → prod, so nothing
 # ring-specific is baked in: the Helm chart sets APP_ENV, APP_URL, APP_VERSION
-# (the image tag, reported by /api/v1/health for Ring Promoter) and DATABASE_URL
-# at runtime.
+# (the image tag, reported by /api/v1/health for Ring Promoter) and the OpsAPI
+# settings at runtime. Pet data lives in OpsAPI (opsapi/pintopets plugin).
 #
 # All stages run on the target platform: `sharp` (photo processing) is a native
 # module, so it must be installed for the architecture that runs it.
@@ -28,11 +28,10 @@ RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
 # ── Build ────────────────────────────────────────────────────────────────────
 FROM deps AS builder
 COPY . .
-RUN pnpm --filter @pintopets/web build && pnpm --filter @pintopets/db bundle
+RUN pnpm --filter @pintopets/web build
 # `next build` exiting 0 doesn't prove it wrote the standalone bundle.
 RUN test -f apps/web/.next/standalone/apps/web/server.js \
- && test -d apps/web/.next/static \
- && test -f packages/db/dist/db-tasks.mjs
+ && test -d apps/web/.next/static
 
 # ── Runtime ──────────────────────────────────────────────────────────────────
 FROM node:${NODE_VERSION}-alpine AS runner
@@ -45,9 +44,6 @@ RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 # Monorepo standalone output mirrors the repo layout: server at apps/web/server.js.
 COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/.next/static ./apps/web/.next/static
-# Migrations + seed, run by the init container: node db/db-tasks.mjs migrate-and-seed
-COPY --from=builder --chown=nextjs:nodejs /repo/packages/db/dist/db-tasks.mjs ./db/db-tasks.mjs
-COPY --from=builder --chown=nextjs:nodejs /repo/packages/db/migrations ./db/migrations
 USER nextjs
 EXPOSE 3000
 CMD ["node", "apps/web/server.js"]

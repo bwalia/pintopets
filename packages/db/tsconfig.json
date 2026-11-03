@@ -1,4 +1,4 @@
 {
   "extends": "@pintopets/config/tsconfig/library.json",
-  "include": ["src", "drizzle.config.ts", "vitest.config.ts", "eslint.config.js"]
+  "include": ["src", "vitest.config.ts", "eslint.config.js"]
 }

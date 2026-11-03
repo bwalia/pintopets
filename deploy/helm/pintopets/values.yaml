@@ -2,9 +2,9 @@
 # Installed as release `pintopets` into the shared ring namespaces
 # (int/test/acc/prod), like workerra and closeknitty.
 #
-# No credential is ever set here (the repo is public). The Postgres password is
-# generated in-cluster on first install (see templates/postgres.yaml); app
-# secrets come from WSL Vault through External Secrets (vaultSecrets below).
+# No credential is ever set here (the repo is public). Pet data lives in OpsAPI
+# (opsapi/pintopets plugin); the session secret is generated in-cluster
+# (templates/session-secret.yaml); the OpsAPI key is a Secret created out of band.
 
 # Ring name, passed to the app as APP_ENV (local|int|test|acc|prod).
 env: int
@@ -22,22 +22,17 @@ image:
 replicaCount: 1
 port: 3000
 
-# Run migrations + idempotent reference-data seed before the web container starts.
-migrations:
-  enabled: true
-
-postgres:
-  # In-chart Postgres with pgvector (knowledge base embeddings, M6).
-  enabled: true
-  image: pgvector/pgvector:pg17
-  database: pintopets
-  user: pintopets
-  storage: 10Gi
-  # longhorn is replicated across nodes; local-path would pin the data to one node.
-  storageClass: longhorn
-  resources:
-    requests: { cpu: 50m, memory: 256Mi }
-    limits: { cpu: 500m, memory: 1Gi }
+# PintoPets' data API and sign-in: OpsAPI with the `pintopets` plugin
+# (opsapi/pintopets, loaded into OpsAPI as a plugin overlay image).
+opsapi:
+  # Server to server (in-cluster).
+  url: http://workstation-opsapi.int.svc.cluster.local
+  # As the browser sees it, for the hosted sign-in page.
+  publicUrl: https://int-opsapi.workstation.co.uk
+  namespace: pintopets
+  # Secret holding OPSAPI_API_KEY (an opsk_ key scoped to the pintopets_*
+  # modules). Created out of band (never in git); see docs/environments.md.
+  apiKeySecret: pintopets-opsapi
 
 # One ExternalSecret per entry; ESO copies every key under the Vault path into a
 # Secret named pintopets-<entry>, loaded into the web pod with envFrom. Vault key

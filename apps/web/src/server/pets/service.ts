@@ -1,198 +1,133 @@
 import "server-only";
 import type { Pet, PetInputParsed, PetUpdateParsed } from "@pintopets/api-contract";
-import { schema } from "@pintopets/db";
-import { and, asc, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import type { Actor } from "../auth";
-import { db } from "../db";
 import { HttpError } from "../http";
+import { createRow, deleteRow, getRow, updateRow, userView } from "../opsapi/client";
+import { type OpsRow, pgTimestampToIso } from "../opsapi/mapping";
+import { speciesBySlug, type SpeciesInfo } from "../reference-data";
 import { assertPetAccess, assertWritable, type PetRole, type PetStatus } from "./access";
-
-const { pets, petMembers, petBreeds, breeds, species, media, weightEntries } = schema;
-
-type PetRow = typeof pets.$inferSelect;
 
 export function photoUrl(mediaId: string, variant: "thumb" | "full"): string {
   return `/api/v1/photos/${mediaId}/file?variant=${variant}`;
 }
 
-/** Builds API DTOs for pets in a few batched queries. */
-async function hydrate(rows: { pet: PetRow; role: PetRole }[]): Promise<Pet[]> {
-  if (rows.length === 0) return [];
-  const ids = rows.map((r) => r.pet.id);
-  const speciesIds = [...new Set(rows.map((r) => r.pet.speciesId))];
-  const profileIds = rows.map((r) => r.pet.profileMediaId).filter((x): x is string => Boolean(x));
+const str = (v: unknown) => (typeof v === "string" && v !== "" ? v : null);
+const int = (v: unknown) => (typeof v === "number" ? v : null);
 
-  const [speciesRows, breedRows, photoRows, weightRows] = await Promise.all([
-    db().select().from(species).where(inArray(species.id, speciesIds)),
-    db()
-      .select({
-        petId: petBreeds.petId,
-        slug: breeds.slug,
-        name: breeds.name,
-        position: petBreeds.position,
-      })
-      .from(petBreeds)
-      .innerJoin(breeds, eq(breeds.id, petBreeds.breedId))
-      .where(inArray(petBreeds.petId, ids))
-      .orderBy(asc(petBreeds.position)),
-    profileIds.length
-      ? db()
-          .select({ id: media.id, altText: media.altText })
-          .from(media)
-          .where(and(inArray(media.id, profileIds), isNull(media.deletedAt)))
-      : Promise.resolve([]),
-    db()
-      .selectDistinctOn([weightEntries.petId], {
-        petId: weightEntries.petId,
-        grams: weightEntries.weightGrams,
-        measuredOn: weightEntries.measuredOn,
-      })
-      .from(weightEntries)
-      .where(inArray(weightEntries.petId, ids))
-      .orderBy(weightEntries.petId, desc(weightEntries.measuredOn), desc(weightEntries.createdAt)),
-  ]);
-
-  const speciesById = new Map(speciesRows.map((s) => [s.id, s]));
-  const photoById = new Map(photoRows.map((p) => [p.id, p]));
-  const weightByPet = new Map(weightRows.map((w) => [w.petId, w]));
-
-  return rows.map(({ pet, role }) => {
-    const sp = speciesById.get(pet.speciesId);
-    if (!sp) throw new Error(`Species ${pet.speciesId} missing`);
-    const photo = pet.profileMediaId ? photoById.get(pet.profileMediaId) : undefined;
-    const weight = weightByPet.get(pet.id);
-    return {
-      id: pet.id,
-      name: pet.name,
-      species: {
-        slug: sp.slug,
-        name: sp.name,
-        group: sp.group,
-        tracksHeightInHands: sp.tracksHeightInHands,
-      },
-      speciesOther: pet.speciesOther,
-      breeds: breedRows.filter((b) => b.petId === pet.id).map(({ slug, name }) => ({ slug, name })),
-      sex: pet.sex,
-      neutered: pet.neutered,
-      dateOfBirth: pet.dateOfBirth,
-      dateOfBirthIsEstimate: pet.dateOfBirthIsEstimate,
-      colourMarkings: pet.colourMarkings,
-      heightInches: pet.heightInches,
-      passportNumber: pet.passportNumber,
-      insuranceProvider: pet.insuranceProvider,
-      insurancePolicyRef: pet.insurancePolicyRef,
-      vetPracticeName: pet.vetPracticeName,
-      vetPracticePhone: pet.vetPracticePhone,
-      emergencyContactName: pet.emergencyContactName,
-      emergencyContactPhone: pet.emergencyContactPhone,
-      notes: pet.notes,
-      status: pet.status,
-      deceasedOn: pet.deceasedOn,
-      profilePhoto: photo
-        ? { id: photo.id, thumbUrl: photoUrl(photo.id, "thumb"), altText: photo.altText }
-        : null,
-      latestWeight: weight ? { grams: weight.grams, measuredOn: weight.measuredOn } : null,
-      myRole: role,
-      createdAt: pet.createdAt.toISOString(),
-      updatedAt: pet.updatedAt.toISOString(),
-    };
-  });
+/** A row of the plugin's `users/:uuid/pets` view → Pet. No further calls. */
+function toPet(row: OpsRow): Pet {
+  const sp = speciesBySlug(String(row.species));
+  if (!sp) throw new Error(`Pet ${row.uuid} has unknown species ${String(row.species)}`);
+  const breedSlugs = (str(row.breeds) ?? "").split(",").filter(Boolean);
+  const profileId = str(row.profile_photo_uuid);
+  const grams = int(row.latest_weight_grams);
+  return {
+    id: row.uuid,
+    name: String(row.name),
+    species: {
+      slug: sp.slug,
+      name: sp.name,
+      group: sp.group,
+      tracksHeightInHands: sp.tracksHeightInHands,
+    },
+    speciesOther: str(row.species_other),
+    breeds: breedSlugs.flatMap((slug) => {
+      const b = sp.breeds.find((x) => x.slug === slug);
+      return b ? [{ slug: b.slug, name: b.name }] : [];
+    }),
+    sex: row.sex as Pet["sex"],
+    neutered: row.neutered as Pet["neutered"],
+    dateOfBirth: str(row.date_of_birth),
+    dateOfBirthIsEstimate: row.date_of_birth_is_estimate === true,
+    colourMarkings: str(row.colour_markings),
+    heightInches: int(row.height_inches),
+    passportNumber: str(row.passport_number),
+    insuranceProvider: str(row.insurance_provider),
+    insurancePolicyRef: str(row.insurance_policy_ref),
+    vetPracticeName: str(row.vet_practice_name),
+    vetPracticePhone: str(row.vet_practice_phone),
+    emergencyContactName: str(row.emergency_contact_name),
+    emergencyContactPhone: str(row.emergency_contact_phone),
+    notes: str(row.notes),
+    status: row.status as PetStatus,
+    deceasedOn: str(row.deceased_on),
+    profilePhoto: profileId
+      ? {
+          id: profileId,
+          thumbUrl: photoUrl(profileId, "thumb"),
+          altText: str(row.profile_photo_alt),
+        }
+      : null,
+    latestWeight: grams !== null ? { grams, measuredOn: String(row.latest_weight_on) } : null,
+    myRole: row.my_role as PetRole,
+    createdAt: pgTimestampToIso(String(row.created_at)),
+    updatedAt: pgTimestampToIso(String(row.updated_at)),
+  };
 }
 
 export async function listPets(
   actor: Pick<Actor, "id">,
   status: PetStatus = "active",
 ): Promise<Pet[]> {
-  const rows = await db()
-    .select({ pet: pets, role: petMembers.role })
-    .from(petMembers)
-    .innerJoin(pets, eq(pets.id, petMembers.petId))
-    .where(and(eq(petMembers.userId, actor.id), eq(pets.status, status), isNull(pets.deletedAt)))
-    .orderBy(asc(sql`lower(${pets.name})`));
-  return hydrate(rows);
+  return (await userView("pets", actor.id, { status })).map(toPet);
 }
 
 export async function getPet(actor: Pick<Actor, "id">, petId: string): Promise<Pet> {
-  const m = await assertPetAccess(actor, petId);
-  const [pet] = await db().select().from(pets).where(eq(pets.id, petId)).limit(1);
-  if (!pet) throw new HttpError("not_found", "We couldn't find that pet.");
-  const [dto] = await hydrate([{ pet, role: m.role }]);
-  if (!dto) throw new HttpError("not_found", "We couldn't find that pet.");
-  return dto;
+  await assertPetAccess(actor, petId);
+  const [row] = await userView("pets", actor.id, { pet_uuid: petId });
+  if (!row) throw new HttpError("not_found", "We couldn't find that pet.");
+  return toPet(row);
 }
 
-interface ResolvedSpecies {
-  speciesId: string;
-  breedIds: string[];
-  tracksHeightInHands: boolean;
-  requiresFreeText: boolean;
-}
-
-async function resolveSpecies(speciesSlug: string, breedSlugs: string[]): Promise<ResolvedSpecies> {
-  const [sp] = await db().select().from(species).where(eq(species.slug, speciesSlug)).limit(1);
+function resolveSpecies(
+  speciesSlug: string,
+  breedSlugs: string[],
+): SpeciesInfo & { breedSlugs: string[] } {
+  const sp = speciesBySlug(speciesSlug);
   if (!sp) {
     throw new HttpError("validation_failed", "Please choose a species.", [
       { path: ["speciesSlug"], message: "Unknown species" },
     ]);
   }
   const unique = [...new Set(breedSlugs)];
-  const found = unique.length
-    ? await db()
-        .select({ id: breeds.id, slug: breeds.slug })
-        .from(breeds)
-        .where(and(eq(breeds.speciesId, sp.id), inArray(breeds.slug, unique)))
-    : [];
-  if (found.length !== unique.length) {
+  if (!unique.every((slug) => sp.breeds.some((b) => b.slug === slug))) {
     throw new HttpError("validation_failed", "Please choose a breed from the list.", [
       { path: ["breedSlugs"], message: "Unknown breed for this species" },
     ]);
   }
-  const idBySlug = new Map(found.map((b) => [b.slug, b.id]));
-  return {
-    speciesId: sp.id,
-    breedIds: unique.flatMap((s) => idBySlug.get(s) ?? []),
-    tracksHeightInHands: sp.tracksHeightInHands,
-    requiresFreeText: sp.requiresFreeText,
-  };
+  return { ...sp, breedSlugs: unique };
 }
 
-function profileColumns(input: PetUpdateParsed, sp?: ResolvedSpecies) {
+/** PetInput/PetUpdate → plugin columns (camelCase; the store converts to snake_case). */
+function profileColumns(input: PetUpdateParsed, sp?: SpeciesInfo & { breedSlugs: string[] }) {
   const { speciesSlug: _s, breedSlugs: _b, ...rest } = input;
   return {
     ...rest,
-    ...(sp ? { speciesId: sp.speciesId } : {}),
+    ...(sp ? { species: sp.slug, breeds: sp.breedSlugs.join(",") || null } : {}),
     ...(sp && !sp.requiresFreeText ? { speciesOther: null } : {}),
     ...(sp && !sp.tracksHeightInHands ? { heightInches: null } : {}),
   };
 }
 
 export async function createPet(actor: Pick<Actor, "id">, input: PetInputParsed): Promise<Pet> {
-  const sp = await resolveSpecies(input.speciesSlug, input.breedSlugs);
+  const sp = resolveSpecies(input.speciesSlug, input.breedSlugs);
   if (sp.requiresFreeText && !input.speciesOther) {
     throw new HttpError("validation_failed", "Please tell us what kind of animal it is.", [
       { path: ["speciesOther"], message: "Required for Other" },
     ]);
   }
-  const petId = await db().transaction(async (tx) => {
-    const [pet] = await tx
-      .insert(pets)
-      .values({
-        ...profileColumns(input, sp),
-        name: input.name,
-        speciesId: sp.speciesId,
-        createdBy: actor.id,
-      })
-      .returning({ id: pets.id });
-    if (!pet) throw new Error("Insert failed");
-    await tx.insert(petMembers).values({ petId: pet.id, userId: actor.id, role: "owner" });
-    if (sp.breedIds.length) {
-      await tx
-        .insert(petBreeds)
-        .values(sp.breedIds.map((breedId, position) => ({ petId: pet.id, breedId, position })));
-    }
-    return pet.id;
+  const pet = await createRow("pets", {
+    ...profileColumns(input, sp),
+    ownerUserUuid: actor.id,
+    status: "active",
   });
-  return getPet(actor, petId);
+  try {
+    await createRow("pet-members", { petId: pet.uuid, userUuid: actor.id, role: "owner" });
+  } catch (error) {
+    await deleteRow("pets", pet.uuid).catch(() => undefined);
+    throw error;
+  }
+  return getPet(actor, pet.uuid);
 }
 
 export async function updatePet(
@@ -202,31 +137,13 @@ export async function updatePet(
 ): Promise<Pet> {
   const m = await assertPetAccess(actor, petId, "co_owner");
   assertWritable(m);
-  const [current] = await db().select().from(pets).where(eq(pets.id, petId)).limit(1);
-  if (!current) throw new HttpError("not_found", "We couldn't find that pet.");
-
-  let sp: ResolvedSpecies | undefined;
+  let sp: (SpeciesInfo & { breedSlugs: string[] }) | undefined;
   if (patch.speciesSlug !== undefined || patch.breedSlugs !== undefined) {
-    const [currentSpecies] = await db()
-      .select()
-      .from(species)
-      .where(eq(species.id, current.speciesId));
-    if (!currentSpecies) throw new Error(`Species ${current.speciesId} missing`);
-    sp = await resolveSpecies(patch.speciesSlug ?? currentSpecies.slug, patch.breedSlugs ?? []);
+    const current = await getRow("pets", petId);
+    sp = resolveSpecies(patch.speciesSlug ?? String(current?.species), patch.breedSlugs ?? []);
   }
-
-  await db().transaction(async (tx) => {
-    const values = profileColumns(patch, sp);
-    if (Object.keys(values).length) await tx.update(pets).set(values).where(eq(pets.id, petId));
-    if (sp) {
-      await tx.delete(petBreeds).where(eq(petBreeds.petId, petId));
-      if (sp.breedIds.length) {
-        await tx
-          .insert(petBreeds)
-          .values(sp.breedIds.map((breedId, position) => ({ petId, breedId, position })));
-      }
-    }
-  });
+  const values = profileColumns(patch, sp);
+  if (Object.keys(values).length) await updateRow("pets", petId, values);
   return getPet(actor, petId);
 }
 
@@ -237,12 +154,9 @@ export async function changePetStatus(
   change: { status: PetStatus; deceasedOn: string | null },
 ): Promise<Pet> {
   await assertPetAccess(actor, petId, "owner");
-  await db()
-    .update(pets)
-    .set({
-      status: change.status,
-      deceasedOn: change.status === "deceased" ? change.deceasedOn : null,
-    })
-    .where(eq(pets.id, petId));
+  await updateRow("pets", petId, {
+    status: change.status,
+    deceasedOn: change.status === "deceased" ? change.deceasedOn : null,
+  });
   return getPet(actor, petId);
 }

@@ -13,11 +13,11 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@opsapi/client": "^1.3.0",
     "@pintopets/api-contract": "workspace:*",
     "@pintopets/db": "workspace:*",
     "@pintopets/ui": "workspace:*",
     "@sentry/nextjs": "^11.10.0",
-    "drizzle-orm": "^0.45.4",
     "lucide-react": "^1.66.0",
     "next": "^16.4.0",
     "next-intl": "^4.14.9",

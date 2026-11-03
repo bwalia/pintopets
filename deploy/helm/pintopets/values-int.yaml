@@ -10,8 +10,14 @@ host: int.pintopets.app
 extraEnv:
   LOG_LEVEL: "debug"
 
-# VPN-only test ring: shared demo account until Google / email sign-in exists.
-demoAuth: true
+# Real sign-in through OpsAPI (hosted page: password + 2FA, or Google).
+demoAuth: false
+
+opsapi:
+  url: http://workstation-opsapi.int.svc.cluster.local
+  publicUrl: https://int-opsapi.workstation.co.uk
+  namespace: pintopets
+  apiKeySecret: pintopets-opsapi
 
 # Any healthy LAN amd64 node, as workerra/workstation-opsapi do: net-region=home
 # keeps it on the LAN next to the ring's services (the cloud<->LAN mesh is

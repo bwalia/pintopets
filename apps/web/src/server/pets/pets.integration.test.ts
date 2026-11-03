@@ -1,29 +1,20 @@
-import { schema, uuidv7 } from "@pintopets/db";
 import { PetInput } from "@pintopets/api-contract";
-import { eq } from "drizzle-orm";
 import { beforeAll, describe, expect, it } from "vitest";
-import { db } from "../db";
 import { HttpError } from "../http";
+import { createRow, getRow } from "../opsapi/client";
 import { createRecord, deleteRecord, listRecords, updateRecord } from "./records";
 import { listReminders, todayInLondon } from "./reminders";
 import { changePetStatus, createPet, getPet, listPets, updatePet } from "./service";
 
 /**
- * Permission and behaviour tests against a real, migrated and seeded
- * database (section 10: "a user cannot see or change another user's pet").
+ * Permission and behaviour tests against a real OpsAPI with the pintopets
+ * plugin (local: `pnpm opsapi:up`; CI starts the same stack). Users are OpsAPI
+ * user uuids; nothing here needs a real account.
+ * Section 10 of the brief: "a user cannot see or change another user's pet".
  */
-const hasDb = Boolean(process.env.DATABASE_URL);
+const hasOpsApi = Boolean(process.env.OPSAPI_API_KEY && process.env.OPSAPI_URL);
 
-async function makeUser(label: string) {
-  const email = `${label}-${uuidv7()}@test.pintopets.app`;
-  const [u] = await db()
-    .insert(schema.users)
-    .values({ email, name: label, displayName: label })
-    .returning({ id: schema.users.id });
-  if (!u) throw new Error("user insert failed");
-  return { id: u.id };
-}
-
+const user = () => ({ id: crypto.randomUUID() });
 const dog = (over: Partial<PetInput> = {}) =>
   PetInput.parse({ name: "Max", speciesSlug: "dog", breedSlugs: ["labrador-retriever"], ...over });
 
@@ -33,16 +24,16 @@ async function expectHttp(promise: Promise<unknown>, code: string) {
   );
 }
 
-describe.skipIf(!hasDb)("pets (integration)", () => {
+describe.skipIf(!hasOpsApi)("pets on OpsAPI (integration)", () => {
   let alice: { id: string };
   let bob: { id: string };
 
-  beforeAll(async () => {
-    alice = await makeUser("alice");
-    bob = await makeUser("bob");
+  beforeAll(() => {
+    alice = user();
+    bob = user();
   });
 
-  it("creates a pet with the creator as owner, species and breed", async () => {
+  it("creates a pet in OpsAPI with the creator as owner, species and breed", async () => {
     const pet = await createPet(alice, dog());
     expect(pet).toMatchObject({
       name: "Max",
@@ -52,6 +43,8 @@ describe.skipIf(!hasDb)("pets (integration)", () => {
       breeds: [{ slug: "labrador-retriever", name: "Labrador Retriever" }],
     });
     expect((await listPets(alice)).map((p) => p.id)).toContain(pet.id);
+    // The row really is in the plugin's table, owned by Alice.
+    expect((await getRow("pets", pet.id))?.owner_user_uuid).toBe(alice.id);
   });
 
   it("never shows or changes another user's pet (404, not 403)", async () => {
@@ -68,11 +61,12 @@ describe.skipIf(!hasDb)("pets (integration)", () => {
       changePetStatus(bob, pet.id, { status: "archived", deceasedOn: null }),
       "not_found",
     );
+    await expectHttp(getPet(bob, "not-a-uuid"), "not_found");
   });
 
   it("carers can view and log symptoms but not edit the profile or archive", async () => {
     const pet = await createPet(alice, dog({ name: "Sitting" }));
-    await db().insert(schema.petMembers).values({ petId: pet.id, userId: bob.id, role: "carer" });
+    await createRow("pet-members", { petId: pet.id, userUuid: bob.id, role: "carer" });
 
     expect((await getPet(bob, pet.id)).myRole).toBe("carer");
     const entry = await createRecord(bob, pet.id, "symptoms", {
@@ -85,7 +79,7 @@ describe.skipIf(!hasDb)("pets (integration)", () => {
     await expectHttp(
       createRecord(bob, pet.id, "medications", {
         name: "X",
-        doseAsPrescribed: "as vet wrote",
+        doseAsPrescribed: "as the vet wrote",
         frequency: "daily",
         startOn: "2026-11-01",
       }),
@@ -96,7 +90,6 @@ describe.skipIf(!hasDb)("pets (integration)", () => {
       "forbidden",
     );
 
-    // Carers may change their own entries but not the owner's.
     const ownersEntry = await createRecord(alice, pet.id, "symptoms", {
       occurredAt: "2026-11-02T09:00:00Z",
       symptom: "Itching",
@@ -142,12 +135,28 @@ describe.skipIf(!hasDb)("pets (integration)", () => {
       grams: 25500,
       measuredOn: "2026-10-01",
     });
-    expect((await listRecords(alice, pet.id, "weights")).map((r) => r.id)[0]).toBe(latest.id);
+    expect((await listRecords(alice, pet.id, "weights"))[0]?.id).toBe(latest.id);
 
     const updated = await updateRecord(alice, pet.id, "weights", latest.id, { weightGrams: 25000 });
     expect(updated.weightGrams).toBe(25000);
     await deleteRecord(alice, pet.id, "weights", latest.id);
     expect((await listRecords(alice, pet.id, "weights")).length).toBe(1);
+  });
+
+  it("surfaces OpsAPI's own validation as field errors (plugin rules back up ours)", async () => {
+    const pet = await createPet(alice, dog({ name: "Invalid" }));
+    const attempt = createRow("weights", {
+      petId: pet.id,
+      createdByUserUuid: alice.id,
+      measuredOn: "2026-10-01",
+      weightGrams: 0,
+    });
+    await expect(attempt).rejects.toSatisfy(
+      (e: unknown) =>
+        e instanceof HttpError &&
+        e.code === "validation_failed" &&
+        JSON.stringify(e.details).includes('"weightGrams"'),
+    );
   });
 
   it("memorial mode makes records read-only and stops reminders", async () => {
@@ -169,7 +178,6 @@ describe.skipIf(!hasDb)("pets (integration)", () => {
       createRecord(alice, pet.id, "weights", { measuredOn: "2026-11-01", weightGrams: 1 }),
       "conflict",
     );
-    // Records stay readable.
     expect((await listRecords(alice, pet.id, "vaccinations")).length).toBe(1);
   });
 
@@ -180,7 +188,7 @@ describe.skipIf(!hasDb)("pets (integration)", () => {
     expect((await listPets(alice, "archived")).map((p) => p.id)).toContain(pet.id);
   });
 
-  it("never stores a dose suggestion: medication dose is the vet's text, verbatim", async () => {
+  it("stores the vet's dose verbatim", async () => {
     const pet = await createPet(alice, dog({ name: "Meds" }));
     const med = await createRecord(alice, pet.id, "medications", {
       name: "Antibiotic",
@@ -188,10 +196,8 @@ describe.skipIf(!hasDb)("pets (integration)", () => {
       frequency: "Twice daily",
       startOn: "2026-11-01",
     });
-    const [row] = await db()
-      .select()
-      .from(schema.medications)
-      .where(eq(schema.medications.id, med.id));
-    expect(row?.doseAsPrescribed).toBe("1 tablet (as on the label)");
+    expect((await getRow("medications", med.id))?.dose_as_prescribed).toBe(
+      "1 tablet (as on the label)",
+    );
   });
 });

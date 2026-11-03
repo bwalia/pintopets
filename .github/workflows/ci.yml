@@ -13,7 +13,11 @@ permissions:
   contents: read
 
 env:
-  DATABASE_URL: postgres://pintopets:pintopets@localhost:5432/pintopets
+  # OpsAPI with the pintopets plugin, started below from docker-compose.opsapi.yml.
+  OPSAPI_URL: http://localhost:4042
+  OPSAPI_NAMESPACE: pintopets
+  # Test-only signing key for the session cookie (not a real secret).
+  SESSION_SECRET: ci-only-session-secret-not-used-anywhere-else-000
   APP_URL: http://localhost:3000
   NEXT_PUBLIC_APP_URL: http://localhost:3000
   NEXT_TELEMETRY_DISABLED: "1"
@@ -26,18 +30,6 @@ jobs:
     name: Lint, type-check, test, build, e2e
     runs-on: ubuntu-latest
     timeout-minutes: 25
-
-    services:
-      postgres:
-        image: pgvector/pgvector:pg17
-        env:
-          POSTGRES_USER: pintopets
-          POSTGRES_PASSWORD: pintopets
-          POSTGRES_DB: pintopets
-        ports: ["5432:5432"]
-        options: >-
-          --health-cmd "pg_isready -U pintopets -d pintopets"
-          --health-interval 2s --health-timeout 3s --health-retries 30
 
     steps:
       - uses: actions/checkout@v4
@@ -66,11 +58,18 @@ jobs:
           helm lint deploy/helm/pintopets -f deploy/helm/pintopets/values-int.yaml
           helm template pintopets deploy/helm/pintopets -n int -f deploy/helm/pintopets/values-int.yaml --set image.tag=ci > /dev/null
 
-      - name: Migrations are in sync with the schema
-        run: pnpm db:check
+      - name: OpsAPI plugin loads in the OpsAPI version int runs
+        run: docker build -f Dockerfile.opsapi-plugin -t pintopets-opsapi-plugin:ci .
 
-      - name: Apply migrations and seed
-        run: pnpm db:migrate && pnpm db:seed
+      - name: Start OpsAPI with the pintopets plugin
+        run: |
+          set -euo pipefail
+          docker compose -f docker-compose.opsapi.yml up -d --wait opsapi
+          docker compose -f docker-compose.opsapi.yml up bootstrap
+          key=$(docker compose -f docker-compose.opsapi.yml logs --no-log-prefix bootstrap | grep '^OPSAPI_API_KEY=' | tail -1 | cut -d= -f2)
+          [ -n "$key" ] || { echo "::error::bootstrap printed no API key"; exit 1; }
+          echo "::add-mask::$key"
+          echo "OPSAPI_API_KEY=$key" >> "$GITHUB_ENV"
 
       - name: Unit and integration tests
         run: pnpm test
@@ -83,6 +82,10 @@ jobs:
 
       - name: End-to-end tests
         run: pnpm test:e2e
+
+      - name: OpsAPI logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.opsapi.yml logs --tail=200 opsapi migrate || true
 
       - name: Upload Playwright report
         if: failure()
