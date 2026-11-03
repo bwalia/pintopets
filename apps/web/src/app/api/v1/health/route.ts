@@ -1,20 +1,20 @@
 import type { HealthResponse } from "@pintopets/api-contract";
 import { NextResponse } from "next/server";
-import { pingDatabase } from "@/server/db";
+import { pingOpsApi } from "@/server/opsapi/health";
 import { apiRoute } from "@/server/http";
 import { appEnv, appVersion } from "@/lib/version";
 
 export const GET = apiRoute(async () => {
-  const dbOk = await pingDatabase();
+  const ok = await pingOpsApi();
   const body: HealthResponse = {
-    status: dbOk ? "ok" : "degraded",
+    status: ok ? "ok" : "degraded",
     version: appVersion(),
     env: appEnv(),
     time: new Date().toISOString(),
-    checks: { database: dbOk ? "ok" : "error" },
+    checks: { opsapi: ok ? "ok" : "error" },
   };
   return NextResponse.json(body, {
-    status: dbOk ? 200 : 503,
+    status: ok ? 200 : 503,
     headers: { "Cache-Control": "no-store" },
   });
 });

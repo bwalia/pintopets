@@ -1,52 +1,48 @@
 import "server-only";
 import type { Pet, Photo } from "@pintopets/api-contract";
-import { schema, uuidv7 } from "@pintopets/db";
-import { and, desc, eq, isNull } from "drizzle-orm";
 import { env } from "@/env";
 import type { Actor } from "../auth";
-import { db } from "../db";
 import { HttpError } from "../http";
+import { createRow, deleteRow, getRow, listAll, updateRow } from "../opsapi/client";
+import { type OpsRow, pgTimestampToIso } from "../opsapi/mapping";
 import { assertPetAccess, assertWritable } from "../pets/access";
 import { getPet, photoUrl } from "../pets/service";
 import { processImage, UnsupportedImageError } from "./images";
 import { storage } from "./storage";
 
-const { media, pets } = schema;
+/**
+ * Photo metadata lives in OpsAPI (pintopets_photos, visible in the admin
+ * dashboard); the image bytes live in PintoPets' storage (a volume now, R2 later).
+ */
+const s = (v: unknown) => (typeof v === "string" && v ? v : null);
+const n = (v: unknown) => (typeof v === "number" ? v : null);
 
-type MediaRow = typeof media.$inferSelect;
-type PetPhotoRow = MediaRow & { petId: string };
-
-function toPhoto(row: PetPhotoRow, profileMediaId: string | null): Photo {
+function toPhoto(row: OpsRow, profileId: string | null): Photo {
   return {
-    id: row.id,
-    petId: row.petId,
-    caption: row.caption,
-    altText: row.altText,
-    width: row.width,
-    height: row.height,
-    thumbUrl: photoUrl(row.id, "thumb"),
-    fullUrl: photoUrl(row.id, "full"),
-    isProfile: row.id === profileMediaId,
-    createdAt: row.createdAt.toISOString(),
+    id: row.uuid,
+    petId: String(row.pet_uuid),
+    caption: s(row.caption),
+    altText: s(row.alt_text),
+    width: n(row.width),
+    height: n(row.height),
+    thumbUrl: photoUrl(row.uuid, "thumb"),
+    fullUrl: photoUrl(row.uuid, "full"),
+    isProfile: row.uuid === profileId,
+    createdAt: pgTimestampToIso(String(row.created_at)),
   };
 }
 
 async function profileIdOf(petId: string): Promise<string | null> {
-  const [p] = await db().select({ id: pets.profileMediaId }).from(pets).where(eq(pets.id, petId));
-  return p?.id ?? null;
+  return s((await getRow("pets", petId))?.profile_photo_uuid);
 }
 
 export async function listPhotos(actor: Pick<Actor, "id">, petId: string): Promise<Photo[]> {
   await assertPetAccess(actor, petId);
   const [rows, profileId] = await Promise.all([
-    db()
-      .select()
-      .from(media)
-      .where(and(eq(media.petId, petId), eq(media.kind, "image"), isNull(media.deletedAt)))
-      .orderBy(desc(media.createdAt)),
+    listAll("photos", { pet_uuid: petId, sort: "created_at", order: "desc" }),
     profileIdOf(petId),
   ]);
-  return rows.flatMap((r) => (r.petId ? [toPhoto({ ...r, petId: r.petId }, profileId)] : []));
+  return rows.map((r) => toPhoto(r, profileId));
 }
 
 export interface UploadInput {
@@ -68,7 +64,6 @@ export async function uploadPhoto(
       `Photos can be up to ${Math.round(env().MAX_UPLOAD_BYTES / 1024 / 1024)} MB.`,
     );
   }
-
   let processed;
   try {
     processed = await processImage(input.bytes);
@@ -78,38 +73,32 @@ export async function uploadPhoto(
     throw error;
   }
 
-  const id = uuidv7();
-  const storageKey = `pets/${petId}/${id}-full.webp`;
-  const thumbKey = `pets/${petId}/${id}-thumb.webp`;
+  const key = `pets/${petId}/${crypto.randomUUID()}`;
+  const storageKey = `${key}-full.webp`;
+  const thumbKey = `${key}-thumb.webp`;
   await storage().put(storageKey, processed.full, "image/webp");
   await storage().put(thumbKey, processed.thumb, "image/webp");
 
   try {
-    const [row] = await db()
-      .insert(media)
-      .values({
-        id,
-        petId,
-        uploadedBy: actor.id,
-        kind: "image",
-        status: "ready",
-        storageKey,
-        thumbKey,
-        mimeType: "image/webp",
-        bytes: processed.full.byteLength,
-        width: processed.width,
-        height: processed.height,
-        caption: input.caption,
-        altText: input.altText,
-      })
-      .returning();
+    const row = await createRow("photos", {
+      petId,
+      uploadedByUserUuid: actor.id,
+      storageKey,
+      thumbKey,
+      mimeType: "image/webp",
+      bytes: processed.full.byteLength,
+      width: processed.width,
+      height: processed.height,
+      caption: input.caption,
+      altText: input.altText,
+    });
     // First photo becomes the profile photo.
-    await db()
-      .update(pets)
-      .set({ profileMediaId: id })
-      .where(and(eq(pets.id, petId), isNull(pets.profileMediaId)));
-    if (!row) throw new Error("Insert failed");
-    return toPhoto({ ...row, petId }, await profileIdOf(petId));
+    let profileId = await profileIdOf(petId);
+    if (!profileId) {
+      await updateRow("pets", petId, { profilePhotoUuid: row.uuid });
+      profileId = row.uuid;
+    }
+    return toPhoto(row, profileId);
   } catch (error) {
     await storage().delete(storageKey);
     await storage().delete(thumbKey);
@@ -117,14 +106,10 @@ export async function uploadPhoto(
   }
 }
 
-async function findPhoto(photoId: string): Promise<PetPhotoRow> {
-  const [row] = await db()
-    .select()
-    .from(media)
-    .where(and(eq(media.id, photoId), eq(media.kind, "image"), isNull(media.deletedAt)))
-    .limit(1);
-  if (!row?.petId) throw new HttpError("not_found", "We couldn't find that photo.");
-  return { ...row, petId: row.petId };
+async function findPhoto(photoId: string): Promise<OpsRow> {
+  const row = await getRow("photos", photoId).catch(() => null);
+  if (!row) throw new HttpError("not_found", "We couldn't find that photo.");
+  return row;
 }
 
 export async function updatePhoto(
@@ -133,29 +118,32 @@ export async function updatePhoto(
   patch: { caption?: string | null; altText?: string | null },
 ): Promise<Photo> {
   const row = await findPhoto(photoId);
-  const m = await assertPetAccess(actor, row.petId, "co_owner");
+  const petId = String(row.pet_uuid);
+  const m = await assertPetAccess(actor, petId, "co_owner");
   assertWritable(m);
-  const [updated] = await db().update(media).set(patch).where(eq(media.id, photoId)).returning();
-  if (!updated) throw new HttpError("not_found", "We couldn't find that photo.");
-  return toPhoto({ ...updated, petId: row.petId }, await profileIdOf(row.petId));
+  const updated = await updateRow("photos", photoId, patch);
+  return toPhoto(updated, await profileIdOf(petId));
 }
 
 export async function deletePhoto(actor: Pick<Actor, "id">, photoId: string): Promise<void> {
   const row = await findPhoto(photoId);
-  const m = await assertPetAccess(actor, row.petId, "co_owner");
+  const petId = String(row.pet_uuid);
+  const m = await assertPetAccess(actor, petId, "co_owner");
   assertWritable(m);
-  await db().update(media).set({ deletedAt: new Date() }).where(eq(media.id, photoId));
-  await db().update(pets).set({ profileMediaId: null }).where(eq(pets.profileMediaId, photoId));
-  await storage().delete(row.storageKey);
-  if (row.thumbKey) await storage().delete(row.thumbKey);
+  if ((await profileIdOf(petId)) === photoId)
+    await updateRow("pets", petId, { profilePhotoUuid: null });
+  await deleteRow("photos", photoId);
+  await storage().delete(String(row.storage_key));
+  if (row.thumb_key) await storage().delete(String(row.thumb_key));
 }
 
 export async function setProfilePhoto(actor: Pick<Actor, "id">, photoId: string): Promise<Pet> {
   const row = await findPhoto(photoId);
-  const m = await assertPetAccess(actor, row.petId, "co_owner");
+  const petId = String(row.pet_uuid);
+  const m = await assertPetAccess(actor, petId, "co_owner");
   assertWritable(m);
-  await db().update(pets).set({ profileMediaId: photoId }).where(eq(pets.id, row.petId));
-  return getPet(actor, row.petId);
+  await updateRow("pets", petId, { profilePhotoUuid: photoId });
+  return getPet(actor, petId);
 }
 
 /** Bytes for a photo the actor may see (private: pet members only). */
@@ -165,8 +153,9 @@ export async function readPhotoFile(
   variant: "thumb" | "full",
 ): Promise<Buffer> {
   const row = await findPhoto(photoId);
-  await assertPetAccess(actor, row.petId);
-  const key = variant === "thumb" && row.thumbKey ? row.thumbKey : row.storageKey;
+  await assertPetAccess(actor, String(row.pet_uuid));
+  const key =
+    variant === "thumb" && row.thumb_key ? String(row.thumb_key) : String(row.storage_key);
   const bytes = await storage().get(key);
   if (!bytes) throw new HttpError("not_found", "That photo's file is missing.");
   return bytes;

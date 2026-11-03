@@ -10,7 +10,8 @@ export const HealthResponse = z
     env: z.enum(["local", "int", "test", "acc", "prod"]),
     time: z.iso.datetime(),
     checks: z.object({
-      database: z.enum(["ok", "error"]),
+      /** OpsAPI holds PintoPets' data. */
+      opsapi: z.enum(["ok", "error"]),
     }),
   })
   .meta({ id: "HealthResponse" });
@@ -22,12 +23,13 @@ registry.registerPath({
   operationId: "getHealth",
   tags: ["System"],
   summary: "Service health",
-  description: "Returns 200 when the API and its database are reachable, 503 otherwise.",
+  description:
+    "Returns 200 when the API and OpsAPI (where the data lives) are reachable, 503 otherwise.",
   security: [],
   responses: {
     200: { description: "Healthy", content: { "application/json": { schema: HealthResponse } } },
     503: {
-      description: "Database unreachable",
+      description: "OpsAPI unreachable",
       content: { "application/json": { schema: HealthResponse } },
     },
     500: { description: "Unexpected error", content: { "application/json": { schema: ApiError } } },

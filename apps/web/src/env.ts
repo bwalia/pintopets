@@ -10,9 +10,16 @@ const ServerEnv = z
   .object({
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     APP_URL: z.url().default("http://localhost:3000"),
-    DATABASE_URL: z
-      .string()
-      .regex(/^postgres(ql)?:\/\//, "DATABASE_URL must be a postgres:// connection string"),
+    /** OpsAPI, server-to-server (in-cluster URL on k3s1). PintoPets' data lives there. */
+    OPSAPI_URL: z.url(),
+    /** OpsAPI as the browser sees it (hosted sign-in). Defaults to OPSAPI_URL. */
+    OPSAPI_PUBLIC_URL: z.url().optional(),
+    /** The PintoPets workspace in OpsAPI. */
+    OPSAPI_NAMESPACE: z.string().min(1).default("pintopets"),
+    /** opsk_ API key scoped to the pintopets_* modules (PintoPets' server only). */
+    OPSAPI_API_KEY: z.string().startsWith("opsk_", "OPSAPI_API_KEY must be an OpsAPI key (opsk_…)"),
+    /** Signs the PintoPets session cookie. 32+ random characters. */
+    SESSION_SECRET: z.string().min(32, "SESSION_SECRET must be at least 32 characters").optional(),
     NEXT_PUBLIC_SENTRY_DSN: z.union([z.url(), z.literal("")]).optional(),
     APP_ENV: z.enum(["local", "int", "test", "acc", "prod"]).default("local"),
     /**

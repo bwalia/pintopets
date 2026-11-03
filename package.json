@@ -14,15 +14,13 @@
     "test:e2e": "pnpm --filter @pintopets/web test:e2e",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "db:up": "docker compose up -d db",
-    "db:down": "docker compose down",
-    "db:generate": "pnpm --filter @pintopets/db db:generate",
-    "db:migrate": "pnpm --filter @pintopets/db db:migrate",
-    "db:seed": "pnpm --filter @pintopets/db db:seed",
-    "db:check": "pnpm --filter @pintopets/db db:check",
-    "db:studio": "pnpm --filter @pintopets/db db:studio"
+    "opsapi:up": "docker compose -f docker-compose.opsapi.yml up -d --wait opsapi && docker compose -f docker-compose.opsapi.yml up bootstrap",
+    "opsapi:down": "docker compose -f docker-compose.opsapi.yml down",
+    "opsapi:key": "docker compose -f docker-compose.opsapi.yml logs --no-log-prefix bootstrap | grep '^OPSAPI_'",
+    "opsapi:types": "node scripts/opsapi-types.mjs && prettier --write apps/web/src/server/opsapi/pintopets.d.ts"
   },
   "devDependencies": {
+    "openapi-typescript": "^7.13.0",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "turbo": "^2.11.10",

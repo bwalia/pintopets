@@ -19,7 +19,6 @@ export const SpeciesGroup = z
 
 export const Breed = z
   .object({
-    id: z.uuid(),
     slug: z.string(),
     name: z.string(),
     isMixedOrUnknown: z.boolean(),
@@ -29,7 +28,6 @@ export type Breed = z.infer<typeof Breed>;
 
 export const Species = z
   .object({
-    id: z.uuid(),
     slug: z.string(),
     name: z.string(),
     group: SpeciesGroup,
