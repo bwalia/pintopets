@@ -4,11 +4,11 @@ import { expect, test } from "@playwright/test";
 test.describe("API v1", () => {
   test.skip(({ isMobile }) => isMobile, "API tests run on one project only");
 
-  test("health reports the database as ok", async ({ request }) => {
+  test("health reports OpsAPI as ok", async ({ request }) => {
     const res = await request.get("/api/v1/health");
     expect(res.status()).toBe(200);
     const body = await res.json();
-    expect(body).toMatchObject({ status: "ok", checks: { database: "ok" } });
+    expect(body).toMatchObject({ status: "ok", checks: { opsapi: "ok" } });
   });
 
   test("lists all 17 species in order", async ({ request }) => {

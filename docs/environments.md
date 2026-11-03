@@ -22,8 +22,52 @@ browser
   → wslproxy vhost               TLS (Let's Encrypt), VPN access profile
   → k3s1 traefik ingress         Host: int.pintopets.app
   → Service pintopets → Deployment pintopets (Next.js standalone)
-                      → StatefulSet pintopets-postgres (pgvector/pg17, longhorn PVC)
+        → OpsAPI (workstation-opsapi, in-cluster) /api/v2/pintopets/*   all pet data
+        → volume pintopets-media                                       photo files
 ```
+
+## Data and sign-in: OpsAPI
+
+PintoPets has **no database of its own**. Its data lives in OpsAPI, in the
+`pintopets` plugin (`opsapi/pintopets` in this repo):
+
+- **Tables and API are generated** with `opsapi make:resource` (migration +
+  `sdk.crud` REST resource + admin dashboard page + RBAC module per table):
+  pets, pet members, weights, vaccinations, parasite treatments, medications,
+  vet visits, conditions, allergies, symptoms, horse care, diet items, diet
+  changes, water notes, photos. Hand-written Lua is limited to two read views
+  (`api/views.lua`: a user's pets, and due dates for reminders) that need a join.
+- **Admin side:** staff with a role in the `pintopets` workspace see every
+  table in the OpsAPI dashboard (int: https://int-opsapi-ui.workstation.co.uk).
+- **One workspace, many owners:** OpsAPI scopes data by workspace, so PintoPets'
+  server calls the plugin with an API key for the `pintopets` workspace and
+  enforces per-owner privacy itself (`apps/web/src/server/pets/access.ts`, from
+  `pet-members`). Owners never get the key.
+- **Sign-in:** OpsAPI's hosted page (`/auth/signin`: email + password with 2FA,
+  or Google). It returns to `/auth/callback?token=…`; PintoPets checks a one-time
+  nonce, exchanges the token once for the user (`GET /auth/me`) and sets its own
+  30-day signed session cookie. The OpsAPI token is never stored. Users are
+  OpsAPI users, so Workstation accounts work in PintoPets.
+  - `pintopets.app` must be in the OpsAPI deployment's `CORS_ALLOWED_DOMAINS`.
+  - Brand-new Google users are created in OpsAPI's `SIGNUP_NAMESPACE_SLUG`
+    workspace (`workstation` on the shared int), because the hosted page doesn't
+    pass `project_code`. PintoPets doesn't use that membership.
+- **Reference data** (species, breeds, microchip codes) is static and lives in
+  code (`packages/db`).
+
+### Shipping plugin changes
+
+1. Merge to `main`: the deploy workflow pushes `harneetk78/pintopets-opsapi-plugin`
+   tagged with the commit sha and `int`.
+2. The shared `workstation-opsapi` loads it as a plugin overlay
+   (`bwalia/opsapi` `devops/helm-charts/diytaxreturn-lapis/values-workstation-int.yaml`,
+   `pluginOverlays`), copied in by an init container in the pods and the migrate job.
+3. Redeploy `workstation-opsapi` on int (its Ring Promoter app, or
+   `gh workflow run deploy-k3s.yml -R bwalia/opsapi -f TARGET_ENV=int -f DEPLOYMENT_TYPE=deploy`):
+   the migrate job applies new plugin migrations and the pods load the new routes.
+
+Rules: never edit an applied migration (add a new file); keep `code = "pintopets"`.
+Locally: `pnpm opsapi:up` runs the same plugin on a throwaway OpsAPI.
 
 ### lon1 / lon2 failover
 
@@ -76,13 +120,8 @@ Ring Promoter ◀─────────────────────
 | deploy | self-hosted `pintopets` | Checks the tag exists on Docker Hub, `helm upgrade --install --wait`                        |
 
 **One image runs in every ring.** Nothing ring-specific is decided at build time:
-the chart sets `APP_ENV`, `APP_URL`, `APP_VERSION` (the image tag) and
-`DATABASE_URL` per release.
-
-On every rollout the `migrate` init container runs
-`node db/db-tasks.mjs migrate-and-seed`: it waits for Postgres, applies Drizzle
-migrations and re-seeds reference data (idempotent). If it fails, the rollout
-stops before traffic moves.
+the chart sets `APP_ENV`, `APP_URL`, `APP_VERSION` (the image tag) and the OpsAPI
+settings per release.
 
 ### Deploy switch (off by default)
 
@@ -102,16 +141,14 @@ stop all deploys.
 | `RP_API_TOKEN`                                                | seed    | Workstation Ring Promoter API token     |
 | `KUBE_CONFIG_DATA_K3S`                                        | deploy  | base64 kubeconfig for k3s1              |
 
-**Runtime:**
+**Runtime** (k8s Secrets in the ring namespace; never in git):
 
-- Postgres password: generated in-cluster on first install (Secret
-  `pintopets-postgres`, kept across upgrades and uninstalls). Nobody needs to
-  know it. To rotate: change it in Postgres, update the Secret, restart the pods.
-- App secrets (from M2: Google OAuth, Resend, TOTP key, …): WSL Vault at
-  `pintopets/<ring>/core`, through External Secrets. Create the Vault path and
-  make sure the ESO policy allows `pintopets/*` **before** adding
-  `vaultSecrets: { core: pintopets/int/core }` to the values file. A missing path
-  keeps the ExternalSecret unready and fails `helm --wait`.
+- `pintopets-opsapi` / `OPSAPI_API_KEY`: an `opsk_` key for the `pintopets`
+  workspace in the ring's OpsAPI, scoped to the `pintopets_*` modules. Created
+  with the workspace (see below); rotate by creating a new key in the OpsAPI
+  dashboard, updating the Secret and restarting the pods.
+- `pintopets-session` / `SESSION_SECRET`: generated in-cluster on first install
+  and kept across upgrades. Deleting it and redeploying signs everyone out.
 
 ## One-off setup (INT)
 
@@ -140,6 +177,6 @@ Verify from **outside** the VPN (e.g. a phone on mobile data) that
 ## Health
 
 `GET /api/v1/health` →
-`{"status":"ok","version":"<APP_VERSION>","env":"<ring>","checks":{"database":"ok"}}`
-(503 when the database is unreachable). Used by the readiness probe and by Ring
+`{"status":"ok","version":"<APP_VERSION>","env":"<ring>","checks":{"opsapi":"ok"}}`
+(503 when OpsAPI is unreachable). Used by the readiness probe and by Ring
 Promoter (`health_version_field: version`).
