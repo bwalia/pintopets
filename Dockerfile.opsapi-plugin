@@ -1,0 +1,15 @@
+# PintoPets' OpsAPI plugin as an overlay image: /plugin/pintopets/, copied into
+# OpsAPI pods (and the migrate job) by the diytaxreturn-lapis chart's
+# `pluginOverlays` (opsapi PLUGINS.md §12). bwalia/opsapi itself is unchanged.
+#
+# The check stage loads the plugin in the OpsAPI version it targets, so a broken
+# plugin fails the build instead of a deploy.
+ARG OPSAPI_TAG=1.0.304
+FROM docker.io/bwalia/opsapi:${OPSAPI_TAG} AS check
+COPY opsapi/pintopets /app/projects/pintopets
+RUN opsapi plugin:check pintopets
+
+FROM busybox:1.37
+COPY --from=check /app/projects/pintopets /plugin/pintopets
+RUN test -f /plugin/pintopets/project.lua \
+ && ls /plugin/pintopets/migrations/*.lua /plugin/pintopets/api/*.lua > /dev/null
