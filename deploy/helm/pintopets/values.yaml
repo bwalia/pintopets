@@ -51,6 +51,19 @@ vaultSecrets: {}
 # Plain, non-secret env.
 extraEnv: {}
 
+# Demo sign-in (one shared demo account) until real sign-in lands. The app
+# refuses to start with it on prod (APP_ENV=prod).
+demoAuth: false
+
+# Uploaded photos. One RWO volume, so the web Deployment uses the Recreate
+# strategy while this is enabled (Cloudflare R2 replaces it later).
+media:
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: longhorn
+  mountPath: /data/media
+
 ingress:
   enabled: true
   # TLS terminates on the wslproxy edge (lon1/lon2), which proxies plain HTTP to

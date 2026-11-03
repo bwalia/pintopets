@@ -17,6 +17,9 @@ env:
   APP_URL: http://localhost:3000
   NEXT_PUBLIC_APP_URL: http://localhost:3000
   NEXT_TELEMETRY_DISABLED: "1"
+  # Shared demo sign-in for tests (never on prod; the app refuses it there).
+  DEMO_AUTH: "true"
+  MEDIA_DIR: /tmp/pintopets-media
 
 jobs:
   ci:

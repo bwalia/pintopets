@@ -1,0 +1,17 @@
+{{- if .Values.media.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pintopets-media
+  labels:
+    {{- include "pintopets.labels" . | nindent 4 }}
+  annotations:
+    # Never delete owners' photos when the release is uninstalled.
+    helm.sh/resource-policy: keep
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: {{ .Values.media.persistence.storageClass | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.media.persistence.size }}
+{{- end }}

@@ -3,13 +3,12 @@
 # (the image tag, reported by /api/v1/health for Ring Promoter) and DATABASE_URL
 # at runtime.
 #
-# Build stages run on the builder's architecture and only the runtime stage on
-# the target's: Next's standalone output and the db-tasks bundle are plain
-# JavaScript, so nothing native needs emulating.
+# All stages run on the target platform: `sharp` (photo processing) is a native
+# module, so it must be installed for the architecture that runs it.
 
 ARG NODE_VERSION=24
 
-FROM --platform=$BUILDPLATFORM node:${NODE_VERSION}-alpine AS base
+FROM node:${NODE_VERSION}-alpine AS base
 RUN apk add --no-cache libc6-compat && corepack enable
 ENV NEXT_TELEMETRY_DISABLED=1 \
     COREPACK_ENABLE_DOWNLOAD_PROMPT=0

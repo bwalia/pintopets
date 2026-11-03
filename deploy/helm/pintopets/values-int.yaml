@@ -10,6 +10,9 @@ host: int.pintopets.app
 extraEnv:
   LOG_LEVEL: "debug"
 
+# VPN-only test ring: shared demo account until Google / email sign-in exists.
+demoAuth: true
+
 # Any healthy LAN amd64 node, as workerra/workstation-opsapi do: net-region=home
 # keeps it on the LAN next to the ring's services (the cloud<->LAN mesh is
 # unreliable); arch=amd64 keeps it off the arm64 Pi.
