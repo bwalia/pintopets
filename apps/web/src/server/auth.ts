@@ -1,16 +1,14 @@
 import "server-only";
-import { schema } from "@pintopets/db";
-import { eq } from "drizzle-orm";
+import { cookies } from "next/headers";
 import { connection } from "next/server";
 import { env } from "@/env";
-import { db } from "./db";
 import { HttpError } from "./http";
-
-const { users } = schema;
+import { decodeSession, SESSION_COOKIE } from "./session";
 
 export type UserRole = "owner" | "professional" | "moderator" | "admin";
 
 export interface Actor {
+  /** OpsAPI user uuid. */
   id: string;
   email: string;
   displayName: string;
@@ -19,50 +17,39 @@ export interface Actor {
   demo: boolean;
 }
 
-export const DEMO_EMAIL = "demo@pintopets.app";
-
-let demoActor: Promise<Actor> | undefined;
-
-async function loadDemoActor(): Promise<Actor> {
-  const [existing] = await db().select().from(users).where(eq(users.email, DEMO_EMAIL)).limit(1);
-  const row =
-    existing ??
-    (
-      await db()
-        .insert(users)
-        .values({
-          email: DEMO_EMAIL,
-          emailVerified: true,
-          name: "Demo owner",
-          displayName: "Demo owner",
-          role: "owner",
-        })
-        .onConflictDoNothing({ target: users.email })
-        .returning()
-    )[0] ??
-    (await db().select().from(users).where(eq(users.email, DEMO_EMAIL)).limit(1))[0];
-  if (!row) throw new Error("Could not create the demo user");
-  return { id: row.id, email: row.email, displayName: row.displayName, role: row.role, demo: true };
-}
+/** Fixed id for the shared demo account (never an OpsAPI user). */
+export const DEMO_USER_ID = "d3e0d3e0-0000-4000-8000-00000000d3e0";
 
 /**
- * The signed-in user, or null.
- *
- * Until real sign-in (Better Auth: Google + magic link, M2) exists, DEMO_AUTH
- * signs everyone in as one shared demo account. env() refuses DEMO_AUTH on prod.
- * Every service takes the Actor as a parameter, so swapping this function for a
- * session lookup is the only change M2 needs here.
+ * The signed-in user, or null. Users sign in with OpsAPI (hosted sign-in:
+ * password + 2FA, or Google) and get a PintoPets session cookie. DEMO_AUTH (a
+ * shared demo account) remains for local development and tests; env() refuses
+ * it on prod.
  */
 export async function currentUser(): Promise<Actor | null> {
-  // The signed-in user only exists at request time: never prerender at build
-  // time (when there is no database) a page that depends on it.
+  // Only exists at request time: never prerender at build time a page that depends on it.
   await connection();
+  const secret = env().SESSION_SECRET;
+  if (secret) {
+    const session = decodeSession((await cookies()).get(SESSION_COOKIE)?.value, secret);
+    if (session) {
+      return {
+        id: session.sub,
+        email: session.email,
+        displayName: session.name || session.email,
+        role: "owner",
+        demo: false,
+      };
+    }
+  }
   if (env().DEMO_AUTH) {
-    demoActor ??= loadDemoActor().catch((error: unknown) => {
-      demoActor = undefined;
-      throw error;
-    });
-    return demoActor;
+    return {
+      id: DEMO_USER_ID,
+      email: "demo@pintopets.app",
+      displayName: "Demo owner",
+      role: "owner",
+      demo: true,
+    };
   }
   return null;
 }
@@ -71,4 +58,9 @@ export async function requireUser(): Promise<Actor> {
   const user = await currentUser();
   if (!user) throw new HttpError("unauthenticated", "Please sign in to continue.");
   return user;
+}
+
+/** Sign-in is available when OpsAPI and a session secret are configured. */
+export function signInEnabled(): boolean {
+  return Boolean(env().SESSION_SECRET);
 }

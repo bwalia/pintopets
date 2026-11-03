@@ -1,8 +1,11 @@
+import { Button } from "@pintopets/ui/components/button";
 import { Card, CardContent } from "@pintopets/ui/components/card";
 import { LogIn } from "lucide-react";
+import { signInEnabled } from "@/server/auth";
 
-/** Shown when nobody is signed in (real sign-in arrives with Google + email links). */
-export function SignedOut({ title }: { title: string }) {
+/** Shown when nobody is signed in. Sign-in is OpsAPI's (password + 2FA, or Google). */
+export function SignedOut({ title, next = "/" }: { title: string; next?: string }) {
+  const enabled = signInEnabled();
   return (
     <div className="mx-auto max-w-2xl">
       <h1 className="font-semibold">{title}</h1>
@@ -12,8 +15,18 @@ export function SignedOut({ title }: { title: string }) {
           <div>
             <p className="font-semibold">Sign in to see your pets</p>
             <p className="text-muted-foreground mt-1">
-              Sign-in with Google or an email link is coming soon.
+              Use your Google account, or your email and password with a one-time code.
             </p>
+            {enabled ? (
+              <Button asChild className="mt-4">
+                {/* A plain link: /auth/signin redirects to the sign-in page. */}
+                <a href={`/auth/signin?next=${encodeURIComponent(next)}`}>Sign in</a>
+              </Button>
+            ) : (
+              <p className="text-muted-foreground mt-3 text-sm">
+                Sign-in isn&apos;t set up on this site yet.
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>
