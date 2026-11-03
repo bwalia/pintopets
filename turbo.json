@@ -2,7 +2,15 @@
   "$schema": "https://turbo.build/schema.json",
   "ui": "stream",
   "globalEnv": ["NODE_ENV", "CI"],
-  "globalPassThroughEnv": ["DATABASE_URL", "NEXT_PUBLIC_*", "SENTRY_*", "APP_URL"],
+  "globalPassThroughEnv": [
+    "OPSAPI_*",
+    "SESSION_SECRET",
+    "DEMO_AUTH",
+    "MEDIA_DIR",
+    "NEXT_PUBLIC_*",
+    "SENTRY_*",
+    "APP_URL"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
