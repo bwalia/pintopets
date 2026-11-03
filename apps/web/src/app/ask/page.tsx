@@ -17,7 +17,7 @@ export default async function AskPage({ searchParams }: PageProps<"/ask">) {
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
-      <h1 className="text-3xl font-semibold">{t("title")}</h1>
+      <h1 className="font-semibold">{t("title")}</h1>
       {q ? (
         <Card>
           <CardContent>
