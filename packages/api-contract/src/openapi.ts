@@ -3,6 +3,8 @@ import { registry } from "./registry";
 // Route modules register their paths as a side effect of being imported.
 import "./routes/health";
 import "./routes/reference";
+import "./routes/pets";
+import "./routes/records";
 
 export interface OpenApiOptions {
   serverUrl: string;
