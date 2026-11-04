@@ -40,7 +40,8 @@ export type Resource =
   | "diet-items"
   | "diet-changes"
   | "water-notes"
-  | "photos";
+  | "photos"
+  | "account-settings";
 
 /** OpsAPI failures → PintoPets' standard API errors. */
 export function toHttpError(error: unknown): unknown {

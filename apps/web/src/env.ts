@@ -20,6 +20,17 @@ const ServerEnv = z
     OPSAPI_API_KEY: z.string().startsWith("opsk_", "OPSAPI_API_KEY must be an OpsAPI key (opsk_…)"),
     /** Signs the PintoPets session cookie. 32+ random characters. */
     SESSION_SECRET: z.string().min(32, "SESSION_SECRET must be at least 32 characters").optional(),
+    /** AES-256-GCM key (32 bytes, base64) for TOTP secrets stored in OpsAPI. */
+    TOTP_ENCRYPTION_KEY: z.preprocess(
+      (v) => (v === "" ? undefined : v),
+      z
+        .string()
+        .refine(
+          (v) => Buffer.from(v, "base64").length === 32,
+          "TOTP_ENCRYPTION_KEY must be 32 bytes, base64",
+        )
+        .optional(),
+    ),
     NEXT_PUBLIC_SENTRY_DSN: z.union([z.url(), z.literal("")]).optional(),
     APP_ENV: z.enum(["local", "int", "test", "acc", "prod"]).default("local"),
     /**

@@ -39,7 +39,12 @@ export function StatusActions({ pet }: { pet: Pick<Pet, "id" | "name" | "status"
             <Button variant="outline" disabled={pending} onClick={() => change("archived")}>
               <Archive aria-hidden /> Archive
             </Button>
-            <Button variant="outline" disabled={pending} onClick={() => setMemorialOpen(true)}>
+            <Button
+              variant="outline"
+              disabled={pending}
+              onClick={() => setMemorialOpen(true)}
+              className="h-auto min-h-11 max-w-full py-2 text-left whitespace-normal"
+            >
               <Heart aria-hidden /> {pet.name} has passed away
             </Button>
           </>

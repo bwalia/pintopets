@@ -24,6 +24,7 @@ return {
         { machine_name = "pintopets_diet_changes", name = "Diet changes", category = "PintoPets" },
         { machine_name = "pintopets_water_notes", name = "Water intake", category = "PintoPets" },
         { machine_name = "pintopets_photos", name = "Photos", category = "PintoPets" },
+        { machine_name = "pintopets_account_settings", name = "Account security", category = "PintoPets" },
         -- opsapi:modules (make:resource adds entries above this line)
     },
 
@@ -51,6 +52,7 @@ return {
         { label = "Diet changes", resource = "diet-changes", module = "pintopets_diet_changes", icon = "ArrowLeftRight" },
         { label = "Water intake", resource = "water-notes", module = "pintopets_water_notes", icon = "Droplets" },
         { label = "Photos", resource = "photos", module = "pintopets_photos", icon = "Image" },
+        { label = "Account security", resource = "account-settings", module = "pintopets_account_settings", icon = "ShieldCheck" },
         -- opsapi:menu (make:resource adds entries above this line)
     },
 
@@ -72,6 +74,8 @@ return {
         diet_change = "pintopets_diet_changes",
         water_note = "pintopets_water_notes",
         photo = "pintopets_photos",
+        -- Secrets never leave the table: kept out of events and the audit trail.
+        account_setting = { table = "pintopets_account_settings", hide = "totp_secret_enc,recovery_codes" },
         -- opsapi:publishes (make:resource adds entries above this line)
     },
 

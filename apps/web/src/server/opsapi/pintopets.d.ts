@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-  "/api/v2/pintopets/horse-cares/{id}": {
+  "/api/v2/pintopets/parasite-treatments": {
     parameters: {
       query?: never;
       header?: never;
@@ -12,253 +12,45 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Get a horse care
-     * @description Needs pintopets_horse_cares.read in the workspace.
-     */
-    get: operations["pintopets_horse_cares_get"];
-    /**
-     * Update a horse care
-     * @description Needs pintopets_horse_cares.update in the workspace.
-     */
-    put: operations["pintopets_horse_cares_update"];
-    post?: never;
-    /**
-     * Delete a horse care
-     * @description Needs pintopets_horse_cares.delete in the workspace.
-     */
-    delete: operations["pintopets_horse_cares_delete"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/pets/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get a pet
-     * @description Needs pintopets_pets.read in the workspace.
-     */
-    get: operations["pintopets_pets_get"];
-    /**
-     * Update a pet
-     * @description Needs pintopets_pets.update in the workspace.
-     */
-    put: operations["pintopets_pets_update"];
-    post?: never;
-    /**
-     * Delete a pet
-     * @description Needs pintopets_pets.delete in the workspace.
-     */
-    delete: operations["pintopets_pets_delete"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/photos": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List photos
-     * @description Needs pintopets_photos.read in the workspace.
-     */
-    get: operations["pintopets_photos_list"];
-    put?: never;
-    /**
-     * Create a photo
-     * @description Needs pintopets_photos.create in the workspace.
-     */
-    post: operations["pintopets_photos_create"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/vaccinations": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List vaccinations
-     * @description Needs pintopets_vaccinations.read in the workspace.
-     */
-    get: operations["pintopets_vaccinations_list"];
-    put?: never;
-    /**
-     * Create a vaccination
-     * @description Needs pintopets_vaccinations.create in the workspace.
-     */
-    post: operations["pintopets_vaccinations_create"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/vet-visits": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List vet visits
-     * @description Needs pintopets_vet_visits.read in the workspace.
-     */
-    get: operations["pintopets_vet_visits_list"];
-    put?: never;
-    /**
-     * Create a vet visit
-     * @description Needs pintopets_vet_visits.create in the workspace.
-     */
-    post: operations["pintopets_vet_visits_create"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/water-notes": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List water intake
-     * @description Needs pintopets_water_notes.read in the workspace.
-     */
-    get: operations["pintopets_water_notes_list"];
-    put?: never;
-    /**
-     * Create a water intake
-     * @description Needs pintopets_water_notes.create in the workspace.
-     */
-    post: operations["pintopets_water_notes_create"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/weights": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List weights
-     * @description Needs pintopets_weights.read in the workspace.
-     */
-    get: operations["pintopets_weights_list"];
-    put?: never;
-    /**
-     * Create a weight
-     * @description Needs pintopets_weights.create in the workspace.
-     */
-    post: operations["pintopets_weights_create"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/diet-items/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get a diet
-     * @description Needs pintopets_diet_items.read in the workspace.
-     */
-    get: operations["pintopets_diet_items_get"];
-    /**
-     * Update a diet
-     * @description Needs pintopets_diet_items.update in the workspace.
-     */
-    put: operations["pintopets_diet_items_update"];
-    post?: never;
-    /**
-     * Delete a diet
-     * @description Needs pintopets_diet_items.delete in the workspace.
-     */
-    delete: operations["pintopets_diet_items_delete"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/weights/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get a weight
-     * @description Needs pintopets_weights.read in the workspace.
-     */
-    get: operations["pintopets_weights_get"];
-    /**
-     * Update a weight
-     * @description Needs pintopets_weights.update in the workspace.
-     */
-    put: operations["pintopets_weights_update"];
-    post?: never;
-    /**
-     * Delete a weight
-     * @description Needs pintopets_weights.delete in the workspace.
-     */
-    delete: operations["pintopets_weights_delete"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/parasite-treatments/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get a flea, worm and tick
+     * List flea, worm and tick
      * @description Needs pintopets_parasite_treatments.read in the workspace.
      */
-    get: operations["pintopets_parasite_treatments_get"];
+    get: operations["pintopets_parasite_treatments_list"];
+    put?: never;
     /**
-     * Update a flea, worm and tick
-     * @description Needs pintopets_parasite_treatments.update in the workspace.
+     * Create a flea, worm and tick
+     * @description Needs pintopets_parasite_treatments.create in the workspace.
      */
-    put: operations["pintopets_parasite_treatments_update"];
+    post: operations["pintopets_parasite_treatments_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/vet-visits/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get a vet visit
+     * @description Needs pintopets_vet_visits.read in the workspace.
+     */
+    get: operations["pintopets_vet_visits_get"];
+    /**
+     * Update a vet visit
+     * @description Needs pintopets_vet_visits.update in the workspace.
+     */
+    put: operations["pintopets_vet_visits_update"];
     post?: never;
     /**
-     * Delete a flea, worm and tick
-     * @description Needs pintopets_parasite_treatments.delete in the workspace.
+     * Delete a vet visit
+     * @description Needs pintopets_vet_visits.delete in the workspace.
      */
-    delete: operations["pintopets_parasite_treatments_delete"];
+    delete: operations["pintopets_vet_visits_delete"];
     options?: never;
     head?: never;
     patch?: never;
@@ -292,6 +84,114 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v2/pintopets/allergies/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get a allergy
+     * @description Needs pintopets_allergies.read in the workspace.
+     */
+    get: operations["pintopets_allergies_get"];
+    /**
+     * Update a allergy
+     * @description Needs pintopets_allergies.update in the workspace.
+     */
+    put: operations["pintopets_allergies_update"];
+    post?: never;
+    /**
+     * Delete a allergy
+     * @description Needs pintopets_allergies.delete in the workspace.
+     */
+    delete: operations["pintopets_allergies_delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/weights/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get a weight
+     * @description Needs pintopets_weights.read in the workspace.
+     */
+    get: operations["pintopets_weights_get"];
+    /**
+     * Update a weight
+     * @description Needs pintopets_weights.update in the workspace.
+     */
+    put: operations["pintopets_weights_update"];
+    post?: never;
+    /**
+     * Delete a weight
+     * @description Needs pintopets_weights.delete in the workspace.
+     */
+    delete: operations["pintopets_weights_delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/pets": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List pets
+     * @description Needs pintopets_pets.read in the workspace.
+     */
+    get: operations["pintopets_pets_list"];
+    put?: never;
+    /**
+     * Create a pet
+     * @description Needs pintopets_pets.create in the workspace.
+     */
+    post: operations["pintopets_pets_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/symptoms/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get a symptom diary
+     * @description Needs pintopets_symptoms.read in the workspace.
+     */
+    get: operations["pintopets_symptoms_get"];
+    /**
+     * Update a symptom diary
+     * @description Needs pintopets_symptoms.update in the workspace.
+     */
+    put: operations["pintopets_symptoms_update"];
+    post?: never;
+    /**
+     * Delete a symptom diary
+     * @description Needs pintopets_symptoms.delete in the workspace.
+     */
+    delete: operations["pintopets_symptoms_delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v2/pintopets/water-notes/{id}": {
     parameters: {
       query?: never;
@@ -320,7 +220,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v2/pintopets/vet-visits/{id}": {
+  "/api/v2/pintopets/pet-members/{id}": {
     parameters: {
       query?: never;
       header?: never;
@@ -328,21 +228,253 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Get a vet visit
-     * @description Needs pintopets_vet_visits.read in the workspace.
+     * Get a pet member
+     * @description Needs pintopets_pet_members.read in the workspace.
      */
-    get: operations["pintopets_vet_visits_get"];
+    get: operations["pintopets_pet_members_get"];
     /**
-     * Update a vet visit
-     * @description Needs pintopets_vet_visits.update in the workspace.
+     * Update a pet member
+     * @description Needs pintopets_pet_members.update in the workspace.
      */
-    put: operations["pintopets_vet_visits_update"];
+    put: operations["pintopets_pet_members_update"];
     post?: never;
     /**
-     * Delete a vet visit
-     * @description Needs pintopets_vet_visits.delete in the workspace.
+     * Delete a pet member
+     * @description Needs pintopets_pet_members.delete in the workspace.
      */
-    delete: operations["pintopets_vet_visits_delete"];
+    delete: operations["pintopets_pet_members_delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/photos": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List photos
+     * @description Needs pintopets_photos.read in the workspace.
+     */
+    get: operations["pintopets_photos_list"];
+    put?: never;
+    /**
+     * Create a photo
+     * @description Needs pintopets_photos.create in the workspace.
+     */
+    post: operations["pintopets_photos_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/symptoms": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List symptom diary
+     * @description Needs pintopets_symptoms.read in the workspace.
+     */
+    get: operations["pintopets_symptoms_list"];
+    put?: never;
+    /**
+     * Create a symptom diary
+     * @description Needs pintopets_symptoms.create in the workspace.
+     */
+    post: operations["pintopets_symptoms_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/horse-cares": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List horse care
+     * @description Needs pintopets_horse_cares.read in the workspace.
+     */
+    get: operations["pintopets_horse_cares_list"];
+    put?: never;
+    /**
+     * Create a horse care
+     * @description Needs pintopets_horse_cares.create in the workspace.
+     */
+    post: operations["pintopets_horse_cares_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/medications": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List medicines
+     * @description Needs pintopets_medications.read in the workspace.
+     */
+    get: operations["pintopets_medications_list"];
+    put?: never;
+    /**
+     * Create a medicine
+     * @description Needs pintopets_medications.create in the workspace.
+     */
+    post: operations["pintopets_medications_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/horse-cares/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get a horse care
+     * @description Needs pintopets_horse_cares.read in the workspace.
+     */
+    get: operations["pintopets_horse_cares_get"];
+    /**
+     * Update a horse care
+     * @description Needs pintopets_horse_cares.update in the workspace.
+     */
+    put: operations["pintopets_horse_cares_update"];
+    post?: never;
+    /**
+     * Delete a horse care
+     * @description Needs pintopets_horse_cares.delete in the workspace.
+     */
+    delete: operations["pintopets_horse_cares_delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/vaccinations/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get a vaccination
+     * @description Needs pintopets_vaccinations.read in the workspace.
+     */
+    get: operations["pintopets_vaccinations_get"];
+    /**
+     * Update a vaccination
+     * @description Needs pintopets_vaccinations.update in the workspace.
+     */
+    put: operations["pintopets_vaccinations_update"];
+    post?: never;
+    /**
+     * Delete a vaccination
+     * @description Needs pintopets_vaccinations.delete in the workspace.
+     */
+    delete: operations["pintopets_vaccinations_delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/diet-items/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get a diet
+     * @description Needs pintopets_diet_items.read in the workspace.
+     */
+    get: operations["pintopets_diet_items_get"];
+    /**
+     * Update a diet
+     * @description Needs pintopets_diet_items.update in the workspace.
+     */
+    put: operations["pintopets_diet_items_update"];
+    post?: never;
+    /**
+     * Delete a diet
+     * @description Needs pintopets_diet_items.delete in the workspace.
+     */
+    delete: operations["pintopets_diet_items_delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/vaccinations": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List vaccinations
+     * @description Needs pintopets_vaccinations.read in the workspace.
+     */
+    get: operations["pintopets_vaccinations_list"];
+    put?: never;
+    /**
+     * Create a vaccination
+     * @description Needs pintopets_vaccinations.create in the workspace.
+     */
+    post: operations["pintopets_vaccinations_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/pets/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get a pet
+     * @description Needs pintopets_pets.read in the workspace.
+     */
+    get: operations["pintopets_pets_get"];
+    /**
+     * Update a pet
+     * @description Needs pintopets_pets.update in the workspace.
+     */
+    put: operations["pintopets_pets_update"];
+    post?: never;
+    /**
+     * Delete a pet
+     * @description Needs pintopets_pets.delete in the workspace.
+     */
+    delete: operations["pintopets_pets_delete"];
     options?: never;
     head?: never;
     patch?: never;
@@ -448,7 +580,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v2/pintopets/allergies/{id}": {
+  "/api/v2/pintopets/vet-visits": {
     parameters: {
       query?: never;
       header?: never;
@@ -456,220 +588,16 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Get a allergy
-     * @description Needs pintopets_allergies.read in the workspace.
+     * List vet visits
+     * @description Needs pintopets_vet_visits.read in the workspace.
      */
-    get: operations["pintopets_allergies_get"];
-    /**
-     * Update a allergy
-     * @description Needs pintopets_allergies.update in the workspace.
-     */
-    put: operations["pintopets_allergies_update"];
-    post?: never;
-    /**
-     * Delete a allergy
-     * @description Needs pintopets_allergies.delete in the workspace.
-     */
-    delete: operations["pintopets_allergies_delete"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/pet-members": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List pet members
-     * @description Needs pintopets_pet_members.read in the workspace.
-     */
-    get: operations["pintopets_pet_members_list"];
+    get: operations["pintopets_vet_visits_list"];
     put?: never;
     /**
-     * Create a pet member
-     * @description Needs pintopets_pet_members.create in the workspace.
+     * Create a vet visit
+     * @description Needs pintopets_vet_visits.create in the workspace.
      */
-    post: operations["pintopets_pet_members_create"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/vaccinations/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get a vaccination
-     * @description Needs pintopets_vaccinations.read in the workspace.
-     */
-    get: operations["pintopets_vaccinations_get"];
-    /**
-     * Update a vaccination
-     * @description Needs pintopets_vaccinations.update in the workspace.
-     */
-    put: operations["pintopets_vaccinations_update"];
-    post?: never;
-    /**
-     * Delete a vaccination
-     * @description Needs pintopets_vaccinations.delete in the workspace.
-     */
-    delete: operations["pintopets_vaccinations_delete"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/parasite-treatments": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List flea, worm and tick
-     * @description Needs pintopets_parasite_treatments.read in the workspace.
-     */
-    get: operations["pintopets_parasite_treatments_list"];
-    put?: never;
-    /**
-     * Create a flea, worm and tick
-     * @description Needs pintopets_parasite_treatments.create in the workspace.
-     */
-    post: operations["pintopets_parasite_treatments_create"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/symptoms/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get a symptom diary
-     * @description Needs pintopets_symptoms.read in the workspace.
-     */
-    get: operations["pintopets_symptoms_get"];
-    /**
-     * Update a symptom diary
-     * @description Needs pintopets_symptoms.update in the workspace.
-     */
-    put: operations["pintopets_symptoms_update"];
-    post?: never;
-    /**
-     * Delete a symptom diary
-     * @description Needs pintopets_symptoms.delete in the workspace.
-     */
-    delete: operations["pintopets_symptoms_delete"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/medications": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List medicines
-     * @description Needs pintopets_medications.read in the workspace.
-     */
-    get: operations["pintopets_medications_list"];
-    put?: never;
-    /**
-     * Create a medicine
-     * @description Needs pintopets_medications.create in the workspace.
-     */
-    post: operations["pintopets_medications_create"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/pets": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List pets
-     * @description Needs pintopets_pets.read in the workspace.
-     */
-    get: operations["pintopets_pets_list"];
-    put?: never;
-    /**
-     * Create a pet
-     * @description Needs pintopets_pets.create in the workspace.
-     */
-    post: operations["pintopets_pets_create"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/diet-items": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List diet
-     * @description Needs pintopets_diet_items.read in the workspace.
-     */
-    get: operations["pintopets_diet_items_list"];
-    put?: never;
-    /**
-     * Create a diet
-     * @description Needs pintopets_diet_items.create in the workspace.
-     */
-    post: operations["pintopets_diet_items_create"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/symptoms": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List symptom diary
-     * @description Needs pintopets_symptoms.read in the workspace.
-     */
-    get: operations["pintopets_symptoms_list"];
-    put?: never;
-    /**
-     * Create a symptom diary
-     * @description Needs pintopets_symptoms.create in the workspace.
-     */
-    post: operations["pintopets_symptoms_create"];
+    post: operations["pintopets_vet_visits_create"];
     delete?: never;
     options?: never;
     head?: never;
@@ -704,6 +632,170 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v2/pintopets/users/{user_uuid}/pets": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * A user's pets with role, latest weight and profile photo
+     * @description Needs pintopets_pets.read in the workspace.
+     */
+    get: operations["pintopets_get_users_user_uuid_pets"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/users/{user_uuid}/due": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Records with due dates for a user's active pets (reminders)
+     * @description Needs pintopets_pets.read in the workspace.
+     */
+    get: operations["pintopets_get_users_user_uuid_due"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/weights": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List weights
+     * @description Needs pintopets_weights.read in the workspace.
+     */
+    get: operations["pintopets_weights_list"];
+    put?: never;
+    /**
+     * Create a weight
+     * @description Needs pintopets_weights.create in the workspace.
+     */
+    post: operations["pintopets_weights_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/water-notes": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List water intake
+     * @description Needs pintopets_water_notes.read in the workspace.
+     */
+    get: operations["pintopets_water_notes_list"];
+    put?: never;
+    /**
+     * Create a water intake
+     * @description Needs pintopets_water_notes.create in the workspace.
+     */
+    post: operations["pintopets_water_notes_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/diet-items": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List diet
+     * @description Needs pintopets_diet_items.read in the workspace.
+     */
+    get: operations["pintopets_diet_items_list"];
+    put?: never;
+    /**
+     * Create a diet
+     * @description Needs pintopets_diet_items.create in the workspace.
+     */
+    post: operations["pintopets_diet_items_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/parasite-treatments/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get a flea, worm and tick
+     * @description Needs pintopets_parasite_treatments.read in the workspace.
+     */
+    get: operations["pintopets_parasite_treatments_get"];
+    /**
+     * Update a flea, worm and tick
+     * @description Needs pintopets_parasite_treatments.update in the workspace.
+     */
+    put: operations["pintopets_parasite_treatments_update"];
+    post?: never;
+    /**
+     * Delete a flea, worm and tick
+     * @description Needs pintopets_parasite_treatments.delete in the workspace.
+     */
+    delete: operations["pintopets_parasite_treatments_delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v2/pintopets/pet-members": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List pet members
+     * @description Needs pintopets_pet_members.read in the workspace.
+     */
+    get: operations["pintopets_pet_members_list"];
+    put?: never;
+    /**
+     * Create a pet member
+     * @description Needs pintopets_pet_members.create in the workspace.
+     */
+    post: operations["pintopets_pet_members_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v2/pintopets/photos/{id}": {
     parameters: {
       query?: never;
@@ -732,100 +824,45 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v2/pintopets/horse-cares": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List horse care
-     * @description Needs pintopets_horse_cares.read in the workspace.
-     */
-    get: operations["pintopets_horse_cares_list"];
-    put?: never;
-    /**
-     * Create a horse care
-     * @description Needs pintopets_horse_cares.create in the workspace.
-     */
-    post: operations["pintopets_horse_cares_create"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v2/pintopets/pet-members/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get a pet member
-     * @description Needs pintopets_pet_members.read in the workspace.
-     */
-    get: operations["pintopets_pet_members_get"];
-    /**
-     * Update a pet member
-     * @description Needs pintopets_pet_members.update in the workspace.
-     */
-    put: operations["pintopets_pet_members_update"];
-    post?: never;
-    /**
-     * Delete a pet member
-     * @description Needs pintopets_pet_members.delete in the workspace.
-     */
-    delete: operations["pintopets_pet_members_delete"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     /** @description Allergies (PintoPets plugin) */
     PintopetsAllergy: {
-      /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid: string;
-      /** @description Allergen */
-      allergen: string;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid: string;
-      /** Format: date-time */
-      created_at: string;
-      /** @description Reaction */
-      reaction?: string | null;
-      /** @description Notes */
-      notes?: string | null;
-      namespace_id: number;
-      id: number;
       /** Format: date-time */
       updated_at: string;
       /**
-       * @description Severity
-       * @enum {string}
-       */
-      severity: "mild" | "moderate" | "severe";
-      /** Format: uuid */
-      uuid: string;
-    };
-    PintopetsAllergyCreate: {
-      /**
        * Format: uuid
        * @description Pet uuid
        */
       pet_uuid: string;
+      /** @description Allergen */
+      allergen: string;
+      /**
+       * @description Severity
+       * @enum {string}
+       */
+      severity: "mild" | "moderate" | "severe";
+      /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid: string;
+      /** @description Reaction */
+      reaction?: string | null;
+      namespace_id: number;
+      id: number;
+      /** @description Notes */
+      notes?: string | null;
+      /** Format: uuid */
+      uuid: string;
+      /** Format: date-time */
+      created_at: string;
+    };
+    PintopetsAllergyCreate: {
+      /** @description Reaction */
+      reaction?: string | null;
       /** @description Allergen */
       allergen: string;
       /**
@@ -838,18 +875,18 @@ export interface components {
        * @enum {string}
        */
       severity: "mild" | "moderate" | "severe";
-      /** @description Reaction */
-      reaction?: string | null;
+      /**
+       * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid: string;
       /** @description Notes */
       notes?: string | null;
     };
     /** @description Only the fields sent are changed; null clears an optional field. */
     PintopetsAllergyUpdate: {
-      /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid?: string;
+      /** @description Reaction */
+      reaction?: string | null;
       /** @description Allergen */
       allergen?: string;
       /**
@@ -862,26 +899,25 @@ export interface components {
        * @enum {string}
        */
       severity?: "mild" | "moderate" | "severe";
-      /** @description Reaction */
-      reaction?: string | null;
+      /**
+       * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid?: string;
       /** @description Notes */
       notes?: string | null;
     };
     /** @description Conditions (PintoPets plugin) */
     PintopetsCondition: {
-      /** @description Name */
-      name: string;
+      /** Format: date-time */
+      updated_at: string;
       /**
        * Format: uuid
        * @description Pet uuid
        */
       pet_uuid: string;
-      id: number;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid: string;
+      /** @description Name */
+      name: string;
       /** Format: date-time */
       created_at: string;
       /**
@@ -891,52 +927,61 @@ export interface components {
       diagnosed_on?: string | null;
       /** Format: uuid */
       uuid: string;
-      namespace_id: number;
-      /** Format: date-time */
-      updated_at: string;
-      /**
-       * @description Status
-       * @enum {string}
-       */
-      status: "active" | "managed" | "resolved";
-      /** @description Notes */
-      notes?: string | null;
-    };
-    PintopetsConditionCreate: {
-      /** @description Name */
-      name: string;
-      /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid: string;
-      /**
-       * @description Status
-       * @enum {string}
-       */
-      status: "active" | "managed" | "resolved";
+      id: number;
       /**
        * Format: uuid
        * @description Created by user uuid
        */
       created_by_user_uuid: string;
+      /** @description Notes */
+      notes?: string | null;
+      /**
+       * @description Status
+       * @enum {string}
+       */
+      status: "active" | "managed" | "resolved";
+      namespace_id: number;
+    };
+    PintopetsConditionCreate: {
       /**
        * Format: date
        * @description Diagnosed on
        */
       diagnosed_on?: string | null;
+      /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid: string;
       /** @description Notes */
       notes?: string | null;
-    };
-    /** @description Only the fields sent are changed; null clears an optional field. */
-    PintopetsConditionUpdate: {
-      /** @description Name */
-      name?: string;
+      /**
+       * @description Status
+       * @enum {string}
+       */
+      status: "active" | "managed" | "resolved";
       /**
        * Format: uuid
        * @description Pet uuid
        */
-      pet_uuid?: string;
+      pet_uuid: string;
+      /** @description Name */
+      name: string;
+    };
+    /** @description Only the fields sent are changed; null clears an optional field. */
+    PintopetsConditionUpdate: {
+      /**
+       * Format: date
+       * @description Diagnosed on
+       */
+      diagnosed_on?: string | null;
+      /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid?: string;
+      /** @description Notes */
+      notes?: string | null;
       /**
        * @description Status
        * @enum {string}
@@ -944,25 +989,21 @@ export interface components {
       status?: "active" | "managed" | "resolved";
       /**
        * Format: uuid
-       * @description Created by user uuid
+       * @description Pet uuid
        */
-      created_by_user_uuid?: string;
-      /**
-       * Format: date
-       * @description Diagnosed on
-       */
-      diagnosed_on?: string | null;
-      /** @description Notes */
-      notes?: string | null;
+      pet_uuid?: string;
+      /** @description Name */
+      name?: string;
     };
     /** @description Diet changes (PintoPets plugin) */
     PintopetsDietChange: {
+      /** Format: date-time */
+      updated_at: string;
       /**
        * Format: uuid
        * @description Pet uuid
        */
       pet_uuid: string;
-      id: number;
       /**
        * Format: date
        * @description Changed on
@@ -970,26 +1011,25 @@ export interface components {
       changed_on: string;
       /** Format: date-time */
       created_at: string;
+      /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid: string;
+      /** Format: uuid */
+      uuid: string;
+      /** @description Description */
+      description: string;
       /** @description Reaction */
       reaction?: string | null;
       /** @description Notes */
       notes?: string | null;
       namespace_id: number;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid: string;
-      /** Format: date-time */
-      updated_at: string;
-      /** @description Description */
-      description: string;
-      /** Format: uuid */
-      uuid: string;
+      id: number;
     };
     PintopetsDietChangeCreate: {
-      /** @description Notes */
-      notes?: string | null;
+      /** @description Reaction */
+      reaction?: string | null;
       /** @description Description */
       description: string;
       /**
@@ -997,13 +1037,13 @@ export interface components {
        * @description Created by user uuid
        */
       created_by_user_uuid: string;
+      /** @description Notes */
+      notes?: string | null;
       /**
        * Format: uuid
        * @description Pet uuid
        */
       pet_uuid: string;
-      /** @description Reaction */
-      reaction?: string | null;
       /**
        * Format: date
        * @description Changed on
@@ -1012,8 +1052,8 @@ export interface components {
     };
     /** @description Only the fields sent are changed; null clears an optional field. */
     PintopetsDietChangeUpdate: {
-      /** @description Notes */
-      notes?: string | null;
+      /** @description Reaction */
+      reaction?: string | null;
       /** @description Description */
       description?: string;
       /**
@@ -1021,13 +1061,13 @@ export interface components {
        * @description Created by user uuid
        */
       created_by_user_uuid?: string;
+      /** @description Notes */
+      notes?: string | null;
       /**
        * Format: uuid
        * @description Pet uuid
        */
       pet_uuid?: string;
-      /** @description Reaction */
-      reaction?: string | null;
       /**
        * Format: date
        * @description Changed on
@@ -1043,7 +1083,11 @@ export interface components {
        * @description Pet uuid
        */
       pet_uuid: string;
-      id: number;
+      /**
+       * Format: date
+       * @description Ended on
+       */
+      ended_on?: string | null;
       /**
        * Format: uuid
        * @description Created by user uuid
@@ -1054,66 +1098,62 @@ export interface components {
        * @description Started on
        */
       started_on?: string | null;
-      /**
-       * Format: date
-       * @description Ended on
-       */
-      ended_on?: string | null;
-      /** Format: date-time */
-      updated_at: string;
-      /** @description Amount */
-      amount?: string | null;
-      /** @description Notes */
-      notes?: string | null;
-      namespace_id: number;
+      /** @description Product */
+      product: string;
       /**
        * @description Kind
        * @enum {string}
        */
       kind: "food" | "treat" | "supplement";
-      /** @description Frequency */
-      frequency?: string | null;
-      /** @description Product */
-      product: string;
       /** Format: uuid */
       uuid: string;
+      /** @description Amount */
+      amount?: string | null;
       /** Format: date-time */
       created_at: string;
+      id: number;
+      namespace_id: number;
+      /** @description Notes */
+      notes?: string | null;
+      /** @description Frequency */
+      frequency?: string | null;
+      /** Format: date-time */
+      updated_at: string;
     };
     PintopetsDietItemCreate: {
       /** @description Brand */
       brand?: string | null;
+      /**
+       * Format: date
+       * @description Started on
+       */
+      started_on?: string | null;
+      /**
+       * Format: date
+       * @description Ended on
+       */
+      ended_on?: string | null;
+      /** @description Product */
+      product: string;
+      /** @description Amount */
+      amount?: string | null;
+      /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid: string;
       /**
        * Format: uuid
        * @description Pet uuid
        */
       pet_uuid: string;
       /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid: string;
-      /**
-       * Format: date
-       * @description Started on
-       */
-      started_on?: string | null;
-      /**
-       * Format: date
-       * @description Ended on
-       */
-      ended_on?: string | null;
-      /** @description Amount */
-      amount?: string | null;
-      /** @description Frequency */
-      frequency?: string | null;
-      /** @description Product */
-      product: string;
-      /**
        * @description Kind
        * @enum {string}
        */
       kind: "food" | "treat" | "supplement";
+      /** @description Frequency */
+      frequency?: string | null;
       /** @description Notes */
       notes?: string | null;
     };
@@ -1122,16 +1162,6 @@ export interface components {
       /** @description Brand */
       brand?: string | null;
       /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid?: string;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid?: string;
-      /**
        * Format: date
        * @description Started on
        */
@@ -1141,70 +1171,94 @@ export interface components {
        * @description Ended on
        */
       ended_on?: string | null;
-      /** @description Amount */
-      amount?: string | null;
-      /** @description Frequency */
-      frequency?: string | null;
       /** @description Product */
       product?: string;
+      /** @description Amount */
+      amount?: string | null;
+      /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid?: string;
+      /**
+       * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid?: string;
       /**
        * @description Kind
        * @enum {string}
        */
       kind?: "food" | "treat" | "supplement";
+      /** @description Frequency */
+      frequency?: string | null;
       /** @description Notes */
       notes?: string | null;
     };
     /** @description Horse care (PintoPets plugin) */
     PintopetsHorseCare: {
+      /** Format: date-time */
+      updated_at: string;
       /**
        * Format: uuid
        * @description Pet uuid
        */
       pet_uuid: string;
-      id: number;
+      /** @description Result */
+      result?: string | null;
       /**
-       * Format: uuid
-       * @description Created by user uuid
+       * Format: date
+       * @description Done on
        */
-      created_by_user_uuid: string;
-      /** Format: date-time */
-      created_at: string;
-      /** Format: date-time */
-      updated_at: string;
-      /** @description Provider */
-      provider?: string | null;
-      /** Format: uuid */
-      uuid: string;
-      namespace_id: number;
+      done_on: string;
       /**
        * Format: date
        * @description Next due on
        */
       next_due_on?: string | null;
       /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid: string;
+      id: number;
+      /** Format: date-time */
+      created_at: string;
+      namespace_id: number;
+      /**
        * @description Kind
        * @enum {string}
        */
       kind: "farrier" | "dental" | "worm_egg_count";
-      /**
-       * Format: date
-       * @description Done on
-       */
-      done_on: string;
-      /** @description Result */
-      result?: string | null;
       /** @description Notes */
       notes?: string | null;
+      /** Format: uuid */
+      uuid: string;
+      /** @description Provider */
+      provider?: string | null;
     };
     PintopetsHorseCareCreate: {
       /** @description Provider */
       provider?: string | null;
       /**
        * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid: string;
+      /**
+       * Format: uuid
        * @description Pet uuid
        */
       pet_uuid: string;
+      /** @description Result */
+      result?: string | null;
+      /**
+       * @description Kind
+       * @enum {string}
+       */
+      kind: "farrier" | "dental" | "worm_egg_count";
+      /** @description Notes */
+      notes?: string | null;
       /**
        * Format: date
        * @description Done on
@@ -1215,20 +1269,6 @@ export interface components {
        * @description Next due on
        */
       next_due_on?: string | null;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid: string;
-      /**
-       * @description Kind
-       * @enum {string}
-       */
-      kind: "farrier" | "dental" | "worm_egg_count";
-      /** @description Result */
-      result?: string | null;
-      /** @description Notes */
-      notes?: string | null;
     };
     /** @description Only the fields sent are changed; null clears an optional field. */
     PintopetsHorseCareUpdate: {
@@ -1236,9 +1276,23 @@ export interface components {
       provider?: string | null;
       /**
        * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid?: string;
+      /**
+       * Format: uuid
        * @description Pet uuid
        */
       pet_uuid?: string;
+      /** @description Result */
+      result?: string | null;
+      /**
+       * @description Kind
+       * @enum {string}
+       */
+      kind?: "farrier" | "dental" | "worm_egg_count";
+      /** @description Notes */
+      notes?: string | null;
       /**
        * Format: date
        * @description Done on
@@ -1249,163 +1303,128 @@ export interface components {
        * @description Next due on
        */
       next_due_on?: string | null;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid?: string;
-      /**
-       * @description Kind
-       * @enum {string}
-       */
-      kind?: "farrier" | "dental" | "worm_egg_count";
-      /** @description Result */
-      result?: string | null;
-      /** @description Notes */
-      notes?: string | null;
     };
     /** @description Medicines (PintoPets plugin) */
     PintopetsMedication: {
-      /** @description Name */
-      name: string;
-      /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid: string;
-      id: number;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid: string;
-      /** Format: date-time */
-      created_at: string;
-      /** @description Reminders enabled */
-      reminders_enabled?: boolean | null;
-      /** @description Notes */
-      notes?: string | null;
-      /** Format: uuid */
-      uuid: string;
       /** Format: date-time */
       updated_at: string;
-      namespace_id: number;
-      /** @description Dose as prescribed */
-      dose_as_prescribed: string;
-      /** @description Frequency */
-      frequency: string;
-      /**
-       * Format: date
-       * @description Start on
-       */
-      start_on: string;
-      /**
-       * Format: date
-       * @description End on
-       */
-      end_on?: string | null;
-      /** @description Prescribed by */
-      prescribed_by?: string | null;
-    };
-    PintopetsMedicationCreate: {
-      /** @description Name */
-      name: string;
       /**
        * Format: uuid
        * @description Pet uuid
        */
       pet_uuid: string;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid: string;
-      /** @description Notes */
-      notes?: string | null;
+      /** Format: date-time */
+      created_at: string;
+      /** @description Prescribed by */
+      prescribed_by?: string | null;
+      /** Format: uuid */
+      uuid: string;
+      namespace_id: number;
+      /** @description Name */
+      name: string;
       /** @description Dose as prescribed */
       dose_as_prescribed: string;
-      /** @description Reminders enabled */
-      reminders_enabled?: boolean | null;
-      /** @description Frequency */
-      frequency: string;
       /**
        * Format: date
        * @description Start on
        */
       start_on: string;
       /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid: string;
+      id: number;
+      /** @description Reminders enabled */
+      reminders_enabled?: boolean | null;
+      /** @description Notes */
+      notes?: string | null;
+      /** @description Frequency */
+      frequency: string;
+      /**
        * Format: date
        * @description End on
        */
       end_on?: string | null;
+    };
+    PintopetsMedicationCreate: {
+      /**
+       * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid: string;
+      /** @description Name */
+      name: string;
+      /** @description Dose as prescribed */
+      dose_as_prescribed: string;
+      /**
+       * Format: date
+       * @description Start on
+       */
+      start_on: string;
+      /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid: string;
       /** @description Prescribed by */
       prescribed_by?: string | null;
+      /** @description Reminders enabled */
+      reminders_enabled?: boolean | null;
+      /** @description Notes */
+      notes?: string | null;
+      /** @description Frequency */
+      frequency: string;
+      /**
+       * Format: date
+       * @description End on
+       */
+      end_on?: string | null;
     };
     /** @description Only the fields sent are changed; null clears an optional field. */
     PintopetsMedicationUpdate: {
-      /** @description Name */
-      name?: string;
       /**
        * Format: uuid
        * @description Pet uuid
        */
       pet_uuid?: string;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid?: string;
-      /** @description Notes */
-      notes?: string | null;
+      /** @description Name */
+      name?: string;
       /** @description Dose as prescribed */
       dose_as_prescribed?: string;
-      /** @description Reminders enabled */
-      reminders_enabled?: boolean | null;
-      /** @description Frequency */
-      frequency?: string;
       /**
        * Format: date
        * @description Start on
        */
       start_on?: string;
       /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid?: string;
+      /** @description Prescribed by */
+      prescribed_by?: string | null;
+      /** @description Reminders enabled */
+      reminders_enabled?: boolean | null;
+      /** @description Notes */
+      notes?: string | null;
+      /** @description Frequency */
+      frequency?: string;
+      /**
        * Format: date
        * @description End on
        */
       end_on?: string | null;
-      /** @description Prescribed by */
-      prescribed_by?: string | null;
     };
     /** @description Flea, worm and tick (PintoPets plugin) */
     PintopetsParasiteTreatment: {
-      /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid: string;
-      id: number;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid: string;
-      /** Format: date-time */
-      created_at: string;
       /** Format: date-time */
       updated_at: string;
-      /** Format: uuid */
-      uuid: string;
-      namespace_id: number;
       /**
-       * Format: date
-       * @description Given on
+       * Format: uuid
+       * @description Pet uuid
        */
-      given_on: string;
-      /**
-       * @description Kind
-       * @enum {string}
-       */
-      kind: "flea" | "worm" | "tick" | "flea_and_tick" | "lungworm" | "mite" | "other";
+      pet_uuid: string;
       /** @description Product */
       product: string;
       /**
@@ -1413,17 +1432,31 @@ export interface components {
        * @description Next due on
        */
       next_due_on?: string | null;
-      /** @description Notes */
-      notes?: string | null;
-    };
-    PintopetsParasiteTreatmentCreate: {
-      /** @description Notes */
-      notes?: string | null;
+      /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid: string;
+      id: number;
+      /** Format: date-time */
+      created_at: string;
+      namespace_id: number;
       /**
        * @description Kind
        * @enum {string}
        */
       kind: "flea" | "worm" | "tick" | "flea_and_tick" | "lungworm" | "mite" | "other";
+      /** @description Notes */
+      notes?: string | null;
+      /** Format: uuid */
+      uuid: string;
+      /**
+       * Format: date
+       * @description Given on
+       */
+      given_on: string;
+    };
+    PintopetsParasiteTreatmentCreate: {
       /**
        * Format: date
        * @description Given on
@@ -1434,6 +1467,18 @@ export interface components {
        * @description Created by user uuid
        */
       created_by_user_uuid: string;
+      /**
+       * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid: string;
+      /**
+       * @description Kind
+       * @enum {string}
+       */
+      kind: "flea" | "worm" | "tick" | "flea_and_tick" | "lungworm" | "mite" | "other";
+      /** @description Notes */
+      notes?: string | null;
       /** @description Product */
       product: string;
       /**
@@ -1441,21 +1486,9 @@ export interface components {
        * @description Next due on
        */
       next_due_on?: string | null;
-      /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid: string;
     };
     /** @description Only the fields sent are changed; null clears an optional field. */
     PintopetsParasiteTreatmentUpdate: {
-      /** @description Notes */
-      notes?: string | null;
-      /**
-       * @description Kind
-       * @enum {string}
-       */
-      kind?: "flea" | "worm" | "tick" | "flea_and_tick" | "lungworm" | "mite" | "other";
       /**
        * Format: date
        * @description Given on
@@ -1466,6 +1499,18 @@ export interface components {
        * @description Created by user uuid
        */
       created_by_user_uuid?: string;
+      /**
+       * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid?: string;
+      /**
+       * @description Kind
+       * @enum {string}
+       */
+      kind?: "flea" | "worm" | "tick" | "flea_and_tick" | "lungworm" | "mite" | "other";
+      /** @description Notes */
+      notes?: string | null;
       /** @description Product */
       product?: string;
       /**
@@ -1473,98 +1518,28 @@ export interface components {
        * @description Next due on
        */
       next_due_on?: string | null;
-      /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid?: string;
     };
     /** @description Pets (PintoPets plugin) */
     PintopetsPet: {
-      /**
-       * Format: uuid
-       * @description Owner user uuid
-       */
-      owner_user_uuid: string;
-      /** @description Emergency contact phone */
-      emergency_contact_phone?: string | null;
-      id: number;
-      /** @description Insurance provider */
-      insurance_provider?: string | null;
-      /** @description Species */
-      species: string;
-      /** Format: uuid */
-      uuid: string;
-      /**
-       * Format: date
-       * @description Date of birth
-       */
-      date_of_birth?: string | null;
-      namespace_id: number;
-      /**
-       * @description Sex
-       * @enum {string}
-       */
-      sex: "male" | "female" | "unknown";
-      /** @description Species other */
-      species_other?: string | null;
-      /** @description Breeds */
-      breeds?: string | null;
-      /**
-       * @description Neutered
-       * @enum {string}
-       */
-      neutered: "yes" | "no" | "unknown";
-      /** @description Date of birth is estimate */
-      date_of_birth_is_estimate?: boolean | null;
-      /** @description Colour markings */
-      colour_markings?: string | null;
-      /** @description Height inches */
-      height_inches?: number | null;
-      /** @description Passport number */
-      passport_number?: string | null;
-      /** Format: date-time */
-      created_at: string;
-      /** @description Vet practice name */
-      vet_practice_name?: string | null;
-      /** @description Vet practice phone */
-      vet_practice_phone?: string | null;
-      /** @description Name */
-      name: string;
-      /**
-       * Format: date
-       * @description Deceased on
-       */
-      deceased_on?: string | null;
-      /**
-       * Format: uuid
-       * @description Profile photo uuid
-       */
-      profile_photo_uuid?: string | null;
-      /** @description Insurance policy ref */
-      insurance_policy_ref?: string | null;
-      /**
-       * @description Status
-       * @enum {string}
-       */
-      status: "active" | "archived" | "deceased";
       /** Format: date-time */
       updated_at: string;
+      /**
+       * Format: date
+       * @description Date of birth
+       */
+      date_of_birth?: string | null;
+      /** @description Name */
+      name: string;
+      /** @description Height inches */
+      height_inches?: number | null;
       /** @description Notes */
       notes?: string | null;
-      /** @description Emergency contact name */
-      emergency_contact_name?: string | null;
-    };
-    PintopetsPetCreate: {
-      /**
-       * Format: uuid
-       * @description Owner user uuid
-       */
-      owner_user_uuid: string;
-      /** @description Emergency contact phone */
-      emergency_contact_phone?: string | null;
-      /** @description Insurance provider */
-      insurance_provider?: string | null;
+      /** Format: uuid */
+      uuid: string;
+      namespace_id: number;
+      /** @description Vet practice name */
+      vet_practice_name?: string | null;
+      id: number;
       /** @description Species */
       species: string;
       /** @description Species other */
@@ -1576,8 +1551,85 @@ export interface components {
        * @enum {string}
        */
       sex: "male" | "female" | "unknown";
+      /** @description Emergency contact name */
+      emergency_contact_name?: string | null;
+      /** @description Emergency contact phone */
+      emergency_contact_phone?: string | null;
+      /**
+       * @description Neutered
+       * @enum {string}
+       */
+      neutered: "yes" | "no" | "unknown";
+      /** @description Date of birth is estimate */
+      date_of_birth_is_estimate?: boolean | null;
+      /** @description Colour markings */
+      colour_markings?: string | null;
+      /** @description Insurance provider */
+      insurance_provider?: string | null;
+      /** @description Passport number */
+      passport_number?: string | null;
+      /** @description Insurance policy ref */
+      insurance_policy_ref?: string | null;
+      /**
+       * Format: uuid
+       * @description Owner user uuid
+       */
+      owner_user_uuid: string;
+      /** @description Vet practice phone */
+      vet_practice_phone?: string | null;
+      /** Format: date-time */
+      created_at: string;
+      /**
+       * @description Status
+       * @enum {string}
+       */
+      status: "active" | "archived" | "deceased";
+      /**
+       * Format: uuid
+       * @description Profile photo uuid
+       */
+      profile_photo_uuid?: string | null;
+      /**
+       * Format: date
+       * @description Deceased on
+       */
+      deceased_on?: string | null;
+    };
+    PintopetsPetCreate: {
       /** @description Name */
       name: string;
+      /**
+       * Format: uuid
+       * @description Owner user uuid
+       */
+      owner_user_uuid: string;
+      /**
+       * Format: date
+       * @description Deceased on
+       */
+      deceased_on?: string | null;
+      /** @description Notes */
+      notes?: string | null;
+      /** @description Species */
+      species: string;
+      /** @description Species other */
+      species_other?: string | null;
+      /** @description Breeds */
+      breeds?: string | null;
+      /**
+       * @description Sex
+       * @enum {string}
+       */
+      sex: "male" | "female" | "unknown";
+      /** @description Emergency contact name */
+      emergency_contact_name?: string | null;
+      /** @description Emergency contact phone */
+      emergency_contact_phone?: string | null;
+      /**
+       * @description Neutered
+       * @enum {string}
+       */
+      neutered: "yes" | "no" | "unknown";
       /** @description Date of birth is estimate */
       date_of_birth_is_estimate?: boolean | null;
       /** @description Colour markings */
@@ -1594,106 +1646,99 @@ export interface components {
       vet_practice_phone?: string | null;
       /**
        * Format: date
-       * @description Deceased on
+       * @description Date of birth
        */
-      deceased_on?: string | null;
+      date_of_birth?: string | null;
       /**
        * @description Status
        * @enum {string}
        */
       status: "active" | "archived" | "deceased";
       /**
-       * @description Neutered
-       * @enum {string}
-       */
-      neutered: "yes" | "no" | "unknown";
-      /**
-       * Format: date
-       * @description Date of birth
-       */
-      date_of_birth?: string | null;
-      /** @description Emergency contact name */
-      emergency_contact_name?: string | null;
-      /** @description Notes */
-      notes?: string | null;
-      /**
        * Format: uuid
        * @description Profile photo uuid
        */
       profile_photo_uuid?: string | null;
+      /** @description Insurance provider */
+      insurance_provider?: string | null;
     };
     /** @description Pet members (PintoPets plugin) */
     PintopetsPetMember: {
-      id: number;
-      /** Format: uuid */
-      uuid: string;
-      namespace_id: number;
-      /** Format: date-time */
-      updated_at: string;
-      /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid: string;
-      /** Format: date-time */
-      created_at: string;
-      /**
-       * @description Role
-       * @enum {string}
-       */
-      role: "owner" | "co_owner" | "carer";
       /**
        * Format: uuid
        * @description User uuid
        */
       user_uuid: string;
+      /** Format: date-time */
+      updated_at: string;
+      /** Format: date-time */
+      created_at: string;
+      namespace_id: number;
+      /** Format: uuid */
+      uuid: string;
+      id: number;
+      /**
+       * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid: string;
+      /**
+       * @description Role
+       * @enum {string}
+       */
+      role: "owner" | "co_owner" | "carer";
     };
     PintopetsPetMemberCreate: {
       /**
-       * @description Role
-       * @enum {string}
+       * Format: uuid
+       * @description User uuid
        */
-      role: "owner" | "co_owner" | "carer";
+      user_uuid: string;
       /**
        * Format: uuid
        * @description Pet uuid
        */
       pet_uuid: string;
       /**
-       * Format: uuid
-       * @description User uuid
-       */
-      user_uuid: string;
-    };
-    /** @description Only the fields sent are changed; null clears an optional field. */
-    PintopetsPetMemberUpdate: {
-      /**
        * @description Role
        * @enum {string}
        */
-      role?: "owner" | "co_owner" | "carer";
-      /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid?: string;
+      role: "owner" | "co_owner" | "carer";
+    };
+    /** @description Only the fields sent are changed; null clears an optional field. */
+    PintopetsPetMemberUpdate: {
       /**
        * Format: uuid
        * @description User uuid
        */
       user_uuid?: string;
+      /**
+       * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid?: string;
+      /**
+       * @description Role
+       * @enum {string}
+       */
+      role?: "owner" | "co_owner" | "carer";
     };
     /** @description Only the fields sent are changed; null clears an optional field. */
     PintopetsPetUpdate: {
+      /** @description Name */
+      name?: string;
       /**
        * Format: uuid
        * @description Owner user uuid
        */
       owner_user_uuid?: string;
-      /** @description Emergency contact phone */
-      emergency_contact_phone?: string | null;
-      /** @description Insurance provider */
-      insurance_provider?: string | null;
+      /**
+       * Format: date
+       * @description Deceased on
+       */
+      deceased_on?: string | null;
+      /** @description Notes */
+      notes?: string | null;
       /** @description Species */
       species?: string;
       /** @description Species other */
@@ -1705,8 +1750,15 @@ export interface components {
        * @enum {string}
        */
       sex?: "male" | "female" | "unknown";
-      /** @description Name */
-      name?: string;
+      /** @description Emergency contact name */
+      emergency_contact_name?: string | null;
+      /** @description Emergency contact phone */
+      emergency_contact_phone?: string | null;
+      /**
+       * @description Neutered
+       * @enum {string}
+       */
+      neutered?: "yes" | "no" | "unknown";
       /** @description Date of birth is estimate */
       date_of_birth_is_estimate?: boolean | null;
       /** @description Colour markings */
@@ -1723,70 +1775,58 @@ export interface components {
       vet_practice_phone?: string | null;
       /**
        * Format: date
-       * @description Deceased on
+       * @description Date of birth
        */
-      deceased_on?: string | null;
+      date_of_birth?: string | null;
       /**
        * @description Status
        * @enum {string}
        */
       status?: "active" | "archived" | "deceased";
       /**
-       * @description Neutered
-       * @enum {string}
-       */
-      neutered?: "yes" | "no" | "unknown";
-      /**
-       * Format: date
-       * @description Date of birth
-       */
-      date_of_birth?: string | null;
-      /** @description Emergency contact name */
-      emergency_contact_name?: string | null;
-      /** @description Notes */
-      notes?: string | null;
-      /**
        * Format: uuid
        * @description Profile photo uuid
        */
       profile_photo_uuid?: string | null;
+      /** @description Insurance provider */
+      insurance_provider?: string | null;
     };
     /** @description Photos (PintoPets plugin) */
     PintopetsPhoto: {
+      /** Format: date-time */
+      updated_at: string;
       /**
        * Format: uuid
        * @description Pet uuid
        */
       pet_uuid: string;
       id: number;
-      /** @description Bytes */
-      bytes: number;
+      /** @description Caption */
+      caption?: string | null;
+      /** @description Mime type */
+      mime_type: string;
       /** @description Height */
       height?: number | null;
       /** Format: date-time */
       created_at: string;
-      /** @description Mime type */
-      mime_type: string;
+      /** @description Width */
+      width?: number | null;
       /**
        * Format: uuid
        * @description Uploaded by user uuid
        */
       uploaded_by_user_uuid: string;
+      /** Format: uuid */
+      uuid: string;
+      namespace_id: number;
       /** @description Storage key */
       storage_key: string;
       /** @description Thumb key */
       thumb_key?: string | null;
-      namespace_id: number;
+      /** @description Bytes */
+      bytes: number;
       /** @description Alt text */
       alt_text?: string | null;
-      /** Format: date-time */
-      updated_at: string;
-      /** Format: uuid */
-      uuid: string;
-      /** @description Caption */
-      caption?: string | null;
-      /** @description Width */
-      width?: number | null;
     };
     PintopetsPhotoCreate: {
       /**
@@ -1794,6 +1834,14 @@ export interface components {
        * @description Pet uuid
        */
       pet_uuid: string;
+      /** @description Caption */
+      caption?: string | null;
+      /** @description Height */
+      height?: number | null;
+      /** @description Width */
+      width?: number | null;
+      /** @description Mime type */
+      mime_type: string;
       /**
        * Format: uuid
        * @description Uploaded by user uuid
@@ -1803,18 +1851,10 @@ export interface components {
       storage_key: string;
       /** @description Thumb key */
       thumb_key?: string | null;
-      /** @description Mime type */
-      mime_type: string;
-      /** @description Alt text */
-      alt_text?: string | null;
-      /** @description Width */
-      width?: number | null;
-      /** @description Height */
-      height?: number | null;
-      /** @description Caption */
-      caption?: string | null;
       /** @description Bytes */
       bytes: number;
+      /** @description Alt text */
+      alt_text?: string | null;
     };
     /** @description Only the fields sent are changed; null clears an optional field. */
     PintopetsPhotoUpdate: {
@@ -1823,6 +1863,14 @@ export interface components {
        * @description Pet uuid
        */
       pet_uuid?: string;
+      /** @description Caption */
+      caption?: string | null;
+      /** @description Height */
+      height?: number | null;
+      /** @description Width */
+      width?: number | null;
+      /** @description Mime type */
+      mime_type?: string;
       /**
        * Format: uuid
        * @description Uploaded by user uuid
@@ -1832,27 +1880,32 @@ export interface components {
       storage_key?: string;
       /** @description Thumb key */
       thumb_key?: string | null;
-      /** @description Mime type */
-      mime_type?: string;
-      /** @description Alt text */
-      alt_text?: string | null;
-      /** @description Width */
-      width?: number | null;
-      /** @description Height */
-      height?: number | null;
-      /** @description Caption */
-      caption?: string | null;
       /** @description Bytes */
       bytes?: number;
+      /** @description Alt text */
+      alt_text?: string | null;
     };
     /** @description Symptom diary (PintoPets plugin) */
     PintopetsSymptom: {
+      /** Format: date-time */
+      updated_at: string;
       /**
        * Format: uuid
        * @description Pet uuid
        */
       pet_uuid: string;
-      id: number;
+      /**
+       * @description Source
+       * @enum {string}
+       */
+      source: "manual" | "ai_chat";
+      /**
+       * @description Severity
+       * @enum {string}
+       */
+      severity: "mild" | "moderate" | "severe";
+      /** Format: uuid */
+      uuid: string;
       /**
        * Format: date-time
        * @description Occurred at
@@ -1860,42 +1913,19 @@ export interface components {
       occurred_at: string;
       /** Format: date-time */
       created_at: string;
-      /** @description Symptom */
-      symptom: string;
+      namespace_id: number;
+      id: number;
       /** @description Notes */
       notes?: string | null;
-      namespace_id: number;
       /**
        * Format: uuid
        * @description Created by user uuid
        */
       created_by_user_uuid: string;
-      /** Format: date-time */
-      updated_at: string;
-      /**
-       * @description Severity
-       * @enum {string}
-       */
-      severity: "mild" | "moderate" | "severe";
-      /**
-       * @description Source
-       * @enum {string}
-       */
-      source: "manual" | "ai_chat";
-      /** Format: uuid */
-      uuid: string;
+      /** @description Symptom */
+      symptom: string;
     };
     PintopetsSymptomCreate: {
-      /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid: string;
-      /**
-       * @description Severity
-       * @enum {string}
-       */
-      severity: "mild" | "moderate" | "severe";
       /**
        * Format: date-time
        * @description Occurred at
@@ -1906,8 +1936,11 @@ export interface components {
        * @description Created by user uuid
        */
       created_by_user_uuid: string;
-      /** @description Symptom */
-      symptom: string;
+      /**
+       * @description Severity
+       * @enum {string}
+       */
+      severity: "mild" | "moderate" | "severe";
       /**
        * @description Source
        * @enum {string}
@@ -1915,19 +1948,16 @@ export interface components {
       source: "manual" | "ai_chat";
       /** @description Notes */
       notes?: string | null;
-    };
-    /** @description Only the fields sent are changed; null clears an optional field. */
-    PintopetsSymptomUpdate: {
       /**
        * Format: uuid
        * @description Pet uuid
        */
-      pet_uuid?: string;
-      /**
-       * @description Severity
-       * @enum {string}
-       */
-      severity?: "mild" | "moderate" | "severe";
+      pet_uuid: string;
+      /** @description Symptom */
+      symptom: string;
+    };
+    /** @description Only the fields sent are changed; null clears an optional field. */
+    PintopetsSymptomUpdate: {
       /**
        * Format: date-time
        * @description Occurred at
@@ -1938,8 +1968,11 @@ export interface components {
        * @description Created by user uuid
        */
       created_by_user_uuid?: string;
-      /** @description Symptom */
-      symptom?: string;
+      /**
+       * @description Severity
+       * @enum {string}
+       */
+      severity?: "mild" | "moderate" | "severe";
       /**
        * @description Source
        * @enum {string}
@@ -1947,87 +1980,87 @@ export interface components {
       source?: "manual" | "ai_chat";
       /** @description Notes */
       notes?: string | null;
-    };
-    /** @description Vaccinations (PintoPets plugin) */
-    PintopetsVaccination: {
-      /** @description Batch number */
-      batch_number?: string | null;
-      /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid: string;
-      id: number;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid: string;
-      /** Format: date-time */
-      created_at: string;
-      /** @description Notes */
-      notes?: string | null;
-      /** Format: uuid */
-      uuid: string;
-      namespace_id: number;
-      /**
-       * Format: date
-       * @description Given on
-       */
-      given_on: string;
-      /** Format: date-time */
-      updated_at: string;
-      /** @description Vet */
-      vet?: string | null;
-      /**
-       * Format: date
-       * @description Next due on
-       */
-      next_due_on?: string | null;
-      /** @description Vaccine */
-      vaccine: string;
-    };
-    PintopetsVaccinationCreate: {
-      /** @description Batch number */
-      batch_number?: string | null;
-      /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid: string;
-      /** @description Notes */
-      notes?: string | null;
-      /**
-       * Format: date
-       * @description Given on
-       */
-      given_on: string;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid: string;
-      /** @description Vet */
-      vet?: string | null;
-      /**
-       * Format: date
-       * @description Next due on
-       */
-      next_due_on?: string | null;
-      /** @description Vaccine */
-      vaccine: string;
-    };
-    /** @description Only the fields sent are changed; null clears an optional field. */
-    PintopetsVaccinationUpdate: {
-      /** @description Batch number */
-      batch_number?: string | null;
       /**
        * Format: uuid
        * @description Pet uuid
        */
       pet_uuid?: string;
+      /** @description Symptom */
+      symptom?: string;
+    };
+    /** @description Vaccinations (PintoPets plugin) */
+    PintopetsVaccination: {
+      /** Format: date-time */
+      updated_at: string;
+      /**
+       * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid: string;
+      namespace_id: number;
+      /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid: string;
+      /**
+       * Format: date
+       * @description Next due on
+       */
+      next_due_on?: string | null;
+      /** @description Vet */
+      vet?: string | null;
+      /** @description Vaccine */
+      vaccine: string;
+      /** Format: date-time */
+      created_at: string;
+      id: number;
+      /** @description Batch number */
+      batch_number?: string | null;
       /** @description Notes */
       notes?: string | null;
+      /** Format: uuid */
+      uuid: string;
+      /**
+       * Format: date
+       * @description Given on
+       */
+      given_on: string;
+    };
+    PintopetsVaccinationCreate: {
+      /** @description Vet */
+      vet?: string | null;
+      /**
+       * Format: date
+       * @description Given on
+       */
+      given_on: string;
+      /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid: string;
+      /** @description Vaccine */
+      vaccine: string;
+      /** @description Batch number */
+      batch_number?: string | null;
+      /** @description Notes */
+      notes?: string | null;
+      /**
+       * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid: string;
+      /**
+       * Format: date
+       * @description Next due on
+       */
+      next_due_on?: string | null;
+    };
+    /** @description Only the fields sent are changed; null clears an optional field. */
+    PintopetsVaccinationUpdate: {
+      /** @description Vet */
+      vet?: string | null;
       /**
        * Format: date
        * @description Given on
@@ -2038,48 +2071,69 @@ export interface components {
        * @description Created by user uuid
        */
       created_by_user_uuid?: string;
-      /** @description Vet */
-      vet?: string | null;
+      /** @description Vaccine */
+      vaccine?: string;
+      /** @description Batch number */
+      batch_number?: string | null;
+      /** @description Notes */
+      notes?: string | null;
+      /**
+       * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid?: string;
       /**
        * Format: date
        * @description Next due on
        */
       next_due_on?: string | null;
-      /** @description Vaccine */
-      vaccine?: string;
     };
     /** @description Vet visits (PintoPets plugin) */
     PintopetsVetVisit: {
+      /** @description Outcome */
+      outcome?: string | null;
+      /** Format: date-time */
+      updated_at: string;
+      /**
+       * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid: string;
+      /** @description Reason */
+      reason: string;
+      /** @description Cost pence */
+      cost_pence?: number | null;
       /**
        * Format: date
        * @description Visit on
        */
       visit_on: string;
-      id: number;
-      /** @description Vet name */
-      vet_name?: string | null;
-      /** @description Cost pence */
-      cost_pence?: number | null;
+      /** Format: uuid */
+      uuid: string;
+      namespace_id: number;
       /** Format: date-time */
       created_at: string;
       /**
        * Format: uuid
-       * @description Pet uuid
+       * @description Created by user uuid
        */
-      pet_uuid: string;
-      /** Format: date-time */
-      updated_at: string;
-      /** @description Practice */
-      practice?: string | null;
+      created_by_user_uuid: string;
+      id: number;
+      /**
+       * Format: date
+       * @description Follow up on
+       */
+      follow_up_on?: string | null;
       /** @description Notes */
       notes?: string | null;
-      namespace_id: number;
-      /** @description Reason */
-      reason: string;
+      /** @description Practice */
+      practice?: string | null;
+      /** @description Vet name */
+      vet_name?: string | null;
+    };
+    PintopetsVetVisitCreate: {
       /** @description Outcome */
       outcome?: string | null;
-      /** Format: uuid */
-      uuid: string;
       /**
        * Format: date
        * @description Follow up on
@@ -2087,11 +2141,20 @@ export interface components {
       follow_up_on?: string | null;
       /**
        * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid: string;
+      /** @description Reason */
+      reason: string;
+      /**
+       * Format: uuid
        * @description Created by user uuid
        */
       created_by_user_uuid: string;
-    };
-    PintopetsVetVisitCreate: {
+      /** @description Notes */
+      notes?: string | null;
+      /** @description Cost pence */
+      cost_pence?: number | null;
       /**
        * Format: date
        * @description Visit on
@@ -2101,32 +2164,32 @@ export interface components {
       practice?: string | null;
       /** @description Vet name */
       vet_name?: string | null;
-      /** @description Cost pence */
-      cost_pence?: number | null;
+    };
+    /** @description Only the fields sent are changed; null clears an optional field. */
+    PintopetsVetVisitUpdate: {
+      /** @description Outcome */
+      outcome?: string | null;
       /**
        * Format: date
        * @description Follow up on
        */
       follow_up_on?: string | null;
-      /** @description Notes */
-      notes?: string | null;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid: string;
-      /** @description Outcome */
-      outcome?: string | null;
-      /** @description Reason */
-      reason: string;
       /**
        * Format: uuid
        * @description Pet uuid
        */
-      pet_uuid: string;
-    };
-    /** @description Only the fields sent are changed; null clears an optional field. */
-    PintopetsVetVisitUpdate: {
+      pet_uuid?: string;
+      /** @description Reason */
+      reason?: string;
+      /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid?: string;
+      /** @description Notes */
+      notes?: string | null;
+      /** @description Cost pence */
+      cost_pence?: number | null;
       /**
        * Format: date
        * @description Visit on
@@ -2136,67 +2199,39 @@ export interface components {
       practice?: string | null;
       /** @description Vet name */
       vet_name?: string | null;
-      /** @description Cost pence */
-      cost_pence?: number | null;
-      /**
-       * Format: date
-       * @description Follow up on
-       */
-      follow_up_on?: string | null;
-      /** @description Notes */
-      notes?: string | null;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid?: string;
-      /** @description Outcome */
-      outcome?: string | null;
-      /** @description Reason */
-      reason?: string;
-      /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid?: string;
     };
     /** @description Water intake (PintoPets plugin) */
     PintopetsWaterNote: {
+      /** Format: date-time */
+      updated_at: string;
       /**
        * Format: uuid
        * @description Pet uuid
        */
       pet_uuid: string;
-      id: number;
       /**
        * Format: uuid
        * @description Created by user uuid
        */
       created_by_user_uuid: string;
-      /** Format: date-time */
-      created_at: string;
-      /** Format: uuid */
-      uuid: string;
-      namespace_id: number;
       /**
        * Format: date
        * @description Noted on
        */
       noted_on: string;
-      /** @description Observation */
-      observation: string;
       /** Format: date-time */
-      updated_at: string;
+      created_at: string;
+      namespace_id: number;
+      id: number;
       /** @description Notes */
       notes?: string | null;
+      /** Format: uuid */
+      uuid: string;
+      /** @description Observation */
+      observation: string;
     };
     PintopetsWaterNoteCreate: {
       /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid: string;
-      /**
        * Format: date
        * @description Noted on
        */
@@ -2206,18 +2241,18 @@ export interface components {
        * @description Created by user uuid
        */
       created_by_user_uuid: string;
-      /** @description Observation */
-      observation: string;
       /** @description Notes */
       notes?: string | null;
-    };
-    /** @description Only the fields sent are changed; null clears an optional field. */
-    PintopetsWaterNoteUpdate: {
       /**
        * Format: uuid
        * @description Pet uuid
        */
-      pet_uuid?: string;
+      pet_uuid: string;
+      /** @description Observation */
+      observation: string;
+    };
+    /** @description Only the fields sent are changed; null clears an optional field. */
+    PintopetsWaterNoteUpdate: {
       /**
        * Format: date
        * @description Noted on
@@ -2228,69 +2263,69 @@ export interface components {
        * @description Created by user uuid
        */
       created_by_user_uuid?: string;
-      /** @description Observation */
-      observation?: string;
       /** @description Notes */
       notes?: string | null;
-    };
-    /** @description Weights (PintoPets plugin) */
-    PintopetsWeight: {
-      /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid: string;
-      id: number;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid: string;
-      /** Format: date-time */
-      created_at: string;
-      /** Format: uuid */
-      uuid: string;
-      namespace_id: number;
-      /**
-       * Format: date
-       * @description Measured on
-       */
-      measured_on: string;
-      /** @description Weight grams */
-      weight_grams: number;
-      /** Format: date-time */
-      updated_at: string;
-      /** @description Notes */
-      notes?: string | null;
-    };
-    PintopetsWeightCreate: {
-      /**
-       * Format: uuid
-       * @description Pet uuid
-       */
-      pet_uuid: string;
-      /**
-       * Format: date
-       * @description Measured on
-       */
-      measured_on: string;
-      /**
-       * Format: uuid
-       * @description Created by user uuid
-       */
-      created_by_user_uuid: string;
-      /** @description Weight grams */
-      weight_grams: number;
-      /** @description Notes */
-      notes?: string | null;
-    };
-    /** @description Only the fields sent are changed; null clears an optional field. */
-    PintopetsWeightUpdate: {
       /**
        * Format: uuid
        * @description Pet uuid
        */
       pet_uuid?: string;
+      /** @description Observation */
+      observation?: string;
+    };
+    /** @description Weights (PintoPets plugin) */
+    PintopetsWeight: {
+      /** Format: date-time */
+      updated_at: string;
+      /**
+       * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid: string;
+      /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid: string;
+      /**
+       * Format: date
+       * @description Measured on
+       */
+      measured_on: string;
+      /** Format: date-time */
+      created_at: string;
+      namespace_id: number;
+      id: number;
+      /** @description Notes */
+      notes?: string | null;
+      /** Format: uuid */
+      uuid: string;
+      /** @description Weight grams */
+      weight_grams: number;
+    };
+    PintopetsWeightCreate: {
+      /**
+       * Format: date
+       * @description Measured on
+       */
+      measured_on: string;
+      /**
+       * Format: uuid
+       * @description Created by user uuid
+       */
+      created_by_user_uuid: string;
+      /** @description Notes */
+      notes?: string | null;
+      /**
+       * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid: string;
+      /** @description Weight grams */
+      weight_grams: number;
+    };
+    /** @description Only the fields sent are changed; null clears an optional field. */
+    PintopetsWeightUpdate: {
       /**
        * Format: date
        * @description Measured on
@@ -2301,24 +2336,29 @@ export interface components {
        * @description Created by user uuid
        */
       created_by_user_uuid?: string;
-      /** @description Weight grams */
-      weight_grams?: number;
       /** @description Notes */
       notes?: string | null;
+      /**
+       * Format: uuid
+       * @description Pet uuid
+       */
+      pet_uuid?: string;
+      /** @description Weight grams */
+      weight_grams?: number;
     };
     PluginError: {
+      /** @example false */
+      success: boolean;
       error: string;
       /** @description Validation errors: field -> message */
       details?: {
         [key: string]: string;
       };
-      /** @example false */
-      success: boolean;
     };
     PluginPageMeta: {
+      page: number;
       per_page: number;
       total: number;
-      page: number;
       total_pages: number;
     };
   };
@@ -2330,558 +2370,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  pintopets_horse_cares_get: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Horse care uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description The record */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsHorseCare"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_horse_cares_update: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Horse care uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsHorseCareUpdate"];
-      };
-    };
-    responses: {
-      /** @description Updated */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsHorseCare"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_horse_cares_delete: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Horse care uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Deleted */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            success?: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Still referenced by other records */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_pets_get: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Pets uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description The record */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsPet"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_pets_update: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Pets uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsPetUpdate"];
-      };
-    };
-    responses: {
-      /** @description Updated */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsPet"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_pets_delete: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Pets uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Deleted */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            success?: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Still referenced by other records */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_photos_list: {
-    parameters: {
-      query?: {
-        page?: number;
-        per_page?: number;
-        /** @description Search text */
-        q?: string;
-        sort?:
-          | "pet_uuid"
-          | "uploaded_by_user_uuid"
-          | "storage_key"
-          | "thumb_key"
-          | "mime_type"
-          | "bytes"
-          | "width"
-          | "height"
-          | "caption"
-          | "alt_text"
-          | "created_at"
-          | "updated_at";
-        order?: "asc" | "desc";
-        pet_uuid?: string;
-        uploaded_by_user_uuid?: string;
-        storage_key?: string;
-        thumb_key?: string;
-        mime_type?: string;
-        bytes?: number;
-        width?: number;
-        height?: number;
-        caption?: string;
-        alt_text?: string;
-      };
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description A page of photos */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsPhoto"][];
-            meta?: components["schemas"]["PluginPageMeta"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Bad filter value */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_photos_create: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsPhotoCreate"];
-      };
-    };
-    responses: {
-      /** @description Created */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsPhoto"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_vaccinations_list: {
+  pintopets_parasite_treatments_list: {
     parameters: {
       query?: {
         page?: number;
@@ -2891,20 +2380,18 @@ export interface operations {
         sort?:
           | "pet_uuid"
           | "created_by_user_uuid"
-          | "vaccine"
+          | "kind"
+          | "product"
           | "given_on"
-          | "batch_number"
-          | "vet"
           | "next_due_on"
           | "created_at"
           | "updated_at";
         order?: "asc" | "desc";
         pet_uuid?: string;
         created_by_user_uuid?: string;
-        vaccine?: string;
+        kind?: "flea" | "worm" | "tick" | "flea_and_tick" | "lungworm" | "mite" | "other";
+        product?: string;
         given_on?: string;
-        batch_number?: string;
-        vet?: string;
         next_due_on?: string;
       };
       header?: {
@@ -2916,17 +2403,17 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
-      /** @description A page of vaccinations */
+      /** @description A page of flea, worm and tick */
       200: {
         headers: {
           [name: string]: unknown;
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsVaccination"][];
-            meta?: components["schemas"]["PluginPageMeta"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsParasiteTreatment"][];
+            meta?: components["schemas"]["PluginPageMeta"];
           };
         };
       };
@@ -2959,7 +2446,7 @@ export interface operations {
       };
     };
   };
-  pintopets_vaccinations_create: {
+  pintopets_parasite_treatments_create: {
     parameters: {
       query?: never;
       header?: {
@@ -2971,7 +2458,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["PintopetsVaccinationCreate"];
+        "application/json": components["schemas"]["PintopetsParasiteTreatmentCreate"];
       };
     };
     responses: {
@@ -2982,900 +2469,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsVaccination"];
             /** @example true */
             success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_vet_visits_list: {
-    parameters: {
-      query?: {
-        page?: number;
-        per_page?: number;
-        /** @description Search text */
-        q?: string;
-        sort?:
-          | "pet_uuid"
-          | "created_by_user_uuid"
-          | "visit_on"
-          | "practice"
-          | "vet_name"
-          | "reason"
-          | "cost_pence"
-          | "follow_up_on"
-          | "created_at"
-          | "updated_at";
-        order?: "asc" | "desc";
-        pet_uuid?: string;
-        created_by_user_uuid?: string;
-        visit_on?: string;
-        practice?: string;
-        vet_name?: string;
-        reason?: string;
-        cost_pence?: number;
-        follow_up_on?: string;
-      };
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description A page of vet visits */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsVetVisit"][];
-            meta?: components["schemas"]["PluginPageMeta"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Bad filter value */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_vet_visits_create: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsVetVisitCreate"];
-      };
-    };
-    responses: {
-      /** @description Created */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsVetVisit"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_water_notes_list: {
-    parameters: {
-      query?: {
-        page?: number;
-        per_page?: number;
-        /** @description Search text */
-        q?: string;
-        sort?:
-          | "pet_uuid"
-          | "created_by_user_uuid"
-          | "noted_on"
-          | "observation"
-          | "created_at"
-          | "updated_at";
-        order?: "asc" | "desc";
-        pet_uuid?: string;
-        created_by_user_uuid?: string;
-        noted_on?: string;
-        observation?: string;
-      };
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description A page of water intake */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsWaterNote"][];
-            meta?: components["schemas"]["PluginPageMeta"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Bad filter value */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_water_notes_create: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsWaterNoteCreate"];
-      };
-    };
-    responses: {
-      /** @description Created */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsWaterNote"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_weights_list: {
-    parameters: {
-      query?: {
-        page?: number;
-        per_page?: number;
-        /** @description Search text */
-        q?: string;
-        sort?:
-          | "pet_uuid"
-          | "created_by_user_uuid"
-          | "measured_on"
-          | "weight_grams"
-          | "created_at"
-          | "updated_at";
-        order?: "asc" | "desc";
-        pet_uuid?: string;
-        created_by_user_uuid?: string;
-        measured_on?: string;
-        weight_grams?: number;
-      };
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description A page of weights */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsWeight"][];
-            meta?: components["schemas"]["PluginPageMeta"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Bad filter value */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_weights_create: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsWeightCreate"];
-      };
-    };
-    responses: {
-      /** @description Created */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsWeight"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_diet_items_get: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Diet uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description The record */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsDietItem"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_diet_items_update: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Diet uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsDietItemUpdate"];
-      };
-    };
-    responses: {
-      /** @description Updated */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsDietItem"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_diet_items_delete: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Diet uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Deleted */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            success?: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Still referenced by other records */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_weights_get: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Weights uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description The record */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsWeight"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_weights_update: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Weights uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsWeightUpdate"];
-      };
-    };
-    responses: {
-      /** @description Updated */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsWeight"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_weights_delete: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Weights uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Deleted */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            success?: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Still referenced by other records */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_parasite_treatments_get: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Flea, worm and tick uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description The record */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
             data: components["schemas"]["PintopetsParasiteTreatment"];
-            /** @example true */
-            success: boolean;
           };
         };
       };
@@ -3890,76 +2486,6 @@ export interface operations {
       };
       /** @description No permission in this namespace */
       403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_parasite_treatments_update: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Flea, worm and tick uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsParasiteTreatmentUpdate"];
-      };
-    };
-    responses: {
-      /** @description Updated */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsParasiteTreatment"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
         headers: {
           [name: string]: unknown;
         };
@@ -3978,470 +2504,6 @@ export interface operations {
       };
       /** @description Validation failed (details: field -> message) */
       422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_parasite_treatments_delete: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Flea, worm and tick uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Deleted */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            success?: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Still referenced by other records */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_medications_get: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Medicines uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description The record */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsMedication"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_medications_update: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Medicines uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsMedicationUpdate"];
-      };
-    };
-    responses: {
-      /** @description Updated */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsMedication"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_medications_delete: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Medicines uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Deleted */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            success?: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Still referenced by other records */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_water_notes_get: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Water intake uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description The record */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsWaterNote"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_water_notes_update: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Water intake uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsWaterNoteUpdate"];
-      };
-    };
-    responses: {
-      /** @description Updated */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsWaterNote"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_water_notes_delete: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Water intake uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Deleted */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            success?: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Still referenced by other records */
-      409: {
         headers: {
           [name: string]: unknown;
         };
@@ -4473,9 +2535,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsVetVisit"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsVetVisit"];
           };
         };
       };
@@ -4534,9 +2596,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsVetVisit"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsVetVisit"];
           };
         };
       };
@@ -4651,430 +2713,7 @@ export interface operations {
       };
     };
   };
-  pintopets_allergies_list: {
-    parameters: {
-      query?: {
-        page?: number;
-        per_page?: number;
-        /** @description Search text */
-        q?: string;
-        sort?:
-          | "pet_uuid"
-          | "created_by_user_uuid"
-          | "allergen"
-          | "reaction"
-          | "severity"
-          | "created_at"
-          | "updated_at";
-        order?: "asc" | "desc";
-        pet_uuid?: string;
-        created_by_user_uuid?: string;
-        allergen?: string;
-        reaction?: string;
-        severity?: "mild" | "moderate" | "severe";
-      };
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description A page of allergies */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsAllergy"][];
-            meta?: components["schemas"]["PluginPageMeta"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Bad filter value */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_allergies_create: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsAllergyCreate"];
-      };
-    };
-    responses: {
-      /** @description Created */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsAllergy"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_conditions_list: {
-    parameters: {
-      query?: {
-        page?: number;
-        per_page?: number;
-        /** @description Search text */
-        q?: string;
-        sort?:
-          | "pet_uuid"
-          | "created_by_user_uuid"
-          | "name"
-          | "diagnosed_on"
-          | "status"
-          | "created_at"
-          | "updated_at";
-        order?: "asc" | "desc";
-        pet_uuid?: string;
-        created_by_user_uuid?: string;
-        name?: string;
-        diagnosed_on?: string;
-        status?: "active" | "managed" | "resolved";
-      };
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description A page of conditions */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsCondition"][];
-            meta?: components["schemas"]["PluginPageMeta"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Bad filter value */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_conditions_create: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsConditionCreate"];
-      };
-    };
-    responses: {
-      /** @description Created */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsCondition"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_diet_changes_list: {
-    parameters: {
-      query?: {
-        page?: number;
-        per_page?: number;
-        /** @description Search text */
-        q?: string;
-        sort?:
-          | "pet_uuid"
-          | "created_by_user_uuid"
-          | "changed_on"
-          | "description"
-          | "reaction"
-          | "created_at"
-          | "updated_at";
-        order?: "asc" | "desc";
-        pet_uuid?: string;
-        created_by_user_uuid?: string;
-        changed_on?: string;
-        description?: string;
-        reaction?: string;
-      };
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description A page of diet changes */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsDietChange"][];
-            meta?: components["schemas"]["PluginPageMeta"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Bad filter value */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_diet_changes_create: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsDietChangeCreate"];
-      };
-    };
-    responses: {
-      /** @description Created */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsDietChange"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_conditions_get: {
+  pintopets_medications_get: {
     parameters: {
       query?: never;
       header?: {
@@ -5082,7 +2721,7 @@ export interface operations {
         "X-Namespace-Id"?: string;
       };
       path: {
-        /** @description Conditions uuid */
+        /** @description Medicines uuid */
         id: string;
       };
       cookie?: never;
@@ -5096,9 +2735,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsCondition"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsMedication"];
           };
         };
       };
@@ -5131,7 +2770,7 @@ export interface operations {
       };
     };
   };
-  pintopets_conditions_update: {
+  pintopets_medications_update: {
     parameters: {
       query?: never;
       header?: {
@@ -5139,14 +2778,14 @@ export interface operations {
         "X-Namespace-Id"?: string;
       };
       path: {
-        /** @description Conditions uuid */
+        /** @description Medicines uuid */
         id: string;
       };
       cookie?: never;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["PintopetsConditionUpdate"];
+        "application/json": components["schemas"]["PintopetsMedicationUpdate"];
       };
     };
     responses: {
@@ -5157,9 +2796,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsCondition"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsMedication"];
           };
         };
       };
@@ -5210,7 +2849,7 @@ export interface operations {
       };
     };
   };
-  pintopets_conditions_delete: {
+  pintopets_medications_delete: {
     parameters: {
       query?: never;
       header?: {
@@ -5218,7 +2857,7 @@ export interface operations {
         "X-Namespace-Id"?: string;
       };
       path: {
-        /** @description Conditions uuid */
+        /** @description Medicines uuid */
         id: string;
       };
       cookie?: never;
@@ -5296,9 +2935,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsAllergy"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsAllergy"];
           };
         };
       };
@@ -5357,9 +2996,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsAllergy"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsAllergy"];
           };
         };
       };
@@ -5474,139 +3113,7 @@ export interface operations {
       };
     };
   };
-  pintopets_pet_members_list: {
-    parameters: {
-      query?: {
-        page?: number;
-        per_page?: number;
-        /** @description Search text */
-        q?: string;
-        sort?: "pet_uuid" | "user_uuid" | "role" | "created_at" | "updated_at";
-        order?: "asc" | "desc";
-        pet_uuid?: string;
-        user_uuid?: string;
-        role?: "owner" | "co_owner" | "carer";
-      };
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description A page of pet members */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsPetMember"][];
-            meta?: components["schemas"]["PluginPageMeta"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Bad filter value */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_pet_members_create: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsPetMemberCreate"];
-      };
-    };
-    responses: {
-      /** @description Created */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsPetMember"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_vaccinations_get: {
+  pintopets_weights_get: {
     parameters: {
       query?: never;
       header?: {
@@ -5614,7 +3121,7 @@ export interface operations {
         "X-Namespace-Id"?: string;
       };
       path: {
-        /** @description Vaccinations uuid */
+        /** @description Weights uuid */
         id: string;
       };
       cookie?: never;
@@ -5628,9 +3135,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsVaccination"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsWeight"];
           };
         };
       };
@@ -5663,7 +3170,7 @@ export interface operations {
       };
     };
   };
-  pintopets_vaccinations_update: {
+  pintopets_weights_update: {
     parameters: {
       query?: never;
       header?: {
@@ -5671,14 +3178,14 @@ export interface operations {
         "X-Namespace-Id"?: string;
       };
       path: {
-        /** @description Vaccinations uuid */
+        /** @description Weights uuid */
         id: string;
       };
       cookie?: never;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["PintopetsVaccinationUpdate"];
+        "application/json": components["schemas"]["PintopetsWeightUpdate"];
       };
     };
     responses: {
@@ -5689,9 +3196,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsVaccination"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsWeight"];
           };
         };
       };
@@ -5742,7 +3249,7 @@ export interface operations {
       };
     };
   };
-  pintopets_vaccinations_delete: {
+  pintopets_weights_delete: {
     parameters: {
       query?: never;
       header?: {
@@ -5750,7 +3257,7 @@ export interface operations {
         "X-Namespace-Id"?: string;
       };
       path: {
-        /** @description Vaccinations uuid */
+        /** @description Weights uuid */
         id: string;
       };
       cookie?: never;
@@ -5806,7 +3313,7 @@ export interface operations {
       };
     };
   };
-  pintopets_parasite_treatments_list: {
+  pintopets_pets_list: {
     parameters: {
       query?: {
         page?: number;
@@ -5814,21 +3321,51 @@ export interface operations {
         /** @description Search text */
         q?: string;
         sort?:
-          | "pet_uuid"
-          | "created_by_user_uuid"
-          | "kind"
-          | "product"
-          | "given_on"
-          | "next_due_on"
+          | "owner_user_uuid"
+          | "name"
+          | "species"
+          | "species_other"
+          | "breeds"
+          | "sex"
+          | "neutered"
+          | "date_of_birth"
+          | "date_of_birth_is_estimate"
+          | "colour_markings"
+          | "height_inches"
+          | "passport_number"
+          | "insurance_provider"
+          | "insurance_policy_ref"
+          | "vet_practice_name"
+          | "vet_practice_phone"
+          | "emergency_contact_name"
+          | "emergency_contact_phone"
+          | "status"
+          | "deceased_on"
+          | "profile_photo_uuid"
           | "created_at"
           | "updated_at";
         order?: "asc" | "desc";
-        pet_uuid?: string;
-        created_by_user_uuid?: string;
-        kind?: "flea" | "worm" | "tick" | "flea_and_tick" | "lungworm" | "mite" | "other";
-        product?: string;
-        given_on?: string;
-        next_due_on?: string;
+        owner_user_uuid?: string;
+        name?: string;
+        species?: string;
+        species_other?: string;
+        breeds?: string;
+        sex?: "male" | "female" | "unknown";
+        neutered?: "yes" | "no" | "unknown";
+        date_of_birth?: string;
+        date_of_birth_is_estimate?: boolean;
+        colour_markings?: string;
+        height_inches?: number;
+        passport_number?: string;
+        insurance_provider?: string;
+        insurance_policy_ref?: string;
+        vet_practice_name?: string;
+        vet_practice_phone?: string;
+        emergency_contact_name?: string;
+        emergency_contact_phone?: string;
+        status?: "active" | "archived" | "deceased";
+        deceased_on?: string;
+        profile_photo_uuid?: string;
       };
       header?: {
         /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
@@ -5839,17 +3376,17 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
-      /** @description A page of flea, worm and tick */
+      /** @description A page of pets */
       200: {
         headers: {
           [name: string]: unknown;
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsParasiteTreatment"][];
-            meta?: components["schemas"]["PluginPageMeta"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsPet"][];
+            meta?: components["schemas"]["PluginPageMeta"];
           };
         };
       };
@@ -5882,7 +3419,7 @@ export interface operations {
       };
     };
   };
-  pintopets_parasite_treatments_create: {
+  pintopets_pets_create: {
     parameters: {
       query?: never;
       header?: {
@@ -5894,7 +3431,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["PintopetsParasiteTreatmentCreate"];
+        "application/json": components["schemas"]["PintopetsPetCreate"];
       };
     };
     responses: {
@@ -5905,9 +3442,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsParasiteTreatment"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsPet"];
           };
         };
       };
@@ -5971,9 +3508,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsSymptom"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsSymptom"];
           };
         };
       };
@@ -6032,9 +3569,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsSymptom"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsSymptom"];
           };
         };
       };
@@ -6149,66 +3686,32 @@ export interface operations {
       };
     };
   };
-  pintopets_medications_list: {
+  pintopets_water_notes_get: {
     parameters: {
-      query?: {
-        page?: number;
-        per_page?: number;
-        /** @description Search text */
-        q?: string;
-        sort?:
-          | "pet_uuid"
-          | "created_by_user_uuid"
-          | "name"
-          | "dose_as_prescribed"
-          | "frequency"
-          | "start_on"
-          | "end_on"
-          | "prescribed_by"
-          | "reminders_enabled"
-          | "created_at"
-          | "updated_at";
-        order?: "asc" | "desc";
-        pet_uuid?: string;
-        created_by_user_uuid?: string;
-        name?: string;
-        dose_as_prescribed?: string;
-        frequency?: string;
-        start_on?: string;
-        end_on?: string;
-        prescribed_by?: string;
-        reminders_enabled?: boolean;
-      };
+      query?: never;
       header?: {
         /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
         "X-Namespace-Id"?: string;
       };
-      path?: never;
+      path: {
+        /** @description Water intake uuid */
+        id: string;
+      };
       cookie?: never;
     };
     requestBody?: never;
     responses: {
-      /** @description A page of medicines */
+      /** @description The record */
       200: {
         headers: {
           [name: string]: unknown;
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsMedication"][];
-            meta?: components["schemas"]["PluginPageMeta"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsWaterNote"];
           };
-        };
-      };
-      /** @description Bad filter value */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
         };
       };
       /** @description Missing or invalid credentials */
@@ -6222,6 +3725,15 @@ export interface operations {
       };
       /** @description No permission in this namespace */
       403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
         headers: {
           [name: string]: unknown;
         };
@@ -6231,32 +3743,35 @@ export interface operations {
       };
     };
   };
-  pintopets_medications_create: {
+  pintopets_water_notes_update: {
     parameters: {
       query?: never;
       header?: {
         /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
         "X-Namespace-Id"?: string;
       };
-      path?: never;
+      path: {
+        /** @description Water intake uuid */
+        id: string;
+      };
       cookie?: never;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["PintopetsMedicationCreate"];
+        "application/json": components["schemas"]["PintopetsWaterNoteUpdate"];
       };
     };
     responses: {
-      /** @description Created */
-      201: {
+      /** @description Updated */
+      200: {
         headers: {
           [name: string]: unknown;
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsMedication"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsWaterNote"];
           };
         };
       };
@@ -6271,6 +3786,15 @@ export interface operations {
       };
       /** @description No permission in this namespace */
       403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
         headers: {
           [name: string]: unknown;
         };
@@ -6298,90 +3822,30 @@ export interface operations {
       };
     };
   };
-  pintopets_pets_list: {
+  pintopets_water_notes_delete: {
     parameters: {
-      query?: {
-        page?: number;
-        per_page?: number;
-        /** @description Search text */
-        q?: string;
-        sort?:
-          | "owner_user_uuid"
-          | "name"
-          | "species"
-          | "species_other"
-          | "breeds"
-          | "sex"
-          | "neutered"
-          | "date_of_birth"
-          | "date_of_birth_is_estimate"
-          | "colour_markings"
-          | "height_inches"
-          | "passport_number"
-          | "insurance_provider"
-          | "insurance_policy_ref"
-          | "vet_practice_name"
-          | "vet_practice_phone"
-          | "emergency_contact_name"
-          | "emergency_contact_phone"
-          | "status"
-          | "deceased_on"
-          | "profile_photo_uuid"
-          | "created_at"
-          | "updated_at";
-        order?: "asc" | "desc";
-        owner_user_uuid?: string;
-        name?: string;
-        species?: string;
-        species_other?: string;
-        breeds?: string;
-        sex?: "male" | "female" | "unknown";
-        neutered?: "yes" | "no" | "unknown";
-        date_of_birth?: string;
-        date_of_birth_is_estimate?: boolean;
-        colour_markings?: string;
-        height_inches?: number;
-        passport_number?: string;
-        insurance_provider?: string;
-        insurance_policy_ref?: string;
-        vet_practice_name?: string;
-        vet_practice_phone?: string;
-        emergency_contact_name?: string;
-        emergency_contact_phone?: string;
-        status?: "active" | "archived" | "deceased";
-        deceased_on?: string;
-        profile_photo_uuid?: string;
-      };
+      query?: never;
       header?: {
         /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
         "X-Namespace-Id"?: string;
       };
-      path?: never;
+      path: {
+        /** @description Water intake uuid */
+        id: string;
+      };
       cookie?: never;
     };
     requestBody?: never;
     responses: {
-      /** @description A page of pets */
+      /** @description Deleted */
       200: {
         headers: {
           [name: string]: unknown;
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsPet"][];
-            meta?: components["schemas"]["PluginPageMeta"];
-            /** @example true */
-            success: boolean;
+            success?: boolean;
           };
-        };
-      };
-      /** @description Bad filter value */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
         };
       };
       /** @description Missing or invalid credentials */
@@ -6395,6 +3859,24 @@ export interface operations {
       };
       /** @description No permission in this namespace */
       403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Still referenced by other records */
+      409: {
         headers: {
           [name: string]: unknown;
         };
@@ -6404,32 +3886,31 @@ export interface operations {
       };
     };
   };
-  pintopets_pets_create: {
+  pintopets_pet_members_get: {
     parameters: {
       query?: never;
       header?: {
         /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
         "X-Namespace-Id"?: string;
       };
-      path?: never;
+      path: {
+        /** @description Pet members uuid */
+        id: string;
+      };
       cookie?: never;
     };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsPetCreate"];
-      };
-    };
+    requestBody?: never;
     responses: {
-      /** @description Created */
-      201: {
+      /** @description The record */
+      200: {
         headers: {
           [name: string]: unknown;
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsPet"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsPetMember"];
           };
         };
       };
@@ -6444,6 +3925,76 @@ export interface operations {
       };
       /** @description No permission in this namespace */
       403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_pet_members_update: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Pet members uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsPetMemberUpdate"];
+      };
+    };
+    responses: {
+      /** @description Updated */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsPetMember"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
         headers: {
           [name: string]: unknown;
         };
@@ -6471,7 +4022,71 @@ export interface operations {
       };
     };
   };
-  pintopets_diet_items_list: {
+  pintopets_pet_members_delete: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Pet members uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Deleted */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            success?: boolean;
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Still referenced by other records */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_photos_list: {
     parameters: {
       query?: {
         page?: number;
@@ -6480,26 +4095,28 @@ export interface operations {
         q?: string;
         sort?:
           | "pet_uuid"
-          | "created_by_user_uuid"
-          | "kind"
-          | "brand"
-          | "product"
-          | "amount"
-          | "frequency"
-          | "started_on"
-          | "ended_on"
+          | "uploaded_by_user_uuid"
+          | "storage_key"
+          | "thumb_key"
+          | "mime_type"
+          | "bytes"
+          | "width"
+          | "height"
+          | "caption"
+          | "alt_text"
           | "created_at"
           | "updated_at";
         order?: "asc" | "desc";
         pet_uuid?: string;
-        created_by_user_uuid?: string;
-        kind?: "food" | "treat" | "supplement";
-        brand?: string;
-        product?: string;
-        amount?: string;
-        frequency?: string;
-        started_on?: string;
-        ended_on?: string;
+        uploaded_by_user_uuid?: string;
+        storage_key?: string;
+        thumb_key?: string;
+        mime_type?: string;
+        bytes?: number;
+        width?: number;
+        height?: number;
+        caption?: string;
+        alt_text?: string;
       };
       header?: {
         /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
@@ -6510,17 +4127,17 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
-      /** @description A page of diet */
+      /** @description A page of photos */
       200: {
         headers: {
           [name: string]: unknown;
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsDietItem"][];
-            meta?: components["schemas"]["PluginPageMeta"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsPhoto"][];
+            meta?: components["schemas"]["PluginPageMeta"];
           };
         };
       };
@@ -6553,7 +4170,7 @@ export interface operations {
       };
     };
   };
-  pintopets_diet_items_create: {
+  pintopets_photos_create: {
     parameters: {
       query?: never;
       header?: {
@@ -6565,7 +4182,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["PintopetsDietItemCreate"];
+        "application/json": components["schemas"]["PintopetsPhotoCreate"];
       };
     };
     responses: {
@@ -6576,9 +4193,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsDietItem"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsPhoto"];
           };
         };
       };
@@ -6660,10 +4277,10 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsSymptom"][];
-            meta?: components["schemas"]["PluginPageMeta"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsSymptom"][];
+            meta?: components["schemas"]["PluginPageMeta"];
           };
         };
       };
@@ -6719,9 +4336,2018 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsSymptom"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsSymptom"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_horse_cares_list: {
+    parameters: {
+      query?: {
+        page?: number;
+        per_page?: number;
+        /** @description Search text */
+        q?: string;
+        sort?:
+          | "pet_uuid"
+          | "created_by_user_uuid"
+          | "kind"
+          | "done_on"
+          | "provider"
+          | "result"
+          | "next_due_on"
+          | "created_at"
+          | "updated_at";
+        order?: "asc" | "desc";
+        pet_uuid?: string;
+        created_by_user_uuid?: string;
+        kind?: "farrier" | "dental" | "worm_egg_count";
+        done_on?: string;
+        provider?: string;
+        result?: string;
+        next_due_on?: string;
+      };
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description A page of horse care */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsHorseCare"][];
+            meta?: components["schemas"]["PluginPageMeta"];
+          };
+        };
+      };
+      /** @description Bad filter value */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_horse_cares_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsHorseCareCreate"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsHorseCare"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_medications_list: {
+    parameters: {
+      query?: {
+        page?: number;
+        per_page?: number;
+        /** @description Search text */
+        q?: string;
+        sort?:
+          | "pet_uuid"
+          | "created_by_user_uuid"
+          | "name"
+          | "dose_as_prescribed"
+          | "frequency"
+          | "start_on"
+          | "end_on"
+          | "prescribed_by"
+          | "reminders_enabled"
+          | "created_at"
+          | "updated_at";
+        order?: "asc" | "desc";
+        pet_uuid?: string;
+        created_by_user_uuid?: string;
+        name?: string;
+        dose_as_prescribed?: string;
+        frequency?: string;
+        start_on?: string;
+        end_on?: string;
+        prescribed_by?: string;
+        reminders_enabled?: boolean;
+      };
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description A page of medicines */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsMedication"][];
+            meta?: components["schemas"]["PluginPageMeta"];
+          };
+        };
+      };
+      /** @description Bad filter value */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_medications_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsMedicationCreate"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsMedication"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_horse_cares_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Horse care uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The record */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsHorseCare"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_horse_cares_update: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Horse care uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsHorseCareUpdate"];
+      };
+    };
+    responses: {
+      /** @description Updated */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsHorseCare"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_horse_cares_delete: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Horse care uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Deleted */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            success?: boolean;
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Still referenced by other records */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_vaccinations_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Vaccinations uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The record */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsVaccination"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_vaccinations_update: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Vaccinations uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsVaccinationUpdate"];
+      };
+    };
+    responses: {
+      /** @description Updated */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsVaccination"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_vaccinations_delete: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Vaccinations uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Deleted */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            success?: boolean;
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Still referenced by other records */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_diet_items_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Diet uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The record */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsDietItem"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_diet_items_update: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Diet uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsDietItemUpdate"];
+      };
+    };
+    responses: {
+      /** @description Updated */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsDietItem"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_diet_items_delete: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Diet uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Deleted */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            success?: boolean;
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Still referenced by other records */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_vaccinations_list: {
+    parameters: {
+      query?: {
+        page?: number;
+        per_page?: number;
+        /** @description Search text */
+        q?: string;
+        sort?:
+          | "pet_uuid"
+          | "created_by_user_uuid"
+          | "vaccine"
+          | "given_on"
+          | "batch_number"
+          | "vet"
+          | "next_due_on"
+          | "created_at"
+          | "updated_at";
+        order?: "asc" | "desc";
+        pet_uuid?: string;
+        created_by_user_uuid?: string;
+        vaccine?: string;
+        given_on?: string;
+        batch_number?: string;
+        vet?: string;
+        next_due_on?: string;
+      };
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description A page of vaccinations */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsVaccination"][];
+            meta?: components["schemas"]["PluginPageMeta"];
+          };
+        };
+      };
+      /** @description Bad filter value */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_vaccinations_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsVaccinationCreate"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsVaccination"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_pets_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Pets uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The record */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsPet"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_pets_update: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Pets uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsPetUpdate"];
+      };
+    };
+    responses: {
+      /** @description Updated */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsPet"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_pets_delete: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Pets uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Deleted */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            success?: boolean;
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Still referenced by other records */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_allergies_list: {
+    parameters: {
+      query?: {
+        page?: number;
+        per_page?: number;
+        /** @description Search text */
+        q?: string;
+        sort?:
+          | "pet_uuid"
+          | "created_by_user_uuid"
+          | "allergen"
+          | "reaction"
+          | "severity"
+          | "created_at"
+          | "updated_at";
+        order?: "asc" | "desc";
+        pet_uuid?: string;
+        created_by_user_uuid?: string;
+        allergen?: string;
+        reaction?: string;
+        severity?: "mild" | "moderate" | "severe";
+      };
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description A page of allergies */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsAllergy"][];
+            meta?: components["schemas"]["PluginPageMeta"];
+          };
+        };
+      };
+      /** @description Bad filter value */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_allergies_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsAllergyCreate"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsAllergy"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_conditions_list: {
+    parameters: {
+      query?: {
+        page?: number;
+        per_page?: number;
+        /** @description Search text */
+        q?: string;
+        sort?:
+          | "pet_uuid"
+          | "created_by_user_uuid"
+          | "name"
+          | "diagnosed_on"
+          | "status"
+          | "created_at"
+          | "updated_at";
+        order?: "asc" | "desc";
+        pet_uuid?: string;
+        created_by_user_uuid?: string;
+        name?: string;
+        diagnosed_on?: string;
+        status?: "active" | "managed" | "resolved";
+      };
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description A page of conditions */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsCondition"][];
+            meta?: components["schemas"]["PluginPageMeta"];
+          };
+        };
+      };
+      /** @description Bad filter value */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_conditions_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsConditionCreate"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsCondition"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_diet_changes_list: {
+    parameters: {
+      query?: {
+        page?: number;
+        per_page?: number;
+        /** @description Search text */
+        q?: string;
+        sort?:
+          | "pet_uuid"
+          | "created_by_user_uuid"
+          | "changed_on"
+          | "description"
+          | "reaction"
+          | "created_at"
+          | "updated_at";
+        order?: "asc" | "desc";
+        pet_uuid?: string;
+        created_by_user_uuid?: string;
+        changed_on?: string;
+        description?: string;
+        reaction?: string;
+      };
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description A page of diet changes */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsDietChange"][];
+            meta?: components["schemas"]["PluginPageMeta"];
+          };
+        };
+      };
+      /** @description Bad filter value */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_diet_changes_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsDietChangeCreate"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsDietChange"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_conditions_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Conditions uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The record */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsCondition"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_conditions_update: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Conditions uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsConditionUpdate"];
+      };
+    };
+    responses: {
+      /** @description Updated */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsCondition"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_conditions_delete: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Conditions uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Deleted */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            success?: boolean;
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Still referenced by other records */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_vet_visits_list: {
+    parameters: {
+      query?: {
+        page?: number;
+        per_page?: number;
+        /** @description Search text */
+        q?: string;
+        sort?:
+          | "pet_uuid"
+          | "created_by_user_uuid"
+          | "visit_on"
+          | "practice"
+          | "vet_name"
+          | "reason"
+          | "cost_pence"
+          | "follow_up_on"
+          | "created_at"
+          | "updated_at";
+        order?: "asc" | "desc";
+        pet_uuid?: string;
+        created_by_user_uuid?: string;
+        visit_on?: string;
+        practice?: string;
+        vet_name?: string;
+        reason?: string;
+        cost_pence?: number;
+        follow_up_on?: string;
+      };
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description A page of vet visits */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsVetVisit"][];
+            meta?: components["schemas"]["PluginPageMeta"];
+          };
+        };
+      };
+      /** @description Bad filter value */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_vet_visits_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsVetVisitCreate"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsVetVisit"];
           };
         };
       };
@@ -6785,9 +6411,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsDietChange"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsDietChange"];
           };
         };
       };
@@ -6846,9 +6472,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsDietChange"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsDietChange"];
           };
         };
       };
@@ -6963,6 +6589,868 @@ export interface operations {
       };
     };
   };
+  pintopets_get_users_user_uuid_pets: {
+    parameters: {
+      query?: {
+        pet_uuid?: string;
+        status?: "active" | "archived" | "deceased";
+      };
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        user_uuid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: {
+              [key: string]: unknown;
+            }[];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_get_users_user_uuid_due: {
+    parameters: {
+      query?: {
+        pet_uuid?: string;
+      };
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        user_uuid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: {
+              [key: string]: unknown;
+            }[];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_weights_list: {
+    parameters: {
+      query?: {
+        page?: number;
+        per_page?: number;
+        /** @description Search text */
+        q?: string;
+        sort?:
+          | "pet_uuid"
+          | "created_by_user_uuid"
+          | "measured_on"
+          | "weight_grams"
+          | "created_at"
+          | "updated_at";
+        order?: "asc" | "desc";
+        pet_uuid?: string;
+        created_by_user_uuid?: string;
+        measured_on?: string;
+        weight_grams?: number;
+      };
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description A page of weights */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsWeight"][];
+            meta?: components["schemas"]["PluginPageMeta"];
+          };
+        };
+      };
+      /** @description Bad filter value */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_weights_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsWeightCreate"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsWeight"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_water_notes_list: {
+    parameters: {
+      query?: {
+        page?: number;
+        per_page?: number;
+        /** @description Search text */
+        q?: string;
+        sort?:
+          | "pet_uuid"
+          | "created_by_user_uuid"
+          | "noted_on"
+          | "observation"
+          | "created_at"
+          | "updated_at";
+        order?: "asc" | "desc";
+        pet_uuid?: string;
+        created_by_user_uuid?: string;
+        noted_on?: string;
+        observation?: string;
+      };
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description A page of water intake */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsWaterNote"][];
+            meta?: components["schemas"]["PluginPageMeta"];
+          };
+        };
+      };
+      /** @description Bad filter value */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_water_notes_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsWaterNoteCreate"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsWaterNote"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_diet_items_list: {
+    parameters: {
+      query?: {
+        page?: number;
+        per_page?: number;
+        /** @description Search text */
+        q?: string;
+        sort?:
+          | "pet_uuid"
+          | "created_by_user_uuid"
+          | "kind"
+          | "brand"
+          | "product"
+          | "amount"
+          | "frequency"
+          | "started_on"
+          | "ended_on"
+          | "created_at"
+          | "updated_at";
+        order?: "asc" | "desc";
+        pet_uuid?: string;
+        created_by_user_uuid?: string;
+        kind?: "food" | "treat" | "supplement";
+        brand?: string;
+        product?: string;
+        amount?: string;
+        frequency?: string;
+        started_on?: string;
+        ended_on?: string;
+      };
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description A page of diet */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsDietItem"][];
+            meta?: components["schemas"]["PluginPageMeta"];
+          };
+        };
+      };
+      /** @description Bad filter value */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_diet_items_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsDietItemCreate"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsDietItem"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_parasite_treatments_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Flea, worm and tick uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The record */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsParasiteTreatment"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_parasite_treatments_update: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Flea, worm and tick uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsParasiteTreatmentUpdate"];
+      };
+    };
+    responses: {
+      /** @description Updated */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsParasiteTreatment"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_parasite_treatments_delete: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path: {
+        /** @description Flea, worm and tick uuid */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Deleted */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            success?: boolean;
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Not found in this workspace */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Still referenced by other records */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_pet_members_list: {
+    parameters: {
+      query?: {
+        page?: number;
+        per_page?: number;
+        /** @description Search text */
+        q?: string;
+        sort?: "pet_uuid" | "user_uuid" | "role" | "created_at" | "updated_at";
+        order?: "asc" | "desc";
+        pet_uuid?: string;
+        user_uuid?: string;
+        role?: "owner" | "co_owner" | "carer";
+      };
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description A page of pet members */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsPetMember"][];
+            meta?: components["schemas"]["PluginPageMeta"];
+          };
+        };
+      };
+      /** @description Bad filter value */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
+  pintopets_pet_members_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
+        "X-Namespace-Id"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PintopetsPetMemberCreate"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @example true */
+            success: boolean;
+            data: components["schemas"]["PintopetsPetMember"];
+          };
+        };
+      };
+      /** @description Missing or invalid credentials */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description No permission in this namespace */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Conflicts with an existing record */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+      /** @description Validation failed (details: field -> message) */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PluginError"];
+        };
+      };
+    };
+  };
   pintopets_photos_get: {
     parameters: {
       query?: never;
@@ -6985,9 +7473,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsPhoto"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsPhoto"];
           };
         };
       };
@@ -7046,9 +7534,9 @@ export interface operations {
         };
         content: {
           "application/json": {
-            data: components["schemas"]["PintopetsPhoto"];
             /** @example true */
             success: boolean;
+            data: components["schemas"]["PintopetsPhoto"];
           };
         };
       };
@@ -7108,351 +7596,6 @@ export interface operations {
       };
       path: {
         /** @description Photos uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Deleted */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            success?: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Still referenced by other records */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_horse_cares_list: {
-    parameters: {
-      query?: {
-        page?: number;
-        per_page?: number;
-        /** @description Search text */
-        q?: string;
-        sort?:
-          | "pet_uuid"
-          | "created_by_user_uuid"
-          | "kind"
-          | "done_on"
-          | "provider"
-          | "result"
-          | "next_due_on"
-          | "created_at"
-          | "updated_at";
-        order?: "asc" | "desc";
-        pet_uuid?: string;
-        created_by_user_uuid?: string;
-        kind?: "farrier" | "dental" | "worm_egg_count";
-        done_on?: string;
-        provider?: string;
-        result?: string;
-        next_due_on?: string;
-      };
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description A page of horse care */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsHorseCare"][];
-            meta?: components["schemas"]["PluginPageMeta"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Bad filter value */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_horse_cares_create: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsHorseCareCreate"];
-      };
-    };
-    responses: {
-      /** @description Created */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsHorseCare"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_pet_members_get: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Pet members uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description The record */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsPetMember"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_pet_members_update: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Pet members uuid */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PintopetsPetMemberUpdate"];
-      };
-    };
-    responses: {
-      /** @description Updated */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            data: components["schemas"]["PintopetsPetMember"];
-            /** @example true */
-            success: boolean;
-          };
-        };
-      };
-      /** @description Missing or invalid credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description No permission in this namespace */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Not found in this workspace */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Conflicts with an existing record */
-      409: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-      /** @description Validation failed (details: field -> message) */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PluginError"];
-        };
-      };
-    };
-  };
-  pintopets_pet_members_delete: {
-    parameters: {
-      query?: never;
-      header?: {
-        /** @description Workspace UUID (or send X-Namespace-Slug). Defaults to the token's workspace. */
-        "X-Namespace-Id"?: string;
-      };
-      path: {
-        /** @description Pet members uuid */
         id: string;
       };
       cookie?: never;

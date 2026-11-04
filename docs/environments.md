@@ -149,6 +149,21 @@ stop all deploys.
   dashboard, updating the Secret and restarting the pods.
 - `pintopets-session` / `SESSION_SECRET`: generated in-cluster on first install
   and kept across upgrades. Deleting it and redeploying signs everyone out.
+- `pintopets-totp` / `TOTP_ENCRYPTION_KEY`: encrypts authenticator secrets stored
+  in OpsAPI. Generated once and **never rotated by deploys**: losing it disables
+  every user's two-factor sign-in (they'd need recovery codes and to set it up again).
+
+### Two-factor sign-in (all users, however they sign in)
+
+- OpsAPI's own second factor is an emailed code at password sign-in. PintoPets
+  adds authenticator-app TOTP for everyone (Google sign-ins included): QR
+  enrolment, 10 one-time recovery codes (stored hashed), optional code at every
+  sign-in with a 30-day trusted device, lockout after 5 wrong codes for 15 minutes.
+- **Step-up:** turning 2FA or the sign-in check off, new recovery codes, exporting
+  all data and deleting a pet need a code from the last 10 minutes.
+- State lives in the plugin's `account-settings` resource; the OpsAPI API key
+  needs the `pintopets_account_settings` scope. Secret columns are excluded from
+  OpsAPI events and the audit trail.
 
 ## One-off setup (INT)
 

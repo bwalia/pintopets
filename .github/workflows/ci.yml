@@ -61,6 +61,12 @@ jobs:
       - name: OpsAPI plugin loads in the OpsAPI version int runs
         run: docker build -f Dockerfile.opsapi-plugin -t pintopets-opsapi-plugin:ci .
 
+      - name: Generate a throwaway TOTP encryption key for this run
+        run: |
+          key=$(openssl rand -base64 32)
+          echo "::add-mask::$key"
+          echo "TOTP_ENCRYPTION_KEY=$key" >> "$GITHUB_ENV"
+
       - name: Start OpsAPI with the pintopets plugin
         run: |
           set -euo pipefail
