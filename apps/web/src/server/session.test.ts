@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
-const { decodeSession, encodeSession, safeNext } = await import("./session");
+const { decodeSession, encodeSession, safeNext, signToken, verifyToken } =
+  await import("./session");
 
 const secret = "a".repeat(40);
 const user = { sub: "0b9e6c1e-1111-4222-8333-444455556666", email: "a@b.c", name: "Alex" };
@@ -41,5 +42,14 @@ describe("safeNext", () => {
     ["/\\evil.example", "/"],
   ])("%s → %s", (input, out) => {
     expect(safeNext(input)).toBe(out);
+  });
+});
+
+describe("purpose-bound tokens", () => {
+  it("a step-up token is not a session and vice versa", () => {
+    const stepUp = signToken({ sub: user.sub, exp: 9e9 }, secret, "step-up");
+    expect(verifyToken(stepUp, secret, "step-up")).toMatchObject({ sub: user.sub });
+    expect(decodeSession(stepUp, secret)).toBeNull();
+    expect(verifyToken(encodeSession(user, secret), secret, "step-up")).toBeNull();
   });
 });

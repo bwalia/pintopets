@@ -24,10 +24,44 @@ interface Payload extends SessionUser {
 const b64 = (b: Buffer | string) => Buffer.from(b).toString("base64url");
 const sign = (secret: string, data: string) => createHmac("sha256", secret).update(data).digest();
 
+/**
+ * Signed (not encrypted) token: base64url(JSON) "." base64url(HMAC-SHA256).
+ * `purpose` is mixed into the MAC, so a token issued for one use (step-up,
+ * pending sign-in, trusted device) can never be replayed as another (session).
+ */
+export function signToken(
+  payload: Record<string, unknown>,
+  secret: string,
+  purpose: string,
+): string {
+  const data = b64(JSON.stringify(payload));
+  return `${data}.${b64(sign(secret, `${purpose}:${data}`))}`;
+}
+
+export function verifyToken<T extends { exp: number }>(
+  value: string | undefined,
+  secret: string,
+  purpose: string,
+  now = Date.now(),
+): T | null {
+  if (!value) return null;
+  const [data, mac] = value.split(".");
+  if (!data || !mac) return null;
+  const expected = sign(secret, `${purpose}:${data}`);
+  const given = Buffer.from(mac, "base64url");
+  if (given.length !== expected.length || !timingSafeEqual(given, expected)) return null;
+  try {
+    const p = JSON.parse(Buffer.from(data, "base64url").toString("utf8")) as T;
+    if (typeof p.exp !== "number" || p.exp * 1000 < now) return null;
+    return p;
+  } catch {
+    return null;
+  }
+}
+
 export function encodeSession(user: SessionUser, secret: string, now = Date.now()): string {
   const payload: Payload = { ...user, exp: Math.floor(now / 1000) + SESSION_DAYS * 86_400 };
-  const data = b64(JSON.stringify(payload));
-  return `${data}.${b64(sign(secret, data))}`;
+  return signToken({ ...payload }, secret, "session");
 }
 
 export function decodeSession(
@@ -35,20 +69,15 @@ export function decodeSession(
   secret: string,
   now = Date.now(),
 ): SessionUser | null {
-  if (!value) return null;
-  const [data, mac] = value.split(".");
-  if (!data || !mac) return null;
-  const expected = sign(secret, data);
-  const given = Buffer.from(mac, "base64url");
-  if (given.length !== expected.length || !timingSafeEqual(given, expected)) return null;
-  try {
-    const p = JSON.parse(Buffer.from(data, "base64url").toString("utf8")) as Partial<Payload>;
-    if (typeof p.sub !== "string" || typeof p.exp !== "number" || p.exp * 1000 < now) return null;
-    return { sub: p.sub, email: String(p.email ?? ""), name: String(p.name ?? "") };
-  } catch {
-    return null;
-  }
+  const p = verifyToken<Partial<Payload> & { exp: number }>(value, secret, "session", now);
+  if (!p || typeof p.sub !== "string") return null;
+  return { sub: p.sub, email: String(p.email ?? ""), name: String(p.name ?? "") };
 }
+
+/** A sign-in waiting for the authenticator code (/auth/verify), 10 minutes. */
+export const PENDING_COOKIE = "pp_pending";
+/** "Trust this device" after a code at sign-in: 30 days, per user. */
+export const TRUSTED_COOKIE = "pp_trusted";
 
 /** Only same-site relative paths, so `next` can't send people elsewhere. */
 export function safeNext(next: string | null | undefined): string {

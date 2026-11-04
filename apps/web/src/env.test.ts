@@ -36,4 +36,11 @@ describe("parseServerEnv", () => {
   it("allows demo sign-in on int", () => {
     expect(parseServerEnv({ ...base, APP_ENV: "int", DEMO_AUTH: "true" }).DEMO_AUTH).toBe(true);
   });
+
+  it("treats an empty TOTP key as not set, and rejects a short one", () => {
+    expect(
+      parseServerEnv({ ...base, TOTP_ENCRYPTION_KEY: "" }).TOTP_ENCRYPTION_KEY,
+    ).toBeUndefined();
+    expect(() => parseServerEnv({ ...base, TOTP_ENCRYPTION_KEY: "c2hvcnQ=" })).toThrow(/32 bytes/);
+  });
 });
