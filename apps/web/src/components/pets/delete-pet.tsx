@@ -25,7 +25,11 @@ export function DeletePet({ petId, petName }: { petId: string; petName: string }
         Removes {petName}, every record and every photo. This can&apos;t be undone. If you just want
         to hide {petName}, archive instead.
       </p>
-      <Button variant="ghost" className="text-destructive w-fit" onClick={() => setOpen(true)}>
+      <Button
+        variant="ghost"
+        className="text-destructive h-auto min-h-11 w-fit max-w-full py-2 text-left whitespace-normal"
+        onClick={() => setOpen(true)}
+      >
         <Trash2 aria-hidden /> Delete {petName}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>

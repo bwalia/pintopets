@@ -243,3 +243,19 @@ test.describe("My Pets API", () => {
     expect(res.status()).toBe(415);
   });
 });
+
+test("long pet names never push buttons off the card on phones", async ({ page, isMobile }) => {
+  test.skip(!isMobile, "Phone layout");
+  const name = `A very long pet name indeed ${Date.now().toString(36)}`;
+  await page.goto("/pets/new");
+  await page.getByLabel("Name").fill(name);
+  await page.getByLabel("Species").selectOption({ label: "Dog" });
+  await page.getByRole("button", { name: "Add pet" }).click();
+  await expect(page.getByRole("heading", { level: 1, name })).toBeVisible();
+  await page.goto(`${page.url()}/profile`);
+  const viewport = page.viewportSize()?.width ?? 0;
+  for (const label of [`${name} has passed away`, `Delete ${name}`]) {
+    const box = await page.getByRole("button", { name: label }).boundingBox();
+    expect(box && box.x + box.width).toBeLessThanOrEqual(viewport);
+  }
+});
