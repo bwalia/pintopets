@@ -18,8 +18,6 @@ env:
   OPSAPI_NAMESPACE: pintopets
   # Test-only signing key for the session cookie (not a real secret).
   SESSION_SECRET: ci-only-session-secret-not-used-anywhere-else-000
-  # Test-only 32-byte key (base64) for encrypting TOTP secrets.
-  TOTP_ENCRYPTION_KEY: Y2ktb25seS10b3RwLWtleS0wMDAwMDAwMDAwMDAwMDA=
   APP_URL: http://localhost:3000
   NEXT_PUBLIC_APP_URL: http://localhost:3000
   NEXT_TELEMETRY_DISABLED: "1"
@@ -62,6 +60,12 @@ jobs:
 
       - name: OpsAPI plugin loads in the OpsAPI version int runs
         run: docker build -f Dockerfile.opsapi-plugin -t pintopets-opsapi-plugin:ci .
+
+      - name: Generate a throwaway TOTP encryption key for this run
+        run: |
+          key=$(openssl rand -base64 32)
+          echo "::add-mask::$key"
+          echo "TOTP_ENCRYPTION_KEY=$key" >> "$GITHUB_ENV"
 
       - name: Start OpsAPI with the pintopets plugin
         run: |
