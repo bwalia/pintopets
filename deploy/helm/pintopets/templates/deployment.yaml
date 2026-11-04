@@ -73,6 +73,11 @@ spec:
                 secretKeyRef:
                   name: pintopets-session
                   key: SESSION_SECRET
+            - name: TOTP_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: pintopets-totp
+                  key: TOTP_ENCRYPTION_KEY
             {{- range $name, $value := .Values.extraEnv }}
             - name: {{ $name }}
               value: {{ $value | quote }}

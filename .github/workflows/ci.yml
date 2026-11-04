@@ -18,6 +18,8 @@ env:
   OPSAPI_NAMESPACE: pintopets
   # Test-only signing key for the session cookie (not a real secret).
   SESSION_SECRET: ci-only-session-secret-not-used-anywhere-else-000
+  # Test-only 32-byte key (base64) for encrypting TOTP secrets.
+  TOTP_ENCRYPTION_KEY: Y2ktb25seS10b3RwLWtleS0wMDAwMDAwMDAwMDAwMDA=
   APP_URL: http://localhost:3000
   NEXT_PUBLIC_APP_URL: http://localhost:3000
   NEXT_TELEMETRY_DISABLED: "1"
