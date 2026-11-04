@@ -6,16 +6,15 @@ import {
   PetUpdate,
   PhotoUpdate,
   RecordKindSchema,
-  toValidationIssues,
   Uuid,
 } from "@pintopets/api-contract";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 import { requireUser } from "@/server/auth";
-import { HttpError } from "@/server/http";
+import { type ActionResult, runAction } from "@/server/actions";
 import { deletePhoto, setProfilePhoto, updatePhoto } from "@/server/media/photos";
 import { createRecord, deleteRecord, updateRecord } from "@/server/pets/records";
-import { changePetStatus, createPet, updatePet } from "@/server/pets/service";
+import { changePetStatus, createPet, deletePet, updatePet } from "@/server/pets/service";
+import { requireStepUp } from "@/server/security/step-up";
 
 /**
  * Server actions for the My Pets UI. They are public endpoints like the API,
@@ -23,46 +22,6 @@ import { changePetStatus, createPet, updatePet } from "@/server/pets/service";
  * therefore the same permission checks) as /api/v1. Next.js checks the Origin
  * of every action request.
  */
-export type ActionResult<T = undefined> =
-  { ok: true; data: T } | { ok: false; message: string; fieldErrors: Record<string, string> };
-
-async function run<T>(fn: () => Promise<T>): Promise<ActionResult<T>> {
-  try {
-    return { ok: true, data: await fn() };
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return {
-        ok: false,
-        message: "Please check the highlighted fields.",
-        fieldErrors: issuesToFields(toValidationIssues(error)),
-      };
-    }
-    if (error instanceof HttpError) {
-      const issues = Array.isArray(error.details)
-        ? (error.details as { path: (string | number)[]; message: string }[])
-        : [];
-      return { ok: false, message: error.message, fieldErrors: issuesToFields(issues) };
-    }
-    console.error(error);
-    return {
-      ok: false,
-      message: "Something went wrong on our side. Please try again.",
-      fieldErrors: {},
-    };
-  }
-}
-
-function issuesToFields(
-  issues: { path: (string | number)[]; message: string }[],
-): Record<string, string> {
-  const out: Record<string, string> = {};
-  for (const i of issues) {
-    const key = String(i.path[0] ?? "");
-    if (key && !out[key]) out[key] = i.message;
-  }
-  return out;
-}
-
 function refreshPet(petId: string) {
   revalidatePath(`/pets/${petId}`, "layout");
   revalidatePath("/pets");
@@ -71,7 +30,7 @@ function refreshPet(petId: string) {
 }
 
 export async function createPetAction(payload: unknown): Promise<ActionResult<{ id: string }>> {
-  return run(async () => {
+  return runAction(async () => {
     const actor = await requireUser();
     const pet = await createPet(actor, PetInput.parse(payload));
     revalidatePath("/pets");
@@ -81,7 +40,7 @@ export async function createPetAction(payload: unknown): Promise<ActionResult<{ 
 }
 
 export async function updatePetAction(petId: unknown, payload: unknown): Promise<ActionResult> {
-  return run(async () => {
+  return runAction(async () => {
     const actor = await requireUser();
     const id = Uuid.parse(petId);
     await updatePet(actor, id, PetUpdate.parse(payload));
@@ -91,7 +50,7 @@ export async function updatePetAction(petId: unknown, payload: unknown): Promise
 }
 
 export async function changeStatusAction(petId: unknown, payload: unknown): Promise<ActionResult> {
-  return run(async () => {
+  return runAction(async () => {
     const actor = await requireUser();
     const id = Uuid.parse(petId);
     await changePetStatus(actor, id, PetStatusChange.parse(payload));
@@ -106,7 +65,7 @@ export async function saveRecordAction(
   recordId: unknown,
   payload: unknown,
 ): Promise<ActionResult> {
-  return run(async () => {
+  return runAction(async () => {
     const actor = await requireUser();
     const id = Uuid.parse(petId);
     const k = RecordKindSchema.parse(kind);
@@ -122,7 +81,7 @@ export async function deleteRecordAction(
   kind: unknown,
   recordId: unknown,
 ): Promise<ActionResult> {
-  return run(async () => {
+  return runAction(async () => {
     const actor = await requireUser();
     const id = Uuid.parse(petId);
     await deleteRecord(actor, id, RecordKindSchema.parse(kind), Uuid.parse(recordId));
@@ -132,7 +91,7 @@ export async function deleteRecordAction(
 }
 
 export async function setProfilePhotoAction(photoId: unknown): Promise<ActionResult> {
-  return run(async () => {
+  return runAction(async () => {
     const actor = await requireUser();
     const pet = await setProfilePhoto(actor, Uuid.parse(photoId));
     refreshPet(pet.id);
@@ -141,7 +100,7 @@ export async function setProfilePhotoAction(photoId: unknown): Promise<ActionRes
 }
 
 export async function updatePhotoAction(photoId: unknown, payload: unknown): Promise<ActionResult> {
-  return run(async () => {
+  return runAction(async () => {
     const actor = await requireUser();
     const photo = await updatePhoto(actor, Uuid.parse(photoId), PhotoUpdate.parse(payload));
     refreshPet(photo.petId);
@@ -150,7 +109,7 @@ export async function updatePhotoAction(photoId: unknown, payload: unknown): Pro
 }
 
 export async function deletePhotoAction(petId: unknown, photoId: unknown): Promise<ActionResult> {
-  return run(async () => {
+  return runAction(async () => {
     const actor = await requireUser();
     await deletePhoto(actor, Uuid.parse(photoId));
     refreshPet(Uuid.parse(petId));
@@ -162,4 +121,18 @@ export async function deletePhotoAction(petId: unknown, photoId: unknown): Promi
 export async function photosChangedAction(petId: unknown): Promise<void> {
   await requireUser();
   refreshPet(Uuid.parse(petId));
+}
+
+/** Permanent delete: owner only, and a recent authenticator code (step-up). */
+export async function deletePetAction(petId: unknown): Promise<ActionResult> {
+  return runAction(async () => {
+    const actor = await requireUser();
+    const id = Uuid.parse(petId);
+    await requireStepUp(actor);
+    await deletePet(actor, id);
+    revalidatePath("/pets");
+    revalidatePath("/");
+    revalidatePath("/reminders");
+    return undefined;
+  });
 }

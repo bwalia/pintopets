@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@pintopets/ui/components/card";
 import { PetForm } from "@/components/pets/pet-form";
+import { DeletePet } from "@/components/pets/delete-pet";
 import { StatusActions } from "@/components/pets/status-actions";
 import { formatDate, formatHands } from "@/lib/format";
 import { canEditPet } from "@/lib/pet-permissions";
@@ -67,7 +68,10 @@ export default async function ProfilePage({ params }: PageProps<"/pets/[petId]/p
           <h2 id="manage-heading" className="text-h3 mb-3 font-sans font-semibold tracking-normal">
             Manage
           </h2>
-          <StatusActions pet={pet} />
+          <div className="flex flex-col gap-6">
+            <StatusActions pet={pet} />
+            <DeletePet petId={pet.id} petName={pet.name} />
+          </div>
         </section>
       ) : null}
     </div>

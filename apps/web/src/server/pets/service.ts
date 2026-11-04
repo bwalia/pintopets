@@ -2,7 +2,7 @@ import "server-only";
 import type { Pet, PetInputParsed, PetUpdateParsed } from "@pintopets/api-contract";
 import type { Actor } from "../auth";
 import { HttpError } from "../http";
-import { createRow, deleteRow, getRow, updateRow, userView } from "../opsapi/client";
+import { createRow, deleteRow, getRow, listAll, updateRow, userView } from "../opsapi/client";
 import { type OpsRow, pgTimestampToIso } from "../opsapi/mapping";
 import { speciesBySlug, type SpeciesInfo } from "../reference-data";
 import { assertPetAccess, assertWritable, type PetRole, type PetStatus } from "./access";
@@ -145,6 +145,25 @@ export async function updatePet(
   const values = profileColumns(patch, sp);
   if (Object.keys(values).length) await updateRow("pets", petId, values);
   return getPet(actor, petId);
+}
+
+/**
+ * Deletes a pet and everything about it, permanently: OpsAPI cascades every
+ * record; photo files are removed from storage. Owner only; the caller must
+ * also require a recent step-up (authenticator code).
+ */
+export async function deletePet(actor: Pick<Actor, "id">, petId: string): Promise<void> {
+  await assertPetAccess(actor, petId, "owner");
+  const photos = await listAll("photos", { pet_uuid: petId });
+  await deleteRow("pets", petId);
+  const { storage } = await import("../media/storage");
+  await Promise.all(
+    photos.flatMap((p) =>
+      [p.storage_key, p.thumb_key]
+        .filter((k): k is string => typeof k === "string")
+        .map((k) => storage().delete(k)),
+    ),
+  );
 }
 
 /** Archive, restore, or mark as passed away. Owner only. */
