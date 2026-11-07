@@ -4,7 +4,15 @@ import { LogIn } from "lucide-react";
 import { signInEnabled } from "@/server/auth";
 
 /** Shown when nobody is signed in. Sign-in is OpsAPI's (password + 2FA, or Google). */
-export function SignedOut({ title, next = "/" }: { title: string; next?: string }) {
+export function SignedOut({
+  title,
+  next = "/",
+  message = "Sign in to see your pets",
+}: {
+  title: string;
+  next?: string;
+  message?: string;
+}) {
   const enabled = signInEnabled();
   return (
     <div className="mx-auto max-w-2xl">
@@ -13,7 +21,7 @@ export function SignedOut({ title, next = "/" }: { title: string; next?: string 
         <CardContent className="flex items-start gap-4">
           <LogIn className="text-primary mt-0.5 size-6 shrink-0" aria-hidden />
           <div>
-            <p className="font-semibold">Sign in to see your pets</p>
+            <p className="font-semibold">{message}</p>
             <p className="text-muted-foreground mt-1">
               Use your Google account, or your email and password with a one-time code.
             </p>
