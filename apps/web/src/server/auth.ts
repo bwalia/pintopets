@@ -20,6 +20,15 @@ export interface Actor {
 /** Fixed id for the shared demo account (never an OpsAPI user). */
 export const DEMO_USER_ID = "d3e0d3e0-0000-4000-8000-00000000d3e0";
 
+/** Moderators are listed by email in MODERATOR_EMAILS; everyone else is an owner. */
+function roleFor(email: string): UserRole {
+  return env().MODERATOR_EMAILS.includes(email.toLowerCase()) ? "moderator" : "owner";
+}
+
+export function isModerator(actor: Pick<Actor, "role">): boolean {
+  return actor.role === "moderator" || actor.role === "admin";
+}
+
 /**
  * The signed-in user, or null. Users sign in with OpsAPI (hosted sign-in:
  * password + 2FA, or Google) and get a PintoPets session cookie. DEMO_AUTH (a
@@ -37,7 +46,7 @@ export async function currentUser(): Promise<Actor | null> {
         id: session.sub,
         email: session.email,
         displayName: session.name || session.email,
-        role: "owner",
+        role: roleFor(session.email),
         demo: false,
       };
     }
@@ -47,7 +56,7 @@ export async function currentUser(): Promise<Actor | null> {
       id: DEMO_USER_ID,
       email: "demo@pintopets.app",
       displayName: "Demo owner",
-      role: "owner",
+      role: roleFor("demo@pintopets.app"),
       demo: true,
     };
   }

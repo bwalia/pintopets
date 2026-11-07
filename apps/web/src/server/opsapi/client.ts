@@ -41,7 +41,13 @@ export type Resource =
   | "diet-changes"
   | "water-notes"
   | "photos"
-  | "account-settings";
+  | "account-settings"
+  | "forum-members"
+  | "forum-threads"
+  | "forum-replies"
+  | "forum-votes"
+  | "forum-reports"
+  | "forum-mod-actions";
 
 /** OpsAPI failures → PintoPets' standard API errors. */
 export function toHttpError(error: unknown): unknown {
@@ -135,6 +141,27 @@ export async function userView(
   );
   const env = (data ?? {}) as Envelope;
   return Array.isArray(env.data) ? (env.data as OpsRow[]) : [];
+}
+
+/**
+ * The plugin's hand-written routes (e.g. forum.lua). `path` is under
+ * /api/v2/pintopets and is built from validated values only.
+ */
+export async function pluginGet<T = unknown>(
+  path: string,
+  query: Query = {},
+): Promise<{ data: T; meta: Record<string, unknown> | null }> {
+  const { data } = await call(() => loose().GET(`/api/v2/pintopets${path}`, { params: { query } }));
+  const env = (data ?? {}) as Envelope;
+  return { data: env.data as T, meta: (env.meta as Record<string, unknown>) ?? null };
+}
+
+export async function pluginPost<T = unknown>(
+  path: string,
+  body: Record<string, unknown> = {},
+): Promise<T> {
+  const { data } = await call(() => loose().POST(`/api/v2/pintopets${path}`, { body }));
+  return ((data ?? {}) as Envelope).data as T;
 }
 
 export async function getRow(resource: Resource, uuid: string): Promise<OpsRow | null> {

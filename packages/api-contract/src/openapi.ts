@@ -5,6 +5,7 @@ import "./routes/health";
 import "./routes/reference";
 import "./routes/pets";
 import "./routes/records";
+import "./routes/community";
 
 export interface OpenApiOptions {
   serverUrl: string;
