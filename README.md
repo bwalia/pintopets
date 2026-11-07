@@ -55,6 +55,26 @@ Changing the plugin: edit `opsapi/pintopets` (or add a resource with
 - UI text lives in `apps/web/messages/en-GB.json` (next-intl), ready for more languages.
 - Secrets live only in `.env.local` or the hosting provider. Never commit them.
 
+## Community forum
+
+`/community`: topics, search, sort (latest, most helpful, unanswered), threads,
+replies, "helpful" votes and accepted answers. Reading is public; posting needs
+an account. API: `/api/v1/community/*` (in the OpenAPI spec).
+
+Safety, enforced on the server (`apps/web/src/server/community`):
+
+- Authors show only a community name (set on `/account`), never their email;
+  official-looking names ("Vet", "Moderator", "PintoPets") are refused.
+- Phone numbers, email addresses, link shorteners, more than 3 links, shouting and
+  repeated characters are blocked; invisible/bidi characters are stripped.
+- Posts render as plain text (no HTML); links get `rel="nofollow ugc noopener"`.
+- Per-person rate limits counted in the database (5 threads and 40 replies an
+  hour, 200 votes an hour, 30 reports a day) and duplicate-post detection.
+- 3 reports from different people hide a post until a moderator reviews it.
+- Moderators (`MODERATOR_EMAILS`) get `/moderation`: hide, restore, remove,
+  lock, pin, and pause members (pausing needs a 2FA step-up). Every action is
+  written to an audit log.
+
 ## Useful pages (local)
 
 - `/design`: design system preview (colours, buttons, badges, alerts)

@@ -23,6 +23,7 @@ env:
   NEXT_TELEMETRY_DISABLED: "1"
   # Shared demo sign-in for tests (never on prod; the app refuses it there).
   DEMO_AUTH: "true"
+  MODERATOR_EMAILS: demo@pintopets.app
   MEDIA_DIR: /tmp/pintopets-media
 
 jobs:

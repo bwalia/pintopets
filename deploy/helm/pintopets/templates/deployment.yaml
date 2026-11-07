@@ -55,6 +55,8 @@ spec:
               value: {{ .Values.port | quote }}
             - name: DEMO_AUTH
               value: {{ .Values.demoAuth | quote }}
+            - name: MODERATOR_EMAILS
+              value: {{ join "," .Values.community.moderatorEmails | quote }}
             - name: MEDIA_DIR
               value: {{ .Values.media.mountPath | quote }}
             - name: OPSAPI_URL
