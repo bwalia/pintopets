@@ -1,0 +1,4 @@
+// Local web app (`pnpm dev`). The simulator reaches the Mac's localhost.
+// Two slashes would start a comment in xcconfig, hence $(SLASH).
+SLASH = /
+PINTOPETS_API_URL = http:$(SLASH)$(SLASH)localhost:3000
