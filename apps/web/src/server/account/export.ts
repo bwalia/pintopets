@@ -2,6 +2,7 @@ import "server-only";
 import { RECORD_KINDS } from "@pintopets/api-contract";
 import type { Actor } from "../auth";
 import { mapLimit } from "../concurrency";
+import { communityPosts } from "../community/service";
 import { listPhotos } from "../media/photos";
 import { listRecords } from "../pets/records";
 import { listPets } from "../pets/service";
@@ -11,7 +12,7 @@ import { securityStatus } from "../security/service";
  * Everything PintoPets holds about the user's pets (UK GDPR access/portability).
  * Photo files are referenced by URL; secrets are never included.
  */
-export async function exportMyData(actor: Pick<Actor, "id" | "email" | "displayName">) {
+export async function exportMyData(actor: Pick<Actor, "id" | "email" | "displayName" | "role">) {
   const statuses = ["active", "archived", "deceased"] as const;
   const pets = (await Promise.all(statuses.map((s) => listPets(actor, s)))).flat();
   const security = await securityStatus(actor);
@@ -36,5 +37,7 @@ export async function exportMyData(actor: Pick<Actor, "id" | "email" | "displayN
       ),
       photos: await listPhotos(actor, pet.id),
     })),
+    // Everything they wrote in the community, including hidden or removed posts.
+    community: await communityPosts(actor),
   };
 }

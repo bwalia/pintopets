@@ -50,6 +50,10 @@ extraEnv: {}
 # refuses to start with it on prod (APP_ENV=prod).
 demoAuth: false
 
+# Community forum moderators (sign-in emails).
+community:
+  moderatorEmails: []
+
 # Uploaded photos. One RWO volume, so the web Deployment uses the Recreate
 # strategy while this is enabled (Cloudflare R2 replaces it later).
 media:

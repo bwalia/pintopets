@@ -11,7 +11,9 @@ import type { Metadata } from "next";
 import { PrivacyCard } from "@/components/account/privacy-card";
 import { TwoFactorCard } from "@/components/account/two-factor-card";
 import { SignedOut } from "@/components/signed-out";
+import { CommunityNameCard } from "@/components/community/community-name-card";
 import { currentUser } from "@/server/auth";
+import { communityProfile } from "@/server/community/service";
 import { securityStatus } from "@/server/security/service";
 
 export const metadata: Metadata = { title: "Account" };
@@ -19,7 +21,10 @@ export const metadata: Metadata = { title: "Account" };
 export default async function AccountPage() {
   const user = await currentUser();
   if (!user) return <SignedOut title="Account" next="/account" />;
-  const security = await securityStatus(user).catch(() => null);
+  const [security, community] = await Promise.all([
+    securityStatus(user).catch(() => null),
+    communityProfile(user).catch(() => null),
+  ]);
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
@@ -55,6 +60,10 @@ export default async function AccountPage() {
           )}
         </CardContent>
       </Card>
+
+      {community ? (
+        <CommunityNameCard displayName={community.displayName} isNew={community.isNew} />
+      ) : null}
 
       {security ? (
         <>

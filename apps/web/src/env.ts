@@ -31,6 +31,19 @@ const ServerEnv = z
         )
         .optional(),
     ),
+    /**
+     * Community moderators: comma-separated sign-in emails. They see the
+     * moderation queue and can hide posts, lock threads and suspend members.
+     */
+    MODERATOR_EMAILS: z
+      .string()
+      .default("")
+      .transform((v) =>
+        v
+          .split(",")
+          .map((e) => e.trim().toLowerCase())
+          .filter(Boolean),
+      ),
     NEXT_PUBLIC_SENTRY_DSN: z.union([z.url(), z.literal("")]).optional(),
     APP_ENV: z.enum(["local", "int", "test", "acc", "prod"]).default("local"),
     /**

@@ -12,6 +12,8 @@ extraEnv:
 
 # Real sign-in through OpsAPI (hosted page: password + 2FA, or Google).
 demoAuth: false
+community:
+  moderatorEmails: ["tenthmatrix.mailer@gmail.com"]
 
 opsapi:
   url: http://workstation-opsapi.int.svc.cluster.local

@@ -2,8 +2,8 @@
 return {
     code = "pintopets",          -- stable id: keys migrations + RBAC; never rename
     name = "PintoPets",
-    version = "0.1.0",
-    description = "Pet records, health history and reminders for PintoPets (pintopets.app)",
+    version = "0.2.0",
+    description = "Pet records, health history, reminders and a community forum for PintoPets (pintopets.app)",
     sdk_version = 1,            -- helper.plugin-sdk version this plugin targets
 
     -- RBAC modules. On first install admin/owner roles get "manage"; grant
@@ -25,6 +25,12 @@ return {
         { machine_name = "pintopets_water_notes", name = "Water intake", category = "PintoPets" },
         { machine_name = "pintopets_photos", name = "Photos", category = "PintoPets" },
         { machine_name = "pintopets_account_settings", name = "Account security", category = "PintoPets" },
+        { machine_name = "pintopets_forum_members", name = "Community members", category = "PintoPets Community" },
+        { machine_name = "pintopets_forum_threads", name = "Community threads", category = "PintoPets Community" },
+        { machine_name = "pintopets_forum_replies", name = "Community replies", category = "PintoPets Community" },
+        { machine_name = "pintopets_forum_votes", name = "Community votes", category = "PintoPets Community" },
+        { machine_name = "pintopets_forum_reports", name = "Community reports", category = "PintoPets Community" },
+        { machine_name = "pintopets_forum_mod_actions", name = "Moderation log", category = "PintoPets Community" },
         -- opsapi:modules (make:resource adds entries above this line)
     },
 
@@ -53,6 +59,12 @@ return {
         { label = "Water intake", resource = "water-notes", module = "pintopets_water_notes", icon = "Droplets" },
         { label = "Photos", resource = "photos", module = "pintopets_photos", icon = "Image" },
         { label = "Account security", resource = "account-settings", module = "pintopets_account_settings", icon = "ShieldCheck" },
+        { label = "Community members", resource = "forum-members", module = "pintopets_forum_members", icon = "UserRound" },
+        { label = "Community threads", resource = "forum-threads", module = "pintopets_forum_threads", icon = "MessagesSquare" },
+        { label = "Community replies", resource = "forum-replies", module = "pintopets_forum_replies", icon = "MessageSquareReply" },
+        { label = "Community votes", resource = "forum-votes", module = "pintopets_forum_votes", icon = "ThumbsUp" },
+        { label = "Community reports", resource = "forum-reports", module = "pintopets_forum_reports", icon = "Flag" },
+        { label = "Moderation log", resource = "forum-mod-actions", module = "pintopets_forum_mod_actions", icon = "Gavel" },
         -- opsapi:menu (make:resource adds entries above this line)
     },
 
@@ -76,6 +88,10 @@ return {
         photo = "pintopets_photos",
         -- Secrets never leave the table: kept out of events and the audit trail.
         account_setting = { table = "pintopets_account_settings", hide = "totp_secret_enc,recovery_codes" },
+        forum_thread = "pintopets_forum_threads",
+        forum_reply = "pintopets_forum_replies",
+        forum_report = "pintopets_forum_reports",
+        forum_mod_action = "pintopets_forum_mod_actions",
         -- opsapi:publishes (make:resource adds entries above this line)
     },
 
