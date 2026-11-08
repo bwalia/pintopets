@@ -47,3 +47,21 @@ the device; tokens are signed rather than stored, so they lapse after 30 days.
 
 Not yet in the app: adding health records other than weight, editing and
 deleting forum posts, moderator tools, push notifications.
+
+## TestFlight
+
+```sh
+apps/ios/scripts/testflight.sh
+```
+
+Archives the Release build (build number = UTC time), signs it with the team's
+Apple Distribution certificate and the "PintoPets App Store" profile, and
+uploads it with the App Store Connect API key in
+`~/.appstoreconnect/private_keys/`. Run it from your own Terminal: macOS asks
+once to let `codesign` use the signing key. Release builds talk to
+`https://int.pintopets.app`, so testers need the Workstation VPN until there is a
+production host.
+
+Set up once (done for team PAS2QUVJHC): bundle id `app.pintopets.ios`, the
+"PintoPets App Store" profile, and the app record in App Store Connect
+(created by hand: Apple's API can't create apps).
