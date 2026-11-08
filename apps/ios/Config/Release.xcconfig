@@ -1,0 +1,3 @@
+// Integration environment (Workstation VPN). Change for production releases.
+SLASH = /
+PINTOPETS_API_URL = https:$(SLASH)$(SLASH)int.pintopets.app

@@ -1,7 +1,8 @@
 import "server-only";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { connection } from "next/server";
 import { env } from "@/env";
+import { verifyAppToken } from "./app-auth";
 import { HttpError } from "./http";
 import { decodeSession, SESSION_COOKIE } from "./session";
 
@@ -40,7 +41,12 @@ export async function currentUser(): Promise<Actor | null> {
   await connection();
   const secret = env().SESSION_SECRET;
   if (secret) {
-    const session = decodeSession((await cookies()).get(SESSION_COOKIE)?.value, secret);
+    // The iOS app sends a bearer token; browsers send the session cookie.
+    const authorization = (await headers()).get("authorization");
+    const session = authorization
+      ? verifyAppToken(authorization, secret)
+      : decodeSession((await cookies()).get(SESSION_COOKIE)?.value, secret);
+    if (authorization && !session) return null;
     if (session) {
       return {
         id: session.sub,

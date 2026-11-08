@@ -6,6 +6,7 @@ import "./routes/reference";
 import "./routes/pets";
 import "./routes/records";
 import "./routes/community";
+import "./routes/auth";
 
 export interface OpenApiOptions {
   serverUrl: string;
@@ -20,7 +21,7 @@ export function generateOpenApiDocument({ serverUrl, version }: OpenApiOptions) 
       title: "PintoPets API",
       version,
       description:
-        "Versioned API used by the PintoPets web dashboard and (later) the iOS and Android apps. " +
+        "Versioned API used by the PintoPets web dashboard and the iOS app (bearer tokens from POST /api/v1/auth/token). " +
         "Errors always use `{ error: { code, message, details } }`.",
     },
     servers: [{ url: serverUrl }],

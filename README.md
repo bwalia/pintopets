@@ -8,6 +8,7 @@ Phase 1 is the web dashboard (this repo). It is built API-first so the iOS and A
 
 ```
 apps/web               Next.js app (dashboard + /api/v1 route handlers)
+apps/ios               native SwiftUI iPhone/iPad app (XcodeGen project)
 packages/db            reference data (species, breeds, microchip codes)
 opsapi/pintopets       OpsAPI plugin: tables, REST API and admin pages for all pet data
 packages/api-contract  zod schemas → OpenAPI 3.1 (/api/v1/openapi.json)
@@ -15,7 +16,7 @@ packages/ui            design tokens + shared components (Tailwind 4, shadcn-sty
 packages/config        shared tsconfig and ESLint config
 ```
 
-Later milestones add `packages/ai`, `packages/core` and `packages/emails`, and later still `apps/ios` and `apps/android`.
+Later milestones add `packages/ai`, `packages/core` and `packages/emails`, and later still `apps/android`.
 
 ## Getting started
 
@@ -74,6 +75,12 @@ Safety, enforced on the server (`apps/web/src/server/community`):
 - Moderators (`MODERATOR_EMAILS`) get `/moderation`: hide, restore, remove,
   lock, pin, and pause members (pausing needs a 2FA step-up). Every action is
   written to an audit log.
+
+## iOS app
+
+A native SwiftUI app lives in `apps/ios` (My Pets, Reminders, Community, Account).
+It uses the same `/api/v1` API, signing in through the website with PKCE and a
+bearer token. See [apps/ios/README.md](apps/ios/README.md).
 
 ## Useful pages (local)
 
