@@ -1,23 +1,36 @@
+import { ThreadListQuery } from "@pintopets/api-contract";
 import { Card, CardContent, CardDescription, CardTitle } from "@pintopets/ui/components/card";
-import { MessageCircleQuestion, PawPrint, Plus, UsersRound } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@pintopets/ui/components/button";
-import { PetCard } from "@/components/pets/pet-card";
-import { ReminderList } from "@/components/reminder-list";
-import { currentUser } from "@/server/auth";
-import { listReminders, todayInLondon } from "@/server/pets/reminders";
-import { listPets } from "@/server/pets/service";
+import { MessageCircleQuestion, PawPrint, UsersRound } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { Dashboard } from "@/components/dashboard";
 import { UrgentHelp } from "@/components/urgent-help";
 import { WorryBox } from "@/components/worry-box";
+import { currentUser } from "@/server/auth";
+import { listThreads } from "@/server/community/service";
+import { listReminders, todayInLondon } from "@/server/pets/reminders";
+import { listPets } from "@/server/pets/service";
 
 export default async function HomePage() {
   const t = await getTranslations("home");
   const user = await currentUser();
-  const [pets, reminders] = user
-    ? await Promise.all([listPets(user), listReminders(user)])
-    : [[], []];
-  const today = todayInLondon();
+  if (user) {
+    const [pets, reminders, threads] = await Promise.all([
+      listPets(user),
+      listReminders(user),
+      listThreads(user, ThreadListQuery.parse({}))
+        .then((r) => r.data)
+        .catch(() => []),
+    ]);
+    return (
+      <Dashboard
+        firstName={user.demo ? null : user.displayName.split(/[\s@]/)[0] || null}
+        pets={pets}
+        reminders={reminders}
+        threads={threads}
+        todayIso={todayInLondon()}
+      />
+    );
+  }
   const features = [
     { icon: PawPrint, title: t("featurePetsTitle"), body: t("featurePetsBody") },
     { icon: MessageCircleQuestion, title: t("featureAskTitle"), body: t("featureAskBody") },
@@ -35,44 +48,6 @@ export default async function HomePage() {
       </section>
 
       <UrgentHelp />
-
-      {user ? (
-        <section aria-labelledby="your-pets" className="flex flex-col gap-3">
-          <div className="flex items-end justify-between gap-3">
-            <h2 id="your-pets" className="font-semibold">
-              Your pets
-            </h2>
-            <Button asChild size="sm" variant="secondary">
-              <Link href="/pets/new">
-                <Plus aria-hidden /> Add pet
-              </Link>
-            </Button>
-          </div>
-          {pets.length ? (
-            <ul className="grid gap-3 sm:grid-cols-2">
-              {pets.slice(0, 4).map((pet) => (
-                <li key={pet.id}>
-                  <PetCard
-                    pet={pet}
-                    nextReminder={reminders.find((r) => r.petId === pet.id)}
-                    todayIso={today}
-                  />
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-muted-foreground">
-              Add your pets to keep their records, photos and reminders in one place.
-            </p>
-          )}
-          {reminders.length ? (
-            <>
-              <h2 className="mt-4 font-semibold">Coming up</h2>
-              <ReminderList reminders={reminders.slice(0, 4)} />
-            </>
-          ) : null}
-        </section>
-      ) : null}
 
       <section aria-labelledby="features-heading">
         <h2 id="features-heading" className="font-semibold">

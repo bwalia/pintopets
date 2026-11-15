@@ -2,10 +2,18 @@ import { expect, test } from "@playwright/test";
 import { expectNoA11yViolations } from "./a11y";
 
 test.describe("home page", () => {
-  test("shows the worry box and urgent help", async ({ page }) => {
+  test("signed in, the home page is a dashboard with the worry box and urgent help", async ({
+    page,
+  }) => {
     await page.goto("/");
     await expect(
-      page.getByRole("heading", { level: 1, name: "What's worrying you about your pet?" }),
+      page.getByRole("heading", { level: 1, name: /^Good (morning|afternoon|evening)/ }),
+    ).toBeVisible();
+    for (const name of ["Needs attention", "Your pets", "Community"]) {
+      await expect(page.getByRole("heading", { level: 2, name, exact: true })).toBeVisible();
+    }
+    await expect(
+      page.getByRole("heading", { level: 2, name: "What's worrying you about your pet?" }),
     ).toBeVisible();
     await expect(page.getByRole("textbox", { name: "Describe what's happening" })).toBeVisible();
     await expect(page.getByRole("link", { name: /Find an emergency vet/ })).toHaveAttribute(
