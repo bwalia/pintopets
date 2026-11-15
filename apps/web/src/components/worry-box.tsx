@@ -1,5 +1,6 @@
 import { Button } from "@pintopets/ui/components/button";
 import { Textarea } from "@pintopets/ui/components/textarea";
+import { cn } from "@pintopets/ui/lib/utils";
 import { getTranslations } from "next-intl/server";
 
 /**
@@ -7,7 +8,7 @@ import { getTranslations } from "next-intl/server";
  * to /ask; pet picking, triage and follow-up questions arrive in M7.
  * A plain GET form, so it works before JavaScript loads.
  */
-export async function WorryBox() {
+export async function WorryBox({ compact = false }: { compact?: boolean }) {
   const t = await getTranslations("home");
   return (
     <form action="/ask" method="get" className="flex flex-col gap-3">
@@ -23,13 +24,26 @@ export async function WorryBox() {
         rows={3}
         placeholder={t("placeholder")}
         aria-describedby="worry-disclaimer"
-        className="min-h-28 text-lg shadow-sm"
+        className={compact ? "min-h-24" : "min-h-28 text-lg shadow-sm"}
       />
-      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p id="worry-disclaimer" className="text-muted-foreground text-sm">
+      <div
+        className={
+          compact
+            ? "flex flex-col gap-3"
+            : "flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between"
+        }
+      >
+        <p
+          id="worry-disclaimer"
+          className={cn("text-muted-foreground text-sm", compact && "order-last text-xs")}
+        >
           {t("disclaimer")}
         </p>
-        <Button type="submit" size="lg" className="sm:min-w-32">
+        <Button
+          type="submit"
+          size={compact ? "default" : "lg"}
+          className={compact ? "w-full" : "sm:min-w-32"}
+        >
           {t("submit")}
         </Button>
       </div>
