@@ -1,13 +1,20 @@
 /**
- * Demo data for local development: a household of pets with photos, a year of
- * health records timed so reminders are overdue / due soon / coming up, a
- * pet who has passed away, and a lively community forum.
+ * Demo data: a household of pets with photos, a year of health records timed
+ * so reminders are overdue / due soon / coming up, a pet who has passed away,
+ * and a lively community forum.
  *
+ * Local (the shared demo account):
  *   pnpm --filter @pintopets/web seed:demo
+ *   Clears the demo account's pets and every forum post in the local OpsAPI
+ *   (which e2e runs fill with throwaway rows), then seeds. Needs APP_ENV=local
+ *   and OPSAPI_URL on localhost.
  *
- * LOCAL ONLY. It first clears the demo account's pets and every forum post in
- * the local OpsAPI (which e2e runs fill with throwaway rows), then seeds. It
- * refuses to run unless APP_ENV=local and OPSAPI_URL is on localhost.
+ * int (a real account, via scripts/seed/seed-int.sh):
+ *   APP_ENV=int SEED_OWNER_ID=<OpsAPI user uuid>. Only replaces what an
+ *   earlier seed made: the owner's pets with the seeded names, and the seeded
+ *   members with their threads (replies cascade) and votes. Anything else,
+ *   including the owner's own pets and other people's posts, is left alone.
+ *   Never runs on acc or prod.
  *
  * Photos: Unsplash (free to use under the Unsplash License), see photos/CREDITS.md.
  */
@@ -30,7 +37,13 @@ import { changePetStatus, createPet, deletePet, listPets } from "@/server/pets/s
 
 type Who = Pick<Actor, "id" | "role" | "displayName">;
 
-const demo: Who = { id: DEMO_USER_ID, role: "moderator", displayName: "Demo owner" };
+const target = process.env.APP_ENV === "int" ? "int" : "local";
+/** Whose household the pets join: the demo account locally, a real account on int. */
+const demo: Who = {
+  id: target === "int" ? (process.env.SEED_OWNER_ID ?? "") : DEMO_USER_ID,
+  role: "moderator",
+  displayName: "Demo owner",
+};
 
 /** Fixed ids so re-running replaces the same community members. */
 const member = (n: number, displayName: string): Who => ({
@@ -832,13 +845,38 @@ const THREADS: SeedThread[] = [
   },
 ];
 
-function assertLocal() {
+function assertTarget() {
   const url = new URL(env().OPSAPI_URL);
+  if (target === "int") {
+    if (env().APP_ENV !== "int" || !/^[0-9a-f-]{36}$/.test(demo.id)) {
+      throw new Error("Seeding int needs APP_ENV=int and SEED_OWNER_ID=<OpsAPI user uuid>.");
+    }
+    return;
+  }
   if (env().APP_ENV !== "local" || !["localhost", "127.0.0.1"].includes(url.hostname)) {
     throw new Error(
-      `seed:demo only runs against a local OpsAPI (APP_ENV=${env().APP_ENV}, OPSAPI_URL=${url.origin}).`,
+      `seed:demo only runs against a local OpsAPI or int (APP_ENV=${env().APP_ENV}, OPSAPI_URL=${url.origin}).`,
     );
   }
+}
+
+/** int: remove only what a previous seed created, so real data is untouched. */
+async function clearSeededData() {
+  const names = new Set(PETS.map((p) => p.input.name));
+  for (const status of ["active", "archived", "deceased"] as const) {
+    for (const pet of await listPets(demo, status))
+      if (names.has(pet.name)) await deletePet(demo, pet.id);
+  }
+  const seedIds = new Set(members.map((m) => m.id));
+  const mine = (row: Record<string, unknown>, col: string) => seedIds.has(String(row[col]));
+  for (const row of await listAll("forum-votes", {}, 100))
+    if (mine(row, "user_uuid")) await deleteRow("forum-votes", row.uuid);
+  for (const row of await listAll("forum-threads", {}, 100))
+    if (mine(row, "author_user_uuid")) await deleteRow("forum-threads", row.uuid);
+  for (const row of await listAll("forum-replies", {}, 100))
+    if (mine(row, "author_user_uuid")) await deleteRow("forum-replies", row.uuid);
+  for (const row of await listAll("forum-members", {}, 100))
+    if (mine(row, "user_uuid")) await deleteRow("forum-members", row.uuid);
 }
 
 async function clearDemoData() {
@@ -879,7 +917,8 @@ async function seedPets() {
 }
 
 async function seedCommunity() {
-  await setDisplayName(demo, "Sam (Biscuit's human)");
+  // On int the owner is a real person: keep the name they chose.
+  if (target === "local") await setDisplayName(demo, "Sam (Biscuit's human)");
   for (const m of members) await setDisplayName(m, m.displayName);
   // Oldest first, so the newest discussion is at the top of "Latest".
   const threads = [...THREADS].reverse();
@@ -904,10 +943,12 @@ async function seedCommunity() {
 }
 
 test("seed demo data", async () => {
-  assertLocal();
-  await clearDemoData();
+  assertTarget();
+  await (target === "int" ? clearSeededData() : clearDemoData());
   await seedPets();
   await seedCommunity();
   // Something to look at on the home page straight away.
-  expect((await listPets(demo)).length).toBe(PETS.length - 1);
+  const names = new Set(PETS.map((p) => p.input.name));
+  const seeded = (await listPets(demo)).filter((p) => names.has(p.name));
+  expect(seeded.length).toBe(PETS.length - 1);
 });
