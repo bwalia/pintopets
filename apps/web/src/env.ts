@@ -54,6 +54,15 @@ const ServerEnv = z
       .enum(["true", "false", ""])
       .default("false")
       .transform((v) => v === "true"),
+    /**
+     * Offer "Continue with Apple" (App Store guideline 4.8). Turn on only once
+     * OpsAPI has its APPLE_* settings (Services ID, key, return URL) for this
+     * environment: the button sends people to OpsAPI's /auth/apple.
+     */
+    APPLE_SIGNIN_ENABLED: z
+      .enum(["true", "false", ""])
+      .default("false")
+      .transform((v) => v === "true"),
     /** Where uploaded photos are stored (a persistent volume in k3s). */
     MEDIA_DIR: z.string().min(1).default(".data/media"),
     /** Largest photo upload accepted, in bytes. */

@@ -49,6 +49,9 @@ extraEnv: {}
 # Demo sign-in (one shared demo account) until real sign-in lands. The app
 # refuses to start with it on prod (APP_ENV=prod).
 demoAuth: false
+# "Continue with Apple" (App Store guideline 4.8). Enable only once OpsAPI has
+# APPLE_TEAM_ID/APPLE_KEY_ID/APPLE_PRIVATE_KEY/APPLE_CLIENT_ID/APPLE_REDIRECT_URI.
+appleSignIn: false
 
 # Community forum moderators (sign-in emails).
 community:

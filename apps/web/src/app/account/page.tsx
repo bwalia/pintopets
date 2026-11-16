@@ -6,8 +6,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@pintopets/ui/components/card";
-import { LogOut, UserRound } from "lucide-react";
+import { LogOut, Trash2, UserRound } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { PrivacyCard } from "@/components/account/privacy-card";
 import { TwoFactorCard } from "@/components/account/two-factor-card";
 import { SignedOut } from "@/components/signed-out";
@@ -85,6 +86,23 @@ export default async function AccountPage() {
           Security settings are unavailable right now. Please try again shortly.
         </p>
       )}
+
+      <Card className="border-destructive">
+        <CardHeader>
+          <CardTitle>Delete account</CardTitle>
+          <CardDescription>
+            Permanently delete your pets, records, photos, community posts and settings from
+            PintoPets. Your Workstation sign-in is separate and isn&apos;t affected.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button asChild variant="outline">
+            <Link href="/account/delete">
+              <Trash2 aria-hidden /> Delete account
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }

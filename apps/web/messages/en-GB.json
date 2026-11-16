@@ -65,6 +65,10 @@
   },
   "footer": {
     "notVetAdvice": "Information on PintoPets is not a replacement for advice from your vet.",
-    "copyright": "© {year} PintoPets"
+    "copyright": "© {year} PintoPets",
+    "legalNav": "Legal and help",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "support": "Support"
   }
 }
