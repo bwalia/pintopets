@@ -11,6 +11,9 @@
 #   ASC_KEY_PATH    (default ~/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8)
 #   SIGN_IDENTITY   (default: SHA-1 of the Apple Distribution certificate the
 #                   profile was made with; the name alone also matches revoked ones)
+#   PINTOPETS_API_URL (default: Config/Release.xcconfig, i.e. int, VPN only).
+#                   Set it to the confirmed PUBLIC production URL for builds
+#                   that go to App Review or external testers.
 # The build number is the UTC time (yyyymmddHHMM), so every upload is unique.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -31,13 +34,33 @@ AUTH=(-allowProvisioningUpdates
 
 xcodegen generate --quiet
 
+API_OVERRIDE=()
+if [[ -n "${PINTOPETS_API_URL:-}" ]]; then
+  [[ "$PINTOPETS_API_URL" == https://* ]] || { echo "PINTOPETS_API_URL must be https://…" >&2; exit 1; }
+  curl -fsS -o /dev/null --max-time 10 "$PINTOPETS_API_URL/api/v1/health" ||
+    { echo "$PINTOPETS_API_URL/api/v1/health is not reachable from here." >&2; exit 1; }
+  API_OVERRIDE=(PINTOPETS_API_URL="$PINTOPETS_API_URL")
+  echo "Server: $PINTOPETS_API_URL"
+else
+  # shellcheck disable=SC2016 # $(SLASH) is the literal xcconfig token
+  echo "Server: $(sed -n 's/^PINTOPETS_API_URL = //p' Config/Release.xcconfig | sed 's/\$(SLASH)/\//g')" \
+    "(int, Workstation VPN only: fine for internal TestFlight, NOT for App Review)"
+fi
+
 echo "Archiving PintoPets build $BUILD_NUMBER…"
 xcodebuild archive -project PintoPets.xcodeproj -scheme PintoPets -configuration Release \
   -destination 'generic/platform=iOS' -archivePath "$OUT/PintoPets.xcarchive" \
   CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
   CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="$SIGN_IDENTITY" \
   PROVISIONING_PROFILE_SPECIFIER="PintoPets App Store" \
+  ${API_OVERRIDE[@]+"${API_OVERRIDE[@]}"} \
   "${AUTH[@]}" -quiet
+
+BAKED=$(/usr/libexec/PlistBuddy -c "Print :PintoPetsAPIURL" \
+  "$OUT/PintoPets.xcarchive/Products/Applications/PintoPets.app/Info.plist")
+VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" \
+  "$OUT/PintoPets.xcarchive/Products/Applications/PintoPets.app/Info.plist")
+echo "Archived PintoPets $VERSION ($BUILD_NUMBER), server $BAKED"
 
 cat > "$OUT/ExportOptions.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>

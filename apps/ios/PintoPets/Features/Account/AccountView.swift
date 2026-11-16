@@ -48,10 +48,18 @@ struct AccountView: View {
                     Section {
                         Button("Sign out", role: .destructive) { confirmingSignOut = true }
                     }
+                    Section {
+                        web("Delete account and data", "/account/delete")
+                    } footer: {
+                        Text("Permanently deletes your pets, records, photos and community posts. You'll confirm on the PintoPets website.")
+                    }
                 }
             }
             Section {
                 web("Community guidelines", "/community/guidelines")
+                web("Privacy policy", "/privacy")
+                web("Terms of use", "/terms")
+                web("Help and support", "/support")
                 LabeledContent("Version", value: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")
                 #if DEBUG
                 LabeledContent("Server", value: session.api.baseURL.absoluteString)
