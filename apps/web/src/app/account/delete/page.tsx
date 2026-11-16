@@ -4,6 +4,8 @@ import Link from "next/link";
 import { DeleteAccountForm } from "@/components/account/delete-account-form";
 import { SignedOut } from "@/components/signed-out";
 import { currentUser } from "@/server/auth";
+import { securityStatus } from "@/server/security/service";
+import { signedInRecently } from "@/server/security/step-up";
 
 export const metadata: Metadata = { title: "Delete your account" };
 
@@ -18,6 +20,14 @@ const DELETED = [
 export default async function DeleteAccountPage() {
   const user = await currentUser();
   if (!user) return <SignedOut title="Delete your account" next="/account/delete" />;
+  // How they confirm: an authenticator code with 2FA on, otherwise a recent sign-in.
+  const confirmWith = user.demo
+    ? "code"
+    : (await securityStatus(user)).totpEnabled
+      ? "code"
+      : (await signedInRecently(user))
+        ? "recent-sign-in"
+        : "sign-in-again";
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
@@ -70,7 +80,7 @@ export default async function DeleteAccountPage() {
           </CardContent>
         </Card>
       ) : (
-        <DeleteAccountForm />
+        <DeleteAccountForm confirmWith={confirmWith} />
       )}
 
       <Link href="/account" className="text-primary underline underline-offset-2">

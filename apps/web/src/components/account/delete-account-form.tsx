@@ -11,11 +11,21 @@ import { useStepUp } from "./step-up";
 
 const CONFIRM_WORD = "DELETE";
 
+export type ConfirmWith = "code" | "recent-sign-in" | "sign-in-again";
+
+const HINTS: Record<ConfirmWith, string> = {
+  code: "You'll then be asked for a code from your authenticator app.",
+  "recent-sign-in": "You signed in a few minutes ago, so no code is needed.",
+  "sign-in-again": "",
+};
+
 /**
- * Type DELETE, confirm with an authenticator code (step-up), then
- * DELETE /api/v1/me. The server clears the session; we go home signed out.
+ * Type DELETE, confirm it's them, then DELETE /api/v1/me. With two-factor
+ * sign-in on that's an authenticator code (step-up); without it, a sign-in in
+ * the last 10 minutes (else they sign in again first). The server enforces the
+ * same rule and clears the session; we go home signed out.
  */
-export function DeleteAccountForm() {
+export function DeleteAccountForm({ confirmWith }: { confirmWith: ConfirmWith }) {
   const router = useRouter();
   const { withStepUp, dialog, pending } = useStepUp();
   const [typed, setTyped] = useState("");
@@ -23,17 +33,19 @@ export function DeleteAccountForm() {
   const [busy, setBusy] = useState(false);
   const confirmed = typed.trim() === CONFIRM_WORD;
 
+  async function attempt() {
+    const res = await fetch("/api/v1/me", { method: "DELETE" });
+    if (res.ok) return { ok: true };
+    const body = (await res.json().catch(() => null)) as {
+      error?: { code?: string; message?: string };
+    } | null;
+    return { ok: false, code: body?.error?.code, message: body?.error?.message };
+  }
+
   async function remove() {
     setError(null);
     setBusy(true);
-    const r = await withStepUp(async () => {
-      const res = await fetch("/api/v1/me", { method: "DELETE" });
-      if (res.ok) return { ok: true };
-      const body = (await res.json().catch(() => null)) as {
-        error?: { code?: string; message?: string };
-      } | null;
-      return { ok: false, code: body?.error?.code, message: body?.error?.message };
-    });
+    const r = confirmWith === "code" ? await withStepUp(attempt) : await attempt();
     if (r.ok) {
       // The session cookie is gone: re-render home (and the layout) signed out.
       router.replace("/");
@@ -42,6 +54,26 @@ export function DeleteAccountForm() {
     }
     setBusy(false);
     if (r.message && r.message !== "Cancelled") setError(r.message);
+  }
+
+  if (confirmWith === "sign-in-again") {
+    return (
+      <Card className="border-destructive">
+        <CardContent className="flex flex-col gap-3">
+          <p className="text-sm">
+            To keep your account safe, please sign in again to confirm it&apos;s you. You&apos;ll
+            come straight back here.
+          </p>
+          <div>
+            <Button asChild variant="urgent">
+              <a href={`/auth/signin?next=${encodeURIComponent("/account/delete")}`}>
+                Sign in again to continue
+              </a>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
@@ -62,7 +94,7 @@ export function DeleteAccountForm() {
           <Field
             id="confirm-delete"
             label={`Type ${CONFIRM_WORD} to confirm`}
-            hint="You'll then be asked for a code from your authenticator app."
+            hint={HINTS[confirmWith]}
           >
             <Input
               id="confirm-delete"
