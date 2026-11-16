@@ -28,6 +28,8 @@ const person = (role: UserRole = "owner", displayName = "Alex Rivers") => ({
   displayName,
 });
 const unique = () => crypto.randomUUID().slice(0, 8);
+/** Letters only: 6+ digits in a row would trip the "no contact details in names" rule. */
+const uniqueName = () => unique().replace(/\d/g, (d) => "ghijklmnop"[Number(d)] ?? "x");
 
 async function expectCode(promise: Promise<unknown>, code: string) {
   await expect(promise).rejects.toSatisfy(
@@ -61,7 +63,7 @@ describe.skipIf(!hasOpsApi)("community forum on OpsAPI (integration)", () => {
     expect(found.data.map((t) => t.id)).toContain(thread.id);
     expect(found.data.find((t) => t.id === thread.id)?.author.isYou).toBe(false);
 
-    const renamed = await setDisplayName(author, `Sam ${unique()}`);
+    const renamed = await setDisplayName(author, `Sam ${uniqueName()}`);
     expect(renamed.isNew).toBe(false);
     await expectCode(setDisplayName(author, "PintoPets Support"), "validation_failed");
 
