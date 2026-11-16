@@ -14,8 +14,9 @@ const FAQ = [
     a: (
       <p>
         Choose <strong>Sign in</strong> and use your Workstation account: your email and password
-        with a one-time code, or &ldquo;Sign in with Google&rdquo;. In the iPhone app, sign-in opens
-        a secure browser sheet and returns you to the app.
+        with a one-time code, &ldquo;Continue with Google&rdquo; or, where offered, &ldquo;Continue
+        with Apple&rdquo;. In the iPhone and iPad app, sign-in opens a secure browser sheet and
+        returns you to the app.
       </p>
     ),
   },
@@ -37,7 +38,9 @@ const FAQ = [
       <p>
         On your <Link href="/account">account page</Link>, choose <strong>Export my data</strong>.
         You&apos;ll get a file with every pet, record, photo detail and community post we hold.
-        You&apos;ll need a code from your authenticator app.
+        You&apos;ll need a code from your authenticator app, so two-factor sign-in must be on. If
+        you don&apos;t use it, email <ContactEmail /> from the address you sign in with and
+        we&apos;ll send you a copy.
       </p>
     ),
   },
@@ -46,9 +49,10 @@ const FAQ = [
     a: (
       <p>
         Go to <Link href="/account/delete">Delete your account</Link> (also linked from your account
-        page), type DELETE and confirm with your authenticator code. Your pets, records, photos,
-        community posts and settings are deleted. Your Workstation sign-in is a separate account and
-        isn&apos;t deleted.
+        page) and type DELETE. If you use two-factor sign-in you&apos;ll confirm with a code from
+        your authenticator app; otherwise you may be asked to sign in again first. Your pets,
+        records, photos, community posts and settings are deleted. Your Workstation sign-in is a
+        separate account and isn&apos;t deleted.
       </p>
     ),
   },

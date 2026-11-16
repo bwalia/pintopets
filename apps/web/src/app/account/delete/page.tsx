@@ -12,7 +12,6 @@ export const metadata: Metadata = { title: "Delete your account" };
 const DELETED = [
   "Every pet you own, with all its records: weights, vaccinations, parasite treatments, medications, vet visits, conditions, allergies, symptoms, horse care, diet and water notes.",
   "Every photo of those pets, including the stored image files.",
-  "Your access to pets other people have shared with you (their pets and records stay with them).",
   "Your community posts and replies: their text is erased and they're no longer linked to you. Your community name, your helpful votes and the details you wrote in any reports go too.",
   "Your two-factor sign-in settings, recovery codes and privacy choices.",
 ];

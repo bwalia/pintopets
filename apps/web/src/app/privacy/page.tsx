@@ -31,7 +31,7 @@ export default function PrivacyPage() {
         <ul>
           <li>
             <strong>Account details:</strong> your name, email address and account ID, which come
-            from your Workstation sign-in (by email and password, or with Google).
+            from your Workstation sign-in (by email and password, with Google, or with Apple).
           </li>
           <li>
             <strong>Your pets and their records:</strong> what you enter, such as name, species,
@@ -62,10 +62,10 @@ export default function PrivacyPage() {
       <LegalSection id="why" title="Why we use it">
         <p>
           We use your information to provide PintoPets: to sign you in and keep your account secure,
-          store and show your pets&apos; records and reminders, let people you share a pet with see
-          it, and run the community, including moderation to keep it safe. Our lawful basis is our
-          contract with you to provide the service and, for security and moderation, our legitimate
-          interest in keeping PintoPets and its members safe.
+          store and show your pets&apos; records and reminders, and run the community, including
+          moderation to keep it safe. Our lawful basis is our contract with you to provide the
+          service and, for security and moderation, our legitimate interest in keeping PintoPets and
+          its members safe.
         </p>
         <p>Two optional uses happen only if you turn them on. Both are off by default:</p>
         <ul>
@@ -106,6 +106,11 @@ export default function PrivacyPage() {
             confirms who you are and shares your name and email address with Workstation.
           </li>
           <li>
+            <strong>Apple</strong>, only if you choose &ldquo;Continue with Apple&rdquo;: Apple
+            confirms who you are and shares your name and email address (or a private relay address
+            if you choose to hide your email) with Workstation.
+          </li>
+          <li>
             <strong>Error monitoring:</strong> if it is switched on for the site, technical error
             reports go to Sentry so we can fix problems. They are configured not to include personal
             details such as names, emails or IP addresses by default.
@@ -116,9 +121,9 @@ export default function PrivacyPage() {
 
       <LegalSection id="sharing" title="What other people can see">
         <p>
-          Your pets and their records are private to you and anyone you choose to share a pet with.
-          In the community, other people see your community name (never your email) and what you
-          post. Community moderators can see reports and posts that have been hidden.
+          Your pets and their records are private to you. In the community, other people see your
+          community name (never your email) and what you post. Community moderators can see reports
+          and posts that have been hidden.
         </p>
       </LegalSection>
 
@@ -139,7 +144,7 @@ export default function PrivacyPage() {
           <li>
             <strong>Access and take your data:</strong> download everything we hold about you and
             your pets as a file from your <Link href="/account">account page</Link> (&ldquo;Export
-            my data&rdquo;).
+            my data&rdquo;, which needs two-factor sign-in turned on), or email us for a copy.
           </li>
           <li>
             <strong>Delete it:</strong> delete your account and data at{" "}
@@ -169,9 +174,10 @@ export default function PrivacyPage() {
 
       <LegalSection id="security" title="Keeping it safe">
         <p>
-          Connections are encrypted. Sensitive actions, such as exporting or deleting your data,
-          need a fresh code from your authenticator app. Two-factor secrets are encrypted with a key
-          that only PintoPets holds.
+          Connections are encrypted. Sensitive actions, such as exporting your data, need a fresh
+          code from your authenticator app. Deleting your account needs that code if you use
+          two-factor sign-in, or otherwise a sign-in in the last few minutes. Two-factor secrets are
+          encrypted with a key that only PintoPets holds.
         </p>
       </LegalSection>
 
