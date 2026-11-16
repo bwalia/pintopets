@@ -53,10 +53,14 @@ does not exist yet: replace it with the confirmed production host before uploadi
   compiled AppIcon, `PrivacyInfo.xcprivacy`, version 1.0.0, iOS 17.0, arm64, camera usage text.
 - **iOS unit tests**: 11 passed, 0 failed (`xcodebuild test`, iPhone 17 Pro simulator).
 - **Web** (branch `web/account-deletion-and-policies`): lint and typecheck clean; unit tests
-  110 passed, 22 skipped (OpsAPI integration tests need `.env.local`); api-contract 8, db 26,
-  ui 2 passed. End-to-end against a production build: 74 passed, 15 skipped, 1 failed. The
-  failure (`security.spec.ts:76`, the export step-up dialog) also fails on `main` and predates
-  this work.
+  115 passed, 23 skipped (OpsAPI integration tests need `.env.local`); api-contract 8, db 26,
+  ui 2 passed. Account deletion integration tests (2) pass against a real (local) OpsAPI:
+  pets, records, photo files on disk, threads, replies, votes, reports, settings.
+  End-to-end against a production build: 73–74 passed, 15 skipped. Known local-only failures:
+  `security.spec.ts:76` (the shared demo account in the local database has had 2FA on since
+  7 Nov from an interrupted run; the test assumes it is off; passes on a fresh database, also
+  fails on `main`) and, after many runs in an hour, `community.spec.ts:9` (the forum's
+  per-person posting limit for the demo account).
 - **Signing**: the Apple Distribution certificate `D15B53D8…` is in the login keychain; the
   "PintoPets App Store" profile is an App Store profile for `PAS2QUVJHC.app.pintopets.ios` with
   that certificate and no extra capabilities (none needed: Sign in with Apple runs on the web).
@@ -259,9 +263,29 @@ Review usually takes 24–48 hours. After approval, press **Release This Version
    `/privacy`, `/terms`, `/support`.
 3. Deploy to the production host (B3) with `appleSignIn: true` once B4 is done.
 
-## Known limits (fine for 1.0)
+## Account deletion: how it works and what to verify
 
-- App tokens are signed, not stored, so after deleting an account the app's token stays valid
-  for up to 30 days; the user's data is gone and the app can simply sign out.
-- Deleting from inside the app opens the website (sensitive actions need an authenticator code).
-- The deleted account's Workstation (OpsAPI) sign-in remains; PintoPets data is removed.
+- `/account/delete` (linked from the app's Account tab and the website). Type DELETE, then
+  confirm: with two-factor sign-in on, an authenticator code; without it, a sign-in in the
+  last 10 minutes (else "Sign in again to continue"). `DELETE /api/v1/me` enforces the same.
+- Deleted: owned pets and every record, photo rows and their files (full and thumbnail),
+  pet memberships, community name, helpful votes, two-factor and consent settings.
+- Scrubbed, not deleted: the user's threads and replies (text replaced, status "removed",
+  author set to a random ID) so other people's discussions stay intact; reports they filed
+  (reporter unlinked, their note erased). Kept: moderators' audit log.
+- Not deleted: the **Workstation (OpsAPI) sign-in** (email, name, password or Google/Apple
+  link). It is shared with other Workstation services. OpsAPI's own `POST /auth/delete-account`
+  only deactivates, needs a password (Google/Apple users have none) and doesn't revoke Apple
+  tokens. **Decision needed** (see the PR): accept this for 1.0, or extend OpsAPI to delete or
+  deactivate the identity and revoke Sign in with Apple tokens (Apple expects revocation when
+  an account created with Sign in with Apple is deleted).
+- Records that someone else created on a pet they share with the user would keep the user's
+  ID in `created_by_user_uuid`; the product has no pet sharing yet, so this can't happen today.
+- App tokens are signed, not stored: after deletion the app's token stays valid for up to
+  30 days, but there is no data behind it; signing out clears it.
+
+Verify by hand on int after deploying (needs a throwaway account, not the demo account):
+create a pet with a photo, post a thread and a reply, vote and report; delete the account;
+check the pet, photo URL, thread text and community name are gone and the photo files are no
+longer in the media volume; check a 2FA account is asked for a code and a non-2FA account
+with an old session is asked to sign in again.
