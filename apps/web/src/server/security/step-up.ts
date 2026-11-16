@@ -8,7 +8,7 @@ import { verifySecondFactor } from "./service";
 
 /**
  * Step-up: sensitive actions (turning 2FA off, new recovery codes, exporting all
- * data, deleting a pet; later ownership transfers, certificates and microchips)
+ * data, deleting a pet or the whole account; later ownership transfers, certificates and microchips)
  * need an authenticator code from the last 10 minutes, whatever the sign-in method.
  */
 export const STEP_UP_COOKIE = "pp_stepup";

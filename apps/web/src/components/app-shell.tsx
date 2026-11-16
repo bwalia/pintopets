@@ -95,16 +95,27 @@ export function AppShell({
             don&apos;t add anything private.
           </p>
         ) : null}
-        <main
-          id="main"
-          tabIndex={-1}
-          className="flex-1 px-4 pt-6 pb-28 md:px-10 md:pb-10 print:p-0"
-        >
+        <main id="main" tabIndex={-1} className="flex-1 px-4 pt-6 pb-10 md:px-10 print:p-0">
           {children}
         </main>
-        <footer className="text-muted-foreground hidden border-t px-10 py-6 text-sm md:block print:hidden">
+        {/* Visible on phones too (above the tab bar): App Review looks for these links. */}
+        <footer className="text-muted-foreground border-t px-4 pt-6 pb-28 text-sm md:px-10 md:pb-6 print:hidden">
           <p>{t("footer.notVetAdvice")}</p>
-          <p className="mt-1">{t("footer.copyright", { year: new Date().getFullYear() })}</p>
+          <nav aria-label={t("footer.legalNav")} className="mt-2">
+            <ul className="flex flex-wrap gap-x-4 gap-y-1">
+              {(["privacy", "terms", "support"] as const).map((key) => (
+                <li key={key}>
+                  <Link
+                    href={`/${key}`}
+                    className="hover:text-foreground inline-flex min-h-6 items-center underline underline-offset-2"
+                  >
+                    {t(`footer.${key}`)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <p className="mt-2">{t("footer.copyright", { year: new Date().getFullYear() })}</p>
         </footer>
       </div>
 

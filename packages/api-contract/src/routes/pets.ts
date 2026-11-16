@@ -165,6 +165,26 @@ export const Me = z
   .meta({ id: "Me" });
 export const MeResponse = z.object({ data: Me }).meta({ id: "MeResponse" });
 
+/** What DELETE /api/v1/me removed (counts; a retry reports only what was left). */
+export const AccountDeletionResponse = z
+  .object({
+    data: z.object({
+      deleted: z.object({
+        pets: z.number().int(),
+        sharedPetsLeft: z.number().int(),
+        photos: z.number().int(),
+        records: z.number().int(),
+        threads: z.number().int(),
+        replies: z.number().int(),
+        votes: z.number().int(),
+        reports: z.number().int(),
+        communityProfile: z.boolean(),
+        securitySettings: z.number().int(),
+      }),
+    }),
+  })
+  .meta({ id: "AccountDeletionResponse" });
+
 // ── OpenAPI ────────────────────────────────────────────────────────────────
 const json = <T extends z.ZodType>(schema: T) => ({ content: { "application/json": { schema } } });
 const errors = {
@@ -183,6 +203,25 @@ registry.registerPath({
   tags: ["Account"],
   summary: "The signed-in user",
   responses: { 200: { description: "Me", ...json(MeResponse) }, 401: errors[401] },
+});
+registry.registerPath({
+  method: "delete",
+  path: "/api/v1/me",
+  operationId: "deleteMe",
+  tags: ["Account"],
+  summary: "Delete all of the user's PintoPets data and sign out",
+  description:
+    "Permanently deletes the user's pets (and every record and photo), leaves pets shared with " +
+    "them, scrubs and unlinks their community posts, and deletes their 2FA and consent " +
+    "settings. The Workstation (OpsAPI) sign-in identity is separate and is not deleted. Needs " +
+    "a recent authenticator code (403 step_up_required otherwise); the shared demo account is " +
+    "refused (403 forbidden). Idempotent: safe to retry. Clears the session cookies; app " +
+    "callers should discard their bearer token.",
+  responses: {
+    200: { description: "Deleted", ...json(AccountDeletionResponse) },
+    401: errors[401],
+    403: { description: "Step-up required, or the demo account", ...json(ApiError) },
+  },
 });
 registry.registerPath({
   method: "get",

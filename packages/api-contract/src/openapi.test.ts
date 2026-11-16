@@ -26,6 +26,10 @@ describe("OpenAPI document", () => {
     );
   });
 
+  it("documents account deletion (DELETE /api/v1/me)", () => {
+    expect(doc.paths?.["/api/v1/me"]?.delete?.operationId).toBe("deleteMe");
+  });
+
   it("has unique operation ids (used to name generated Swift/Kotlin methods)", () => {
     const ids = Object.values(doc.paths ?? {}).flatMap((item) =>
       Object.values(item ?? {})
