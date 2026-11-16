@@ -62,6 +62,8 @@ once to let `codesign` use the signing key. Release builds talk to
 `https://int.pintopets.app`, so testers need the Workstation VPN until there is a
 production host.
 
-Set up once (done for team PAS2QUVJHC): bundle id `app.pintopets.ios`, the
-"PintoPets App Store" profile, and the app record in App Store Connect
-(created by hand: Apple's API can't create apps).
+Set up once for team PAS2QUVJHC: bundle id `app.pintopets.ios` and the
+"PintoPets App Store" profile (done); the app record in App Store Connect
+(by hand: Apple's API can't create apps; not created yet). Set
+`PINTOPETS_API_URL=https://<public host>` for builds that go to App Review.
+The full launch checklist is in [APP_STORE.md](APP_STORE.md).

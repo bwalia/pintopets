@@ -1,114 +1,267 @@
 # Launching PintoPets on the App Store
 
-Everything Apple asks for, ready to paste or upload. Store text and screenshots live in
-`fastlane/metadata` and `fastlane/screenshots` and upload with the App Store Connect API key
-(no Apple ID password). Nothing here submits for review: that is a separate, explicit step.
+The complete release package for PintoPets 1.0.0 on iPhone and iPad: what is done, what is
+left, and the exact steps that need the Apple Developer account (Balinder).
 
-| | |
-|---|---|
-| App name | PintoPets |
-| Bundle ID | `app.pintopets.ios` (team PAS2QUVJHC) |
-| SKU | `pintopets-ios` |
-| Primary language | English (U.K.) |
-| Version | 1.0.0 (build number = UTC time, set by `scripts/testflight.sh`) |
-| Category | Lifestyle |
-| Price | Free, all territories (decide before submitting) |
-| Copyright | © 2026 Balinder Walia |
-| Privacy policy | https://pintopets.app/privacy |
-| Support | https://pintopets.app/support |
+Nothing here uploads a build or submits for review. Those are separate, explicit steps.
 
-## Before submitting (blockers)
+## Status (16 November 2026)
 
-1. **Public production host.** Release builds use `PINTOPETS_API_URL` from
-   `Config/Release.xcconfig` (currently `https://int.pintopets.app`). App Review and customers must reach
-   it without the Workstation VPN, and `/privacy`, `/support`, `/terms` and `/account/delete` must be
-   live there. Update the URLs in `fastlane/metadata/en-GB/*_url.txt` if the host differs.
-2. **Account deletion** live on the web (`/account/delete`); the Account tab links to it.
-3. **Sign in with Apple (guideline 4.8).** Sign-in offers Google. Apple requires an equivalent
-   privacy-focused option (Sign in with Apple) unless the app only uses its own account system.
-   Expect a rejection without it.
-4. **Reviewer account** (see below) on the production host, with 2FA off.
+| Area                                                         | Status                                                      | Where                                          |
+| ------------------------------------------------------------ | ----------------------------------------------------------- | ---------------------------------------------- |
+| App code, version 1.0.0, iOS 17+, iPhone and iPad            | ✅ Ready                                                    | branch `ios/app-store-readiness`               |
+| Privacy manifest (`PrivacyInfo.xcprivacy`)                   | ✅ Ready                                                    | `PintoPets/Resources/`                         |
+| Account tab: delete account, privacy, terms, support links   | ✅ Ready                                                    | `Features/Account/AccountView.swift`           |
+| Account deletion (web page + `DELETE /api/v1/me`)            | ✅ Built, not deployed                                      | branch `web/account-deletion-and-policies`     |
+| Privacy policy, terms, support pages                         | ✅ Built, not deployed                                      | same branch: `/privacy`, `/terms`, `/support`  |
+| Sign in with Apple (guideline 4.8)                           | ✅ Built, off until Apple keys exist                        | same branch: `/signin`, `APPLE_SIGNIN_ENABLED` |
+| Store text, screenshots, categories                          | ✅ Ready                                                    | `fastlane/metadata`, `fastlane/screenshots`    |
+| Signing: certificate, "PintoPets App Store" profile, API key | ✅ Verified                                                 | profile valid to 15 Sep 2027                   |
+| App Store Connect app record                                 | ❌ **Balinder**                                             | step B1                                        |
+| Support email `support@pintopets.app`                        | ❌ **Balinder**: domain has no MX records, mail bounces     | step B2                                        |
+| Public production host                                       | ❌ **Balinder**: int is VPN-only, App Review can't reach it | step B3                                        |
+| Apple keys for Sign in with Apple                            | ❌ **Balinder**                                             | step B4                                        |
+| Reviewer demo account                                        | ❌ After B3                                                 | step B6                                        |
 
-## 1. App record (once, by hand: Apple's API can't create apps)
+**Ready for internal TestFlight now** (after B1). **Ready for App Review** once B1–B6 are done
+and both branches are merged and deployed to the production host.
 
-App Store Connect → Apps → + → New App, with the values above, or:
+## Release facts
+
+|                    |                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------- |
+| App name           | PintoPets                                                                       |
+| Bundle ID          | `app.pintopets.ios` (team PAS2QUVJHC). Unchanged.                               |
+| SKU                | `pintopets-ios`                                                                 |
+| Primary language   | English (U.K.)                                                                  |
+| Version            | 1.0.0. Build number = UTC time `yyyymmddHHMM`, set by `scripts/testflight.sh`   |
+| Devices            | iPhone and iPad, iOS 17.0+                                                      |
+| Category           | Lifestyle (no secondary: "Medical" invites guideline 1.4.1 scrutiny)            |
+| Price              | Free (confirm), all territories (confirm)                                       |
+| Copyright          | © 2026 Balinder Walia                                                           |
+| Privacy policy URL | `https://<production host>/privacy`                                             |
+| Support URL        | `https://<production host>/support`                                             |
+| Marketing URL      | `https://<production host>` (optional)                                          |
+| Encryption         | `ITSAppUsesNonExemptEncryption = NO` (HTTPS only): no export question per build |
+
+The `*_url.txt` files in `fastlane/metadata/en-GB` say `https://pintopets.app/...`. That host
+does not exist yet: replace it with the confirmed production host before uploading metadata.
+
+## What was checked
+
+- **Release build** for a device (unsigned) and for the simulator: succeed. Bundle contains the
+  compiled AppIcon, `PrivacyInfo.xcprivacy`, version 1.0.0, iOS 17.0, arm64, camera usage text.
+- **iOS unit tests**: 11 passed, 0 failed (`xcodebuild test`, iPhone 17 Pro simulator).
+- **Web** (branch `web/account-deletion-and-policies`): lint and typecheck clean; unit tests
+  110 passed, 22 skipped (OpsAPI integration tests need `.env.local`); api-contract 8, db 26,
+  ui 2 passed. End-to-end against a production build: 74 passed, 15 skipped, 1 failed. The
+  failure (`security.spec.ts:76`, the export step-up dialog) also fails on `main` and predates
+  this work.
+- **Signing**: the Apple Distribution certificate `D15B53D8…` is in the login keychain; the
+  "PintoPets App Store" profile is an App Store profile for `PAS2QUVJHC.app.pintopets.ios` with
+  that certificate and no extra capabilities (none needed: Sign in with Apple runs on the web).
+  The App Store Connect API key `6KVVV27G4Q` works (it reads the team's apps).
+- **No tracking**: no analytics, ads or tracking SDKs in the app or website. The website can
+  report errors to Sentry when `NEXT_PUBLIC_SENTRY_DSN` is set (no personal data by default).
+
+## Steps for Balinder (Apple Developer account and domain)
+
+### B1. Create the app record (2 minutes)
+
+App Store Connect → Apps → **+** → New App:
+
+- Platforms: **iOS**
+- Name: **PintoPets** (if taken: "PintoPets – Pet Care")
+- Primary language: **English (U.K.)**
+- Bundle ID: **app.pintopets.ios**
+- SKU: **pintopets-ios**
+- User access: **Full Access**
+
+Needs the Account Holder, Admin or App Manager role. Apple's API cannot create apps, so this
+must be done by hand (or with `fastlane produce`, which asks for your Apple ID password).
+
+### B2. Make the support email work
+
+`pintopets.app` is on Cloudflare but has no MX records. Either:
+
+- Cloudflare dashboard → pintopets.app → **Email → Email Routing** → enable → add
+  `support@pintopets.app` → forward to your inbox (adds the MX and SPF records), or
+- choose another address you already receive mail at and change `LEGAL.contactEmail` in
+  `apps/web/src/lib/legal.ts`.
+
+Then send a test email to the address. Also confirm the controller name ("Balinder Walia") in
+the same file.
+
+### B3. Confirm the production host
+
+Decide the public URL (for example `https://pintopets.app`) and where it runs. It must be
+reachable from the internet without the Workstation VPN. Then:
+
+1. `deploy/helm/pintopets/values-prod.example.yaml` → `values-prod.yaml`, fill every `<CONFIRM: …>`.
+2. Deploy `main` (with both branches merged) there; check `/api/v1/health`, `/privacy`,
+   `/terms`, `/support`, `/account/delete` all load.
+3. Replace `https://pintopets.app` in `fastlane/metadata/en-GB/*_url.txt` if different.
+4. Build App Store binaries with `PINTOPETS_API_URL=https://<host> scripts/testflight.sh`
+   (the script checks the host is reachable and prints the server baked into the build).
+
+### B4. Sign in with Apple keys (Certificates, IDs & Profiles)
+
+Done on the web through OpsAPI, so **the app's App ID, entitlements and provisioning profile
+stay unchanged**. To keep it that way, use a separate primary App ID:
+
+1. **Identifiers → + → App IDs → App**: description "PintoPets Web", bundle ID
+   `app.pintopets.web` (explicit), tick **Sign In with Apple** (enable as primary App ID).
+2. **Identifiers → + → Services IDs**: description "PintoPets", identifier
+   `app.pintopets.signin`. Tick **Sign In with Apple → Configure**: primary App ID
+   `app.pintopets.web`; Domains: the OpsAPI public host (int: `int-opsapi.workstation.co.uk`,
+   plus prod's); Return URLs: `https://<OpsAPI public host>/auth/apple/callback`.
+3. **Keys → +**: name "PintoPets Sign in with Apple", tick **Sign In with Apple → Configure**
+   → `app.pintopets.web`. Download the `.p8` (only once) and note the Key ID.
+4. Give OpsAPI (for int and prod), as secrets, never in git:
+   `APPLE_TEAM_ID=PAS2QUVJHC`, `APPLE_KEY_ID=<key id>`, `APPLE_PRIVATE_KEY=<.p8 contents>`,
+   `APPLE_CLIENT_ID=app.pintopets.signin`,
+   `APPLE_REDIRECT_URI=https://<OpsAPI public host>/auth/apple/callback`.
+5. Set `appleSignIn: true` in the PintoPets Helm values for that environment and deploy.
+   Check: the sign-in chooser shows "Continue with Apple" first and it completes.
+6. If OpsAPI emails users (sign-in codes), register its sending domain under
+   **Services → Sign in with Apple for Email Communication**, or mail to
+   `@privaterelay.appleid.com` addresses is dropped.
+
+### B5. TestFlight upload
+
+From your own Terminal on the Mac Studio (macOS asks once to let `codesign` use the key: click
+**Always Allow**):
 
 ```sh
-fastlane produce -u <apple-id> --app_identifier app.pintopets.ios --app_name PintoPets \
-  --sku pintopets-ios --language en-GB --platform ios --team_id PAS2QUVJHC --skip_devcenter
+cd ~/projects/pintopets/apps/ios
+git switch ios/app-store-readiness          # or main once merged
+./scripts/testflight.sh                     # internal testing, int server (VPN)
+# For App Review / external testers, once B3 is done:
+PINTOPETS_API_URL=https://<production host> ./scripts/testflight.sh
 ```
 
-## 2. TestFlight
+It archives, signs with the "PintoPets App Store" profile and uploads with the API key (no
+Apple ID password). The build shows in App Store Connect → TestFlight after processing
+(5–15 minutes). Then:
+
+- TestFlight → **Internal Testing → +** → group "Team" → add yourself and testers (must be
+  App Store Connect users) → add the build. No Beta App Review needed.
+- Install from the TestFlight app on an iPhone. Int builds need the Workstation VPN.
+
+### B6. Reviewer demo account
+
+On the production host, create an account that App Review can use:
+
+- an email you control (e.g. `appreview@<your domain>`) with a password, signing in through
+  "Continue with Google or email";
+- two-factor sign-in **off**, and no email code required at sign-in;
+- filled with a demo household (a few pets with photos, records, upcoming reminders) and a
+  couple of forum posts, like `scripts/seed-int.sh` does for int;
+- keep it working for the whole review. Enter the credentials **only in App Store Connect**
+  (App Review Information), never in git or chat.
+
+### B7. Store listing (text and screenshots)
+
+Either paste from `fastlane/metadata/en-GB/*.txt` into App Store Connect, or upload with the API
+key (no password):
 
 ```sh
-apps/ios/scripts/testflight.sh      # from your own Terminal; allow codesign to use the key
-```
-
-Then TestFlight → Internal Testing → + group "Team" → add yourself → add the build.
-Internal builds need no Beta App Review.
-
-## 3. Store listing (text + screenshots)
-
-```sh
-cp fastlane/api_key.example.json ~/.appstoreconnect/pintopets_api_key.json   # outside the repo
-cd apps/ios
+cp fastlane/api_key.example.json ~/.appstoreconnect/pintopets_api_key.json  # outside the repo
+cd ~/projects/pintopets/apps/ios
 fastlane deliver --api_key_path ~/.appstoreconnect/pintopets_api_key.json \
-  --app_identifier app.pintopets.ios --platform ios \
+  --app_identifier app.pintopets.ios --platform ios --app_version 1.0.0 \
   --skip_binary_upload --submit_for_review false --force \
   --overwrite_screenshots --precheck_include_in_app_purchases false
 ```
 
-Screenshots: iPhone 6.9" (1320×2868) and iPad 13" (2064×2752), My Pets, Reminders, Community.
-Re-take: run the web app (`pnpm dev`) with the demo seed, build Debug, launch with `-tab <name>`
-on "iPhone 17 Pro Max" and "iPad Pro 13-inch (M5)", `xcrun simctl status_bar … override --time 9:41`.
+| Field            | Value (limit)                                                                                          |
+| ---------------- | ------------------------------------------------------------------------------------------------------ |
+| Name             | PintoPets (30)                                                                                         |
+| Subtitle         | Pet health records & reminders (30/30)                                                                 |
+| Keywords         | pet,dog,cat,vet,vaccination,reminder,health,record,rabbit,horse,weight,flea,worming,diet,care (93/100) |
+| Promotional text | `promotional_text.txt` (149/170)                                                                       |
+| Description      | `description.txt` (1,344/4,000)                                                                        |
+| What's new       | First release: pets, health records, reminders and the PintoPets community.                            |
 
-## 4. App Privacy questionnaire
+Screenshots (`fastlane/screenshots/en-GB`), status bar 9:41 and full battery:
 
-Data collection: **Yes**. Tracking: **No** (no ads, no analytics SDKs, no data brokers).
-Matches `PintoPets/Resources/PrivacyInfo.xcprivacy`.
+- iPhone 6.9" (1320 × 2868): My Pets, Reminders, Community
+- iPad 13" (2064 × 2752): My Pets, Reminders, Community
 
-| Data type | Collected | Linked to user | Tracking | Purpose |
-|---|---|---|---|---|
-| Contact info → Name | Yes | Yes | No | App functionality |
-| Contact info → Email address | Yes | Yes | No | App functionality |
-| Identifiers → User ID | Yes | Yes | No | App functionality |
-| User content → Photos or videos | Yes | Yes | No | App functionality |
-| User content → Other user content (pet records, forum posts) | Yes | Yes | No | App functionality |
+To re-take: `pnpm dev` with the demo seed, build Debug, launch on "iPhone 17 Pro Max" and
+"iPad Pro 13-inch (M5)" with `-tab pets|reminders|community`, and
+`xcrun simctl status_bar <device> override --time 9:41 --batteryState charged --batteryLevel 100`.
 
-Not collected: location (EXIF/GPS is stripped on the phone), health data about people, financial
-info, contacts, browsing history, usage data, diagnostics, purchases.
+### B8. App Privacy questionnaire
 
-## 5. Age rating (questionnaire answers)
+Data collection: **Yes**. Tracking: **No**. Matches `PrivacyInfo.xcprivacy`.
 
-- Violence, sexual content, profanity, horror, drugs/alcohol/tobacco, gambling, contests: **None**
-- Medical/treatment information: **Infrequent/mild** (pet care records; health topics point to a vet)
-- User-generated content: **Yes**, with reporting, moderation and published community guidelines
-- Messaging/chat between users: **No** (public forum only, no private messages)
+| Data type                                                    | Linked to user | Tracking | Purpose           |
+| ------------------------------------------------------------ | -------------- | -------- | ----------------- |
+| Contact info → Name                                          | Yes            | No       | App functionality |
+| Contact info → Email address                                 | Yes            | No       | App functionality |
+| Identifiers → User ID                                        | Yes            | No       | App functionality |
+| User content → Photos or videos                              | Yes            | No       | App functionality |
+| User content → Other user content (pet records, forum posts) | Yes            | No       | App functionality |
+
+Not collected: location (photo EXIF/GPS is removed on the phone), health or fitness data about
+people, financial info, contacts, browsing or search history, usage data, diagnostics, purchases.
+If Sentry is turned on for production and receives user IDs, add Diagnostics → Crash data /
+Other diagnostic data (linked, app functionality).
+
+### B9. Age rating questionnaire
+
+- Violence, sexual content or nudity, profanity, horror, drugs, alcohol, tobacco, gambling,
+  contests: **None**
+- Medical or treatment information: **Infrequent/Mild** (pet care records; health topics point
+  to a vet)
+- User-generated content: **Yes** (forum with reporting, moderation and published guidelines)
+- Messaging or chat between users: **No** (public forum only)
 - Unrestricted web access: **No** (opens only PintoPets pages)
-- Advertising: **No**. Parental controls / age assurance: **No**
-- Made for kids: **No**
+- Advertising: **No**. Parental controls: **No**. Age assurance: **No**. Made for Kids: **No**
 
-Expected rating: **13+** (because of user-generated content).
+Expected rating: **13+**.
 
-## 6. App Review information
+### B10. App Review information
 
-- Sign-in required: **Yes**. Demo account: `<reviewer email>` / `<password>` on the production
-  host, 2FA **off**, pre-filled with the demo household (`scripts/seed-int.sh`-style seed).
-  Never commit these credentials; enter them only in App Store Connect.
-- Contact: Balinder Walia, `<phone>`, `<email>`.
+- Sign-in required: **Yes**, with the account from B6.
+- Contact: Balinder Walia, phone and email (App Store Connect only).
 - Notes:
 
-  > PintoPets is a pet-care record keeper. Tap Account → Sign in; sign-in opens our website in a
-  > secure browser sheet (ASWebAuthenticationSession) and returns to the app. Use the demo account
-  > above. My Pets shows the demo household; Reminders lists due care; Community is a moderated forum
-  > (report any post from its menu). Account → "Delete account and data" opens the in-browser
-  > deletion flow. The app collects no tracking or advertising data.
+  > PintoPets keeps pets' health records and care reminders, with a moderated community forum.
+  > To sign in, tap Account → Sign in. Sign-in opens our website in a secure browser sheet
+  > (ASWebAuthenticationSession) and returns to the app; choose "Continue with Google or email"
+  > and use the demo account above (two-factor sign-in is off for it). Sign in with Apple is
+  > also offered on the same screen.
+  > My Pets shows the demo household; Reminders lists due care; Community is a moderated forum
+  > (report any post from its menu). Account → "Delete account and data" opens the deletion
+  > flow on our website, which removes the user's pets, records, photos and posts.
+  > No tracking or advertising.
 
-- Export compliance: `ITSAppUsesNonExemptEncryption = NO` is in Info.plist (HTTPS only).
-- Content rights: no third-party content beyond what users post.
+- Attachment: none needed.
 
-## 7. Submit (only with the owner's explicit approval)
+### B11. Submit (only with explicit approval)
 
-App Store Connect → PintoPets → 1.0.0 → choose the TestFlight build → check every section is
-green → **Add for Review** → **Submit**. Choose "Manually release this version" so launch
-timing stays in your hands. Review usually takes 24–48 hours.
+App Store Connect → PintoPets → iOS App 1.0.0:
+
+1. Build: choose the TestFlight build made with the production `PINTOPETS_API_URL`.
+2. Check every section is complete (Pricing and Availability, App Privacy, Age Rating, App
+   Review Information, screenshots for iPhone and iPad).
+3. Version Release: **Manually release this version**.
+4. **Add for Review → Submit to App Review**.
+
+Review usually takes 24–48 hours. After approval, press **Release This Version** when ready.
+
+## Merging and deploying (engineering, after approval)
+
+1. Open PRs for `web/account-deletion-and-policies` and `ios/app-store-readiness`; review; merge.
+2. Deploy to int (VPN) and test: sign in from the app, delete a throwaway account, open
+   `/privacy`, `/terms`, `/support`.
+3. Deploy to the production host (B3) with `appleSignIn: true` once B4 is done.
+
+## Known limits (fine for 1.0)
+
+- App tokens are signed, not stored, so after deleting an account the app's token stays valid
+  for up to 30 days; the user's data is gone and the app can simply sign out.
+- Deleting from inside the app opens the website (sensitive actions need an authenticator code).
+- The deleted account's Workstation (OpsAPI) sign-in remains; PintoPets data is removed.
