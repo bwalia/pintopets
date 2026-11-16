@@ -1,9 +1,12 @@
 import { Button } from "@pintopets/ui/components/button";
 import { Card, CardContent } from "@pintopets/ui/components/card";
 import { LogIn } from "lucide-react";
+import { env } from "@/env";
 import { signInEnabled } from "@/server/auth";
 
-/** Shown when nobody is signed in. Sign-in is OpsAPI's (password + 2FA, or Google). */
+const appleEnabled = () => env().APPLE_SIGNIN_ENABLED;
+
+/** Shown when nobody is signed in. Sign-in is OpsAPI's (password + 2FA, Google, or Apple). */
 export function SignedOut({
   title,
   next = "/",
@@ -23,7 +26,9 @@ export function SignedOut({
           <div>
             <p className="font-semibold">{message}</p>
             <p className="text-muted-foreground mt-1">
-              Use your Google account, or your email and password with a one-time code.
+              {appleEnabled()
+                ? "Use your Apple or Google account, or your email and password."
+                : "Use your Google account, or your email and password with a one-time code."}
             </p>
             {enabled ? (
               <Button asChild className="mt-4">
