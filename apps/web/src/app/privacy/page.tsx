@@ -133,8 +133,10 @@ export default function PrivacyPage() {
           or a record at any time. When you <Link href="/account/delete">delete your account</Link>,
           we delete your pets, records, photos (including the image files), community name, votes
           and security settings straight away, and erase the text of your community posts and unlink
-          them from you. Moderators&apos; records of actions they took are kept to keep the
-          community safe. Copies in routine backups are overwritten as those backups expire.
+          them from you. Your Workstation sign-in is closed at the same time: it can no longer be
+          used, and if you signed in with Apple we revoke our access to your Apple ID.
+          Moderators&apos; records of actions they took are kept to keep the community safe. Copies
+          in routine backups are overwritten as those backups expire.
         </p>
       </LegalSection>
 
@@ -167,8 +169,8 @@ export default function PrivacyPage() {
           Information Commissioner&apos;s Office (ico.org.uk).
         </p>
         <p>
-          Your Workstation sign-in is a separate account used by other services too. Deleting
-          PintoPets doesn&apos;t delete it; you can manage it with Workstation.
+          Your Workstation sign-in is shared with other Workstation services. Deleting your
+          PintoPets account closes it for all of them.
         </p>
       </LegalSection>
 

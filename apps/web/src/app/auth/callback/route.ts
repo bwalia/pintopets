@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { env } from "@/env";
+import { REAUTH_COOKIE, REAUTH_MINUTES, REAUTH_NEXT, sealReauth } from "@/server/account/reauth";
 import { codeRequiredAtSignIn } from "@/server/security/service";
 import {
   encodeSession,
@@ -36,7 +37,9 @@ function same(a: string, b: string): boolean {
 /**
  * OpsAPI's SSO contract: /auth/callback?token=<JWT>&redirect=<from>. The token
  * is exchanged once, server to server, for the user (GET /auth/me), then a
- * PintoPets session starts. The token is never stored or logged.
+ * PintoPets session starts. The token is never logged, and is kept only after
+ * a deliberate re-sign-in to delete the account (encrypted, 10 minutes,
+ * server/account/reauth.ts): OpsAPI needs it to close the identity.
  */
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -47,7 +50,7 @@ export async function GET(request: Request) {
   const pending = jar.get(SIGNIN_COOKIE)?.value ?? "";
   jar.delete({ name: SIGNIN_COOKIE, path: "/auth" });
 
-  const [nonce = "", next] = pending.split("|");
+  const [nonce = "", next, mode] = pending.split("|");
   const token = url.searchParams.get("token") ?? "";
   if (!nonce || !token || !same(nonce, url.searchParams.get("redirect") ?? ""))
     return fail("expired");
@@ -72,6 +75,16 @@ export async function GET(request: Request) {
   const name = [me.user.first_name, me.user.last_name].filter(Boolean).join(" ").trim();
   const user = { sub: me.user.uuid, email: me.user.email, name };
   const secure = appUrl.startsWith("https://");
+  const keepForDeletion = (res: NextResponse) => {
+    if (mode !== "reauth" || safeNext(next) !== REAUTH_NEXT) return;
+    res.cookies.set(REAUTH_COOKIE, sealReauth(user.sub, token, secret), {
+      httpOnly: true,
+      secure,
+      sameSite: "lax",
+      path: "/",
+      maxAge: REAUTH_MINUTES * 60,
+    });
+  };
 
   // Authenticator code at sign-in (if the user turned it on), unless this
   // device was trusted after an earlier code.
@@ -104,6 +117,7 @@ export async function GET(request: Request) {
         maxAge: 600,
       },
     );
+    keepForDeletion(res);
     res.headers.set("Cache-Control", "no-store");
     return res;
   }
@@ -116,6 +130,7 @@ export async function GET(request: Request) {
     path: "/",
     maxAge: SESSION_DAYS * 86_400,
   });
+  keepForDeletion(res);
   res.headers.set("Cache-Control", "no-store");
   return res;
 }

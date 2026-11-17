@@ -22,7 +22,11 @@ function AppleLogo() {
  * Store guideline 4.8). Every option ends at the same PintoPets account.
  */
 export default async function SignInPage({ searchParams }: PageProps<"/signin">) {
-  const next = encodeURIComponent(safeNext(String((await searchParams).next ?? "/")));
+  const params = await searchParams;
+  // Keep `reauth=1` (a deliberate fresh sign-in to delete the account) on both choices.
+  const next =
+    encodeURIComponent(safeNext(String(params.next ?? "/"))) +
+    (params.reauth === "1" ? "&reauth=1" : "");
   return (
     <div className="mx-auto max-w-md">
       <Card>

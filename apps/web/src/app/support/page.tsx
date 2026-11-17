@@ -49,10 +49,10 @@ const FAQ = [
     a: (
       <p>
         Go to <Link href="/account/delete">Delete your account</Link> (also linked from your account
-        page) and type DELETE. If you use two-factor sign-in you&apos;ll confirm with a code from
-        your authenticator app; otherwise you may be asked to sign in again first. Your pets,
-        records, photos, community posts and settings are deleted. Your Workstation sign-in is a
-        separate account and isn&apos;t deleted.
+        page), sign in again to confirm it&apos;s you, and type DELETE. If you use two-factor
+        sign-in you&apos;ll also enter a code from your authenticator app. Your pets, records,
+        photos, community posts and settings are deleted, and your Workstation sign-in is closed (if
+        you signed in with Apple, our access to your Apple ID is revoked).
       </p>
     ),
   },

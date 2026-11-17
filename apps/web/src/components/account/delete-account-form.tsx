@@ -10,20 +10,21 @@ import { useState } from "react";
 import { useStepUp } from "./step-up";
 
 const CONFIRM_WORD = "DELETE";
+const REAUTH = "reauth_required";
 
 export type ConfirmWith = "code" | "recent-sign-in" | "sign-in-again";
 
 const HINTS: Record<ConfirmWith, string> = {
   code: "You'll then be asked for a code from your authenticator app.",
-  "recent-sign-in": "You signed in a few minutes ago, so no code is needed.",
+  "recent-sign-in": "You've just signed in again, so no code is needed.",
   "sign-in-again": "",
 };
 
 /**
- * Type DELETE, confirm it's them, then DELETE /api/v1/me. With two-factor
- * sign-in on that's an authenticator code (step-up); without it, a sign-in in
- * the last 10 minutes (else they sign in again first). The server enforces the
- * same rule and clears the session; we go home signed out.
+ * Type DELETE, confirm it's them, then DELETE /api/v1/me. Everyone first signs
+ * in again (OpsAPI needs that fresh sign-in to close the Workstation sign-in);
+ * with two-factor sign-in on, they also enter an authenticator code. The server
+ * enforces the same rule and clears the session; we go home signed out.
  */
 export function DeleteAccountForm({ confirmWith }: { confirmWith: ConfirmWith }) {
   const router = useRouter();
@@ -37,9 +38,13 @@ export function DeleteAccountForm({ confirmWith }: { confirmWith: ConfirmWith })
     const res = await fetch("/api/v1/me", { method: "DELETE" });
     if (res.ok) return { ok: true };
     const body = (await res.json().catch(() => null)) as {
-      error?: { code?: string; message?: string };
+      error?: { code?: string; message?: string; details?: { reason?: string } };
     } | null;
-    return { ok: false, code: body?.error?.code, message: body?.error?.message };
+    // A missing or expired fresh sign-in is not a request for an authenticator
+    // code: keep it away from the step-up dialog.
+    const code =
+      body?.error?.details?.reason === "recent_sign_in_required" ? REAUTH : body?.error?.code;
+    return { ok: false, code, message: body?.error?.message };
   }
 
   async function remove() {
@@ -54,6 +59,8 @@ export function DeleteAccountForm({ confirmWith }: { confirmWith: ConfirmWith })
     }
     setBusy(false);
     if (r.message && r.message !== "Cancelled") setError(r.message);
+    // The fresh sign-in expired: re-render with the "Sign in again" button.
+    if (r.code === REAUTH) router.refresh();
   }
 
   if (confirmWith === "sign-in-again") {
@@ -61,12 +68,12 @@ export function DeleteAccountForm({ confirmWith }: { confirmWith: ConfirmWith })
       <Card className="border-destructive">
         <CardContent className="flex flex-col gap-3">
           <p className="text-sm">
-            To keep your account safe, please sign in again to confirm it&apos;s you. You&apos;ll
-            come straight back here.
+            To keep your account safe, please sign in again to confirm it&apos;s you, even if
+            you&apos;re already signed in. You&apos;ll come straight back here.
           </p>
           <div>
             <Button asChild variant="urgent">
-              <a href={`/auth/signin?next=${encodeURIComponent("/account/delete")}`}>
+              <a href={`/auth/signin?reauth=1&next=${encodeURIComponent("/account/delete")}`}>
                 Sign in again to continue
               </a>
             </Button>

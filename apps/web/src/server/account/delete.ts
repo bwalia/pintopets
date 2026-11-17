@@ -11,7 +11,7 @@ import { RECORDS } from "../pets/records";
 /**
  * Deletes everything PintoPets holds about the user (UK GDPR erasure; App Store
  * guideline 5.1.1(v)). Mirrors exportMyData. The Workstation (OpsAPI) sign-in
- * itself is a separate, shared identity: it is NOT deleted here.
+ * is closed afterwards by DELETE /api/v1/me (server/account/reauth.ts).
  *
  * - Pets the user OWNS: every photo (stored files first, then rows), every
  *   record of every kind, then the pet (OpsAPI also cascades on the pet).
