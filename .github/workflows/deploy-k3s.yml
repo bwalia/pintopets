@@ -157,7 +157,10 @@ jobs:
           zone_id=$(curl -fsS "${auth[@]}" "$api/zones?name=$DNS_ZONE" | jq -r '.result[0].id // empty')
           [ -n "$zone_id" ] || { echo "::error::zone $DNS_ZONE is not visible to this token"; exit 1; }
           records=$(curl -fsS "${auth[@]}" "$api/zones/$zone_id/dns_records?name=$HOST")
-          other=$(echo "$records" | jq -r '[.result[] | select(.type != "CNAME") | .type] | join(",")')
+          # Only address records conflict with the CNAME. The apex (prod) also
+          # carries MX/TXT for Email Routing (support@), which Cloudflare allows
+          # next to a flattened apex CNAME.
+          other=$(echo "$records" | jq -r '[.result[] | select(.type == "A" or .type == "AAAA") | .type] | join(",")')
           [ -z "$other" ] || { echo "::error::$HOST already has $other record(s); not touching it"; exit 1; }
           rec=$(echo "$records" | jq -c '[.result[] | select(.type == "CNAME")][0] // empty')
           if [ -z "$rec" ]; then
@@ -377,12 +380,16 @@ jobs:
           HOST: ${{ needs.ring.outputs.host }}
         run: |
           # From the LAN runner a VPN-only host is proxied; elsewhere it is a 403.
-          for i in $(seq 1 10); do
+          for i in $(seq 1 18); do
             code=$(curl -sS -o /dev/null -m 10 -w '%{http_code}' "https://$HOST/api/v1/health") || code=000
             echo "[$i] https://$HOST/api/v1/health -> $code"
             [ "$code" = 200 ] && exit 0
             sleep 10
           done
+          # Prod is public and is what App Review uses: it must answer.
+          if [ "$TARGET_ENV" = prod ]; then
+            echo "::error::https://$HOST/api/v1/health did not answer 200"; exit 1
+          fi
           echo "::warning::$HOST did not answer 200 yet (DNS/cert propagation can take a few minutes)"
       - name: Remove kubeconfig
         if: always()
