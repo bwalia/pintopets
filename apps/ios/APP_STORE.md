@@ -7,21 +7,21 @@ Nothing here uploads a build or submits for review. Those are separate, explicit
 
 ## Status (16 November 2026)
 
-| Area                                                         | Status                                                      | Where                                          |
-| ------------------------------------------------------------ | ----------------------------------------------------------- | ---------------------------------------------- |
-| App code, version 1.0.0, iOS 17+, iPhone and iPad            | ✅ Ready                                                    | branch `ios/app-store-readiness`               |
-| Privacy manifest (`PrivacyInfo.xcprivacy`)                   | ✅ Ready                                                    | `PintoPets/Resources/`                         |
-| Account tab: delete account, privacy, terms, support links   | ✅ Ready                                                    | `Features/Account/AccountView.swift`           |
-| Account deletion (web page + `DELETE /api/v1/me`)            | ✅ Built, not deployed                                      | branch `web/account-deletion-and-policies`     |
-| Privacy policy, terms, support pages                         | ✅ Built, not deployed                                      | same branch: `/privacy`, `/terms`, `/support`  |
-| Sign in with Apple (guideline 4.8)                           | ✅ Built, off until Apple keys exist                        | same branch: `/signin`, `APPLE_SIGNIN_ENABLED` |
-| Store text, screenshots, categories                          | ✅ Ready                                                    | `fastlane/metadata`, `fastlane/screenshots`    |
-| Signing: certificate, "PintoPets App Store" profile, API key | ✅ Verified                                                 | profile valid to 15 Sep 2027                   |
-| App Store Connect app record                                 | ❌ **Balinder**                                             | step B1                                        |
-| Support email `support@pintopets.app`                        | ❌ **Balinder**: domain has no MX records, mail bounces     | step B2                                        |
-| Public production host                                       | ❌ **Balinder**: int is VPN-only, App Review can't reach it | step B3                                        |
-| Apple keys for Sign in with Apple                            | ❌ **Balinder**                                             | step B4                                        |
-| Reviewer demo account                                        | ❌ After B3                                                 | step B6                                        |
+| Area                                                         | Status                                                        | Where                                          |
+| ------------------------------------------------------------ | ------------------------------------------------------------- | ---------------------------------------------- |
+| App code, version 1.0.0, iOS 17+, iPhone and iPad            | ✅ Ready                                                      | branch `ios/app-store-readiness`               |
+| Privacy manifest (`PrivacyInfo.xcprivacy`)                   | ✅ Ready                                                      | `PintoPets/Resources/`                         |
+| Account tab: delete account, privacy, terms, support links   | ✅ Ready                                                      | `Features/Account/AccountView.swift`           |
+| Account deletion (web page + `DELETE /api/v1/me`)            | ✅ Built, not deployed                                        | branch `web/account-deletion-and-policies`     |
+| Privacy policy, terms, support pages                         | ✅ Built, not deployed                                        | same branch: `/privacy`, `/terms`, `/support`  |
+| Sign in with Apple (guideline 4.8)                           | ✅ Built, off until Apple keys exist                          | same branch: `/signin`, `APPLE_SIGNIN_ENABLED` |
+| Store text, screenshots, categories                          | ✅ Ready                                                      | `fastlane/metadata`, `fastlane/screenshots`    |
+| Signing: certificate, "PintoPets App Store" profile, API key | ✅ Verified                                                   | profile valid to 15 Sep 2027                   |
+| App Store Connect app record                                 | ❌ **Balinder**                                               | step B1                                        |
+| Support email `support@pintopets.app`                        | ❌ **Balinder**: domain has no MX records, mail bounces       | step B2                                        |
+| Public production host                                       | 🟡 `pintopets.app` on k3s1 chosen; config ready, not deployed | step B3                                        |
+| Apple keys for Sign in with Apple                            | ❌ **Balinder**                                               | step B4                                        |
+| Reviewer demo account                                        | ❌ After B3                                                   | step B6                                        |
 
 **Ready for internal TestFlight now** (after B1). **Ready for App Review** once B1–B6 are done
 and both branches are merged and deployed to the production host.
@@ -101,10 +101,15 @@ the same file.
 Decide the public URL (for example `https://pintopets.app`) and where it runs. It must be
 reachable from the internet without the Workstation VPN. Then:
 
-1. `deploy/helm/pintopets/values-prod.example.yaml` → `values-prod.yaml`, fill every `<CONFIRM: …>`.
-2. Deploy `main` (with both branches merged) there; check `/api/v1/health`, `/privacy`,
-   `/terms`, `/support`, `/account/delete` all load.
-3. Replace `https://pintopets.app` in `fastlane/metadata/en-GB/*_url.txt` if different.
+**Decided (17 Nov 2026): `https://pintopets.app` on k3s1, namespace `prod`, public.**
+`deploy/helm/pintopets/values-prod.yaml` and `deploy/edge/wslproxy-server-prod.json` are in
+the repo; follow `docs/environments.md` → "One-off setup (PROD)".
+
+1. Prod OpsAPI loads the plugin and trusts `pintopets.app`; create the prod `pintopets`
+   workspace, API key and `pintopets-opsapi` Secret; apply the apex DNS failover.
+2. Deploy prod; check `/api/v1/health`, `/privacy`, `/terms`, `/support`, `/account/delete`
+   all load from outside the VPN.
+3. The `fastlane/metadata/en-GB/*_url.txt` files already say `https://pintopets.app`.
 4. Build App Store binaries with `PINTOPETS_API_URL=https://<host> scripts/testflight.sh`
    (the script checks the host is reachable and prints the server baked into the build).
 

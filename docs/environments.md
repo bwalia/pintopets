@@ -2,12 +2,12 @@
 
 ## Rings
 
-| Ring | Host                 | Access               | Cluster                | Status                               |
-| ---- | -------------------- | -------------------- | ---------------------- | ------------------------------------ |
-| INT  | `int.pintopets.app`  | Workstation VPN only | k3s1, namespace `int`  | Set up (this doc)                    |
-| TEST | `test.pintopets.app` | Workstation VPN only | k3s1, namespace `test` | Not yet: no values file or edge spec |
-| ACC  | `acc.pintopets.app`  | Workstation VPN only | k3s1, namespace `acc`  | Not yet                              |
-| PROD | `pintopets.app`      | Public               | TBD (Vercel or k3s1)   | Not yet                              |
+| Ring | Host                 | Access               | Cluster                | Status                                   |
+| ---- | -------------------- | -------------------- | ---------------------- | ---------------------------------------- |
+| INT  | `int.pintopets.app`  | Workstation VPN only | k3s1, namespace `int`  | Set up (this doc)                        |
+| TEST | `test.pintopets.app` | Workstation VPN only | k3s1, namespace `test` | Not yet: no values file or edge spec     |
+| ACC  | `acc.pintopets.app`  | Workstation VPN only | k3s1, namespace `acc`  | Not yet                                  |
+| PROD | `pintopets.app`      | Public               | k3s1, namespace `prod` | Config in repo; see One-off setup (PROD) |
 
 INT, TEST and ACC must reject requests that do not come through the Workstation
 VPN. The workflow refuses to publish a non-prod ring whose edge spec has no
@@ -195,3 +195,42 @@ Verify from **outside** the VPN (e.g. a phone on mobile data) that
 `{"status":"ok","version":"<APP_VERSION>","env":"<ring>","checks":{"opsapi":"ok"}}`
 (503 when OpsAPI is unreachable). Used by the readiness probe and by Ring
 Promoter (`health_version_field: version`).
+
+## One-off setup (PROD)
+
+`pintopets.app` is public (App Review and customers), on the same path as int
+but with no VPN access profile (`deploy/edge/wslproxy-server-prod.json`). The
+`ring` job only lets prod publish a vhost without one. The apex is a
+Cloudflare-flattened CNAME (DNS-only, TTL 60) to `lon1.pop0.uk`, owned by the
+same `pintopets-app` failover instance. MX/TXT records for Email Routing
+(`support@pintopets.app`) live next to it; the `dns` job only objects to A/AAAA.
+
+Prod OpsAPI is the shared `workstation-opsapi` release in namespace `prod`
+(`https://opsapi.workstation.co.uk`, on cloud003). PintoPets prod runs on the LAN
+nodes and calls it through that public host (`values-prod.yaml`).
+
+In order:
+
+1. **OpsAPI prod** (`bwalia/opsapi` `values-workstation-prod.yaml`): the
+   `pintopets` plugin overlay pinned to a commit tag that ran on int, and
+   `pintopets.app` in `corsAllowedDomains` (else hosted sign-in says "This app is
+   not allowed to sign in with OpsAPI"). Deploy `workstation-opsapi` to prod; the
+   migrate job creates the `pintopets_*` tables.
+2. **Workspace and key:** in the prod OpsAPI dashboard
+   (https://opsapi-ui.workstation.co.uk) create the `pintopets` workspace and an
+   `opsk_` API key scoped to every `pintopets_*` module (what
+   `opsapi/dev/bootstrap.lua` does locally). Then, on k3s1:
+   `kubectl -n prod create secret generic pintopets-opsapi --from-literal=OPSAPI_API_KEY=<key>`.
+   The key goes only into that Secret.
+3. **DNS failover:** `bwalia/diy-tax-return-infra` adds the apex to the
+   `pintopets-app` instance; apply with `ansible-playbook nebuladns-failover.yml`.
+4. **Deploy:** `gh workflow run deploy-k3s.yml -R bwalia/pintopets -f TARGET_ENV=prod -f DEPLOYMENT_TYPE=deploy -f IMAGE_TAG=<sha int runs>`
+   (or register a `prod` ring in Ring Promoter and promote). It creates the apex
+   CNAME, registers the public vhost (Let's Encrypt), helm-installs into `prod`
+   and fails unless `https://pintopets.app/api/v1/health` answers 200.
+5. **Check from outside the VPN:** `/`, `/privacy`, `/terms`, `/support`,
+   `/account/delete`, `/signin` load, and sign-in completes.
+
+Prod has a fresh, empty data set (its own `pintopets` workspace). Photos are on
+the `pintopets-media` Longhorn volume in `prod`: back it up with the cluster's
+Longhorn backups.
