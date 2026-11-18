@@ -855,7 +855,9 @@ function assertTarget() {
   const url = new URL(env().OPSAPI_URL);
   if (target === "review") {
     if (env().APP_ENV !== "prod" || !/^[0-9a-f-]{36}$/.test(demo.id)) {
-      throw new Error("Review mode needs APP_ENV=prod and SEED_OWNER_ID=<reviewer's OpsAPI user uuid>.");
+      throw new Error(
+        "Review mode needs APP_ENV=prod and SEED_OWNER_ID=<reviewer's OpsAPI user uuid>.",
+      );
     }
     return;
   }
