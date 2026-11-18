@@ -14,7 +14,12 @@
  *   earlier seed made: the owner's pets with the seeded names, and the seeded
  *   members with their threads (replies cascade) and votes. Anything else,
  *   including the owner's own pets and other people's posts, is left alone.
- *   Never runs on acc or prod.
+ *   Never runs on acc, and on prod only in review mode (below).
+ *
+ * prod, App Review's demo account only (via scripts/seed/seed-review.sh):
+ *   APP_ENV=prod SEED_TARGET=review SEED_OWNER_ID=<reviewer's OpsAPI user uuid>.
+ *   Pets, photos and records for that one account. No community members or
+ *   posts (prod's forum is real people only); replaces only pets it made before.
  *
  * Photos: Unsplash (free to use under the Unsplash License), see photos/CREDITS.md.
  */
@@ -37,11 +42,12 @@ import { changePetStatus, createPet, deletePet, listPets } from "@/server/pets/s
 
 type Who = Pick<Actor, "id" | "role" | "displayName">;
 
-const target = process.env.APP_ENV === "int" ? "int" : "local";
-/** Whose household the pets join: the demo account locally, a real account on int. */
+const target =
+  process.env.SEED_TARGET === "review" ? "review" : process.env.APP_ENV === "int" ? "int" : "local";
+/** Whose household the pets join: the demo account locally, a real account on int / prod review. */
 const demo: Who = {
-  id: target === "int" ? (process.env.SEED_OWNER_ID ?? "") : DEMO_USER_ID,
-  role: "moderator",
+  id: target === "local" ? DEMO_USER_ID : (process.env.SEED_OWNER_ID ?? ""),
+  role: target === "review" ? "member" : "moderator",
   displayName: "Demo owner",
 };
 
@@ -847,6 +853,12 @@ const THREADS: SeedThread[] = [
 
 function assertTarget() {
   const url = new URL(env().OPSAPI_URL);
+  if (target === "review") {
+    if (env().APP_ENV !== "prod" || !/^[0-9a-f-]{36}$/.test(demo.id)) {
+      throw new Error("Review mode needs APP_ENV=prod and SEED_OWNER_ID=<reviewer's OpsAPI user uuid>.");
+    }
+    return;
+  }
   if (target === "int") {
     if (env().APP_ENV !== "int" || !/^[0-9a-f-]{36}$/.test(demo.id)) {
       throw new Error("Seeding int needs APP_ENV=int and SEED_OWNER_ID=<OpsAPI user uuid>.");
@@ -860,13 +872,18 @@ function assertTarget() {
   }
 }
 
-/** int: remove only what a previous seed created, so real data is untouched. */
-async function clearSeededData() {
+/** Remove the owner's pets an earlier seed made (by name); their other pets stay. */
+async function clearSeededPets() {
   const names = new Set(PETS.map((p) => p.input.name));
   for (const status of ["active", "archived", "deceased"] as const) {
     for (const pet of await listPets(demo, status))
       if (names.has(pet.name)) await deletePet(demo, pet.id);
   }
+}
+
+/** int: remove only what a previous seed created, so real data is untouched. */
+async function clearSeededData() {
+  await clearSeededPets();
   const seedIds = new Set(members.map((m) => m.id));
   const mine = (row: Record<string, unknown>, col: string) => seedIds.has(String(row[col]));
   for (const row of await listAll("forum-votes", {}, 100))
@@ -944,9 +961,10 @@ async function seedCommunity() {
 
 test("seed demo data", async () => {
   assertTarget();
-  await (target === "int" ? clearSeededData() : clearDemoData());
+  if (target === "review") await clearSeededPets();
+  else await (target === "int" ? clearSeededData() : clearDemoData());
   await seedPets();
-  await seedCommunity();
+  if (target !== "review") await seedCommunity();
   // Something to look at on the home page straight away.
   const names = new Set(PETS.map((p) => p.input.name));
   const seeded = (await listPets(demo)).filter((p) => names.has(p.name));
