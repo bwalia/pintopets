@@ -12,14 +12,14 @@ Nothing here uploads a build or submits for review. Those are separate, explicit
 | App code, version 1.0.0, iOS 17+, iPhone and iPad            | ✅ Ready                                                      | branch `ios/app-store-readiness`               |
 | Privacy manifest (`PrivacyInfo.xcprivacy`)                   | ✅ Ready                                                      | `PintoPets/Resources/`                         |
 | Account tab: delete account, privacy, terms, support links   | ✅ Ready                                                      | `Features/Account/AccountView.swift`           |
-| Account deletion (web page + `DELETE /api/v1/me`)            | ✅ Built, not deployed                                        | branch `web/account-deletion-and-policies`     |
+| Account deletion (web page + `DELETE /api/v1/me`)            | ✅ Closes the OpsAPI sign-in + revokes Apple (opsapi 1.0.397) | merged                                         |
 | Privacy policy, terms, support pages                         | ✅ Built, not deployed                                        | same branch: `/privacy`, `/terms`, `/support`  |
 | Sign in with Apple (guideline 4.8)                           | ✅ Built, off until Apple keys exist                          | same branch: `/signin`, `APPLE_SIGNIN_ENABLED` |
 | Store text, screenshots, categories                          | ✅ Ready                                                      | `fastlane/metadata`, `fastlane/screenshots`    |
 | Signing: certificate, "PintoPets App Store" profile, API key | ✅ Verified                                                   | profile valid to 15 Sep 2027                   |
 | App Store Connect app record                                 | ❌ **Balinder**                                               | step B1                                        |
 | Support email `support@pintopets.app`                        | ❌ **Balinder**: domain has no MX records, mail bounces       | step B2                                        |
-| Public production host                                       | 🟡 `pintopets.app` on k3s1 chosen; config ready, not deployed | step B3                                        |
+| Public production host                                       | 🟡 `pintopets.app` on k3s1; deploying                         | step B3                                        |
 | Apple keys for Sign in with Apple                            | ❌ **Balinder**                                               | step B4                                        |
 | Reviewer demo account                                        | ❌ After B3                                                   | step B6                                        |
 
@@ -270,27 +270,37 @@ Review usually takes 24–48 hours. After approval, press **Release This Version
 
 ## Account deletion: how it works and what to verify
 
-- `/account/delete` (linked from the app's Account tab and the website). Type DELETE, then
-  confirm: with two-factor sign-in on, an authenticator code; without it, a sign-in in the
-  last 10 minutes (else "Sign in again to continue"). `DELETE /api/v1/me` enforces the same.
+- `/account/delete` (linked from the app's Account tab and the website). Everyone first
+  **signs in again** ("Sign in again to continue": OpsAPI's form with `prompt=login`, so
+  single sign-on can't skip it); the fresh OpsAPI token is kept encrypted for 10 minutes for
+  this one purpose. Then type DELETE; with two-factor sign-in on, also an authenticator code.
+  `DELETE /api/v1/me` enforces the same.
 - Deleted: owned pets and every record, photo rows and their files (full and thumbnail),
   pet memberships, community name, helpful votes, two-factor and consent settings.
 - Scrubbed, not deleted: the user's threads and replies (text replaced, status "removed",
   author set to a random ID) so other people's discussions stay intact; reports they filed
   (reporter unlinked, their note erased). Kept: moderators' audit log.
-- Not deleted: the **Workstation (OpsAPI) sign-in** (email, name, password or Google/Apple
-  link). It is shared with other Workstation services. OpsAPI's own `POST /auth/delete-account`
-  only deactivates, needs a password (Google/Apple users have none) and doesn't revoke Apple
-  tokens. **Decision needed** (see the PR): accept this for 1.0, or extend OpsAPI to delete or
-  deactivate the identity and revoke Sign in with Apple tokens (Apple expects revocation when
-  an account created with Sign in with Apple is deleted).
+- **Then the Workstation (OpsAPI) sign-in is closed** with the user's own fresh token
+  (`POST /auth/delete-account`): OpsAPI deactivates it, ends its sessions, removes push
+  device tokens and **revokes Sign in with Apple** (Apple's `/auth/revoke`, with the refresh
+  token OpsAPI now stores sealed at Apple sign-in). Data goes first: if closing the sign-in
+  fails, the user can still sign in and retry. The identity is shared with other Workstation
+  services, so it is closed for them too (said on the page and in the privacy policy).
+- **Requires the OpsAPI change** (bwalia/opsapi PR "account deletion: fresh sign-in, Apple
+  revoke") deployed to the same ring first. Without it, `/auth/delete-account` still demands a
+  password and deletion stops after the data with "couldn't close your Workstation sign-in".
+- Apple users who signed in before that OpsAPI change have no stored Apple token, so
+  revocation reports `false` for them (logged). Every Apple sign-in from then on is covered;
+  Sign in with Apple is still off (B4), so nobody is affected at launch.
 - Records that someone else created on a pet they share with the user would keep the user's
   ID in `created_by_user_uuid`; the product has no pet sharing yet, so this can't happen today.
-- App tokens are signed, not stored: after deletion the app's token stays valid for up to
-  30 days, but there is no data behind it; signing out clears it.
+- Tokens already issued: OpsAPI access tokens live out their TTL (up to 1 hour) except for
+  `/auth/me`; the app's PintoPets token is signed, not stored, and has no data behind it.
 
 Verify by hand on int after deploying (needs a throwaway account, not the demo account):
 create a pet with a photo, post a thread and a reply, vote and report; delete the account;
 check the pet, photo URL, thread text and community name are gone and the photo files are no
-longer in the media volume; check a 2FA account is asked for a code and a non-2FA account
-with an old session is asked to sign in again.
+longer in the media volume; check signing in again with that account is refused; check every
+account is asked to sign in again (even one that just signed in) and a 2FA account is also
+asked for a code. Once B4 is done, repeat with a Sign in with Apple account and check
+Settings → Apple ID → Sign in with Apple no longer lists PintoPets.

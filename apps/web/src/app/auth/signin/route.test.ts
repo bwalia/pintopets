@@ -74,4 +74,26 @@ describe("GET /auth/signin", () => {
     const res = signin("?provider=apple&next=https://evil.example/");
     expect(nonceCookie(res).split("|")[1]).toBe("/");
   });
+
+  it("a deliberate re-sign-in to delete the account forces OpsAPI's form and is flagged", () => {
+    const res = signin("?reauth=1&next=/account/delete");
+    const target = location(res);
+    expect(target.pathname).toBe("/auth/signin");
+    expect(target.searchParams.get("prompt")).toBe("login");
+    expect(nonceCookie(res).split("|").slice(1)).toEqual(["/account/delete", "reauth"]);
+  });
+
+  it("reauth only applies to the delete page", () => {
+    const res = signin("?reauth=1&next=/pets");
+    expect(location(res).searchParams.get("prompt")).toBeNull();
+    expect(nonceCookie(res).split("|")).toHaveLength(2);
+  });
+
+  it("keeps reauth through the chooser when Apple is on", () => {
+    settings.apple = true;
+    const res = signin("?reauth=1&next=/account/delete");
+    const target = location(res);
+    expect(target.pathname).toBe("/signin");
+    expect(target.searchParams.get("reauth")).toBe("1");
+  });
 });

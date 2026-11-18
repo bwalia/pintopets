@@ -1,9 +1,10 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { env } from "@/env";
+import { openReauth, REAUTH_COOKIE, REAUTH_MINUTES } from "../account/reauth";
 import type { Actor } from "../auth";
 import { HttpError } from "../http";
-import { SESSION_COOKIE, SESSION_DAYS, signToken, verifyToken } from "../session";
+import { signToken, verifyToken } from "../session";
 import { verifySecondFactor } from "./service";
 
 /**
@@ -67,46 +68,43 @@ export async function clearStepUp(): Promise<void> {
   (await cookies()).delete(STEP_UP_COOKIE);
 }
 
-/** How recently someone without two-factor sign-in must have signed in to delete their account. */
-export const RECENT_SIGN_IN_MINUTES = 10;
+/** How recently someone must have signed in (through OpsAPI) to delete their account. */
+export const RECENT_SIGN_IN_MINUTES = REAUTH_MINUTES;
 
-/** When this browser's session was issued (sessions last exactly SESSION_DAYS), or null. */
-export async function signedInAt(
-  actor: Pick<Actor, "id">,
-  now = Date.now(),
-): Promise<number | null> {
-  const p = verifyToken<{ sub: string; exp: number }>(
-    (await cookies()).get(SESSION_COOKIE)?.value,
-    secret(),
-    "session",
-    now,
-  );
-  if (p?.sub !== actor.id) return null;
-  return (p.exp - SESSION_DAYS * 86_400) * 1000;
+/**
+ * The OpsAPI token from a sign-in in the last RECENT_SIGN_IN_MINUTES that the
+ * user made on purpose to delete their account ("Sign in again to continue"),
+ * or null. Ordinary sign-ins don't count: OpsAPI needs the token itself to
+ * close the identity, and only that flow keeps it.
+ */
+export async function freshSignInToken(actor: Pick<Actor, "id">): Promise<string | null> {
+  return openReauth((await cookies()).get(REAUTH_COOKIE)?.value, actor.id, secret());
 }
 
-export async function signedInRecently(
-  actor: Pick<Actor, "id">,
-  now = Date.now(),
-): Promise<boolean> {
-  const at = await signedInAt(actor, now);
-  return at !== null && now - at <= RECENT_SIGN_IN_MINUTES * 60_000;
+export async function signedInRecently(actor: Pick<Actor, "id">): Promise<boolean> {
+  return (await freshSignInToken(actor)) !== null;
 }
 
 /**
- * Confirming it's really them before deleting the account. With two-factor
- * sign-in on: an authenticator code (step-up). Without it (most people, and
- * everyone who signs in with Google or Apple), asking them to set up 2FA first
- * would make deletion needlessly hard (App Store guideline 5.1.1(v)), so a
- * sign-in in the last RECENT_SIGN_IN_MINUTES is enough instead.
+ * Confirming it's really them before deleting the account, for everyone: a
+ * fresh sign-in (which also lets OpsAPI close the Workstation identity and
+ * revoke Sign in with Apple), plus an authenticator code if two-factor sign-in
+ * is on. Returns the fresh OpsAPI token.
  */
 export async function requireDeletionConfirmation(
   actor: Pick<Actor, "id">,
   twoFactorOn: boolean,
-): Promise<void> {
-  if (twoFactorOn) return requireStepUp(actor);
-  if (await signedInRecently(actor)) return;
-  throw new HttpError("step_up_required", "Please sign in again to confirm it's you.", {
-    reason: "recent_sign_in_required",
-  });
+): Promise<string> {
+  const token = await freshSignInToken(actor);
+  if (!token) {
+    throw new HttpError("step_up_required", "Please sign in again to confirm it's you.", {
+      reason: "recent_sign_in_required",
+    });
+  }
+  if (twoFactorOn) await requireStepUp(actor);
+  return token;
+}
+
+export async function clearReauth(): Promise<void> {
+  (await cookies()).delete(REAUTH_COOKIE);
 }

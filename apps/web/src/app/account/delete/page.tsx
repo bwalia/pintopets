@@ -14,26 +14,29 @@ const DELETED = [
   "Every photo of those pets, including the stored image files.",
   "Your community posts and replies: their text is erased and they're no longer linked to you. Your community name, your helpful votes and the details you wrote in any reports go too.",
   "Your two-factor sign-in settings, recovery codes and privacy choices.",
+  "Your Workstation sign-in (the account you sign in to PintoPets with) is closed: it can no longer sign in to PintoPets or other Workstation services, and if you signed in with Apple, PintoPets' access to your Apple ID is revoked.",
 ];
 
 export default async function DeleteAccountPage() {
   const user = await currentUser();
   if (!user) return <SignedOut title="Delete your account" next="/account/delete" />;
-  // How they confirm: an authenticator code with 2FA on, otherwise a recent sign-in.
+  // How they confirm: everyone signs in again first (OpsAPI needs that fresh
+  // sign-in to close the Workstation sign-in); with 2FA on, then a code too.
   const confirmWith = user.demo
     ? "code"
-    : (await securityStatus(user)).totpEnabled
-      ? "code"
-      : (await signedInRecently(user))
-        ? "recent-sign-in"
-        : "sign-in-again";
+    : !(await signedInRecently(user))
+      ? "sign-in-again"
+      : (await securityStatus(user)).totpEnabled
+        ? "code"
+        : "recent-sign-in";
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
       <div>
         <h1 className="font-semibold">Delete your account</h1>
         <p className="text-muted-foreground mt-1">
-          This permanently deletes your PintoPets data. It can&apos;t be undone.
+          This permanently deletes your PintoPets data and closes your sign-in. It can&apos;t be
+          undone.
         </p>
       </div>
 
@@ -49,11 +52,6 @@ export default async function DeleteAccountPage() {
           </ul>
           <h2 className="text-h4 mt-2 font-semibold">What stays</h2>
           <ul className="text-muted-foreground list-disc pl-5 text-sm">
-            <li className="mt-1">
-              Your Workstation sign-in (name, email and password) is a separate account shared with
-              other Workstation services. Deleting PintoPets doesn&apos;t delete it: manage or
-              delete it with Workstation.
-            </li>
             <li className="mt-1">
               Discussions started by other people stay, without your replies. Moderators keep their
               records of actions they took, which they need to keep the community safe.
