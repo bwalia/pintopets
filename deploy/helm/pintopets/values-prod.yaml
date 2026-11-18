@@ -1,0 +1,41 @@
+# ── PintoPets — PRODUCTION ─────────────────────────────────────────────────
+# Release: pintopets   Namespace: prod   Cluster: k3s1
+# Host: https://pintopets.app — PUBLIC (no VPN access profile on the wslproxy
+# vhost, deploy/edge/wslproxy-server-prod.json): App Review and customers reach
+# it from the internet. DNS: apex CNAME (Cloudflare-flattened, DNS-only) to
+# lon1.pop0.uk, flipped to lon2.pop0.uk by the nebula-dns-failover Cloudflare
+# writer (diy-tax-return-infra, instance pintopets-app). App Store builds point
+# here (apps/ios: PINTOPETS_API_URL=https://pintopets.app scripts/testflight.sh).
+#
+# Deployed only by hand or by a Ring Promoter promotion; a push deploys int.
+env: prod
+host: pintopets.app
+
+# Real sign-in only; env() refuses DEMO_AUTH on prod.
+demoAuth: false
+# Turn on once prod OpsAPI has APPLE_TEAM_ID, APPLE_KEY_ID, APPLE_PRIVATE_KEY,
+# APPLE_CLIENT_ID (Services ID) and APPLE_REDIRECT_URI
+# (https://opsapi.workstation.co.uk/auth/apple/callback), and OpsAPI revokes
+# Apple tokens on account deletion (apps/ios/APP_STORE.md, B4).
+appleSignIn: false
+community:
+  moderatorEmails: ["tenthmatrix.mailer@gmail.com"]
+
+opsapi:
+  # Prod OpsAPI (bwalia/opsapi values-workstation-prod.yaml) runs on cloud003,
+  # while this release runs on the LAN nodes. The cloud<->LAN mesh is
+  # unreliable, so the server calls OpsAPI through its public host rather than
+  # workstation-opsapi.prod.svc.cluster.local.
+  url: https://opsapi.workstation.co.uk
+  publicUrl: https://opsapi.workstation.co.uk
+  namespace: pintopets
+  # opsk_ key for the `pintopets` workspace in PROD OpsAPI (created by hand,
+  # docs/environments.md "One-off setup (PROD)"). Never the int key.
+  apiKeySecret: pintopets-opsapi
+
+replicaCount: 1
+
+# Same placement as int: any healthy LAN amd64 node.
+nodeSelector:
+  net-region: home
+  kubernetes.io/arch: amd64
