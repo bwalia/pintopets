@@ -14,9 +14,9 @@ const FAQ = [
     a: (
       <p>
         Choose <strong>Sign in</strong> and use your Workstation account: your email and password
-        with a one-time code, &ldquo;Continue with Google&rdquo; or, where offered, &ldquo;Continue
-        with Apple&rdquo;. In the iPhone and iPad app, sign-in opens a secure browser sheet and
-        returns you to the app.
+        with a one-time code, or, where offered, &ldquo;Continue with Apple&rdquo; or
+        &ldquo;Continue with Google&rdquo;. In the iPhone and iPad app, sign-in opens a secure
+        browser sheet and returns you to the app.
       </p>
     ),
   },

@@ -8,7 +8,8 @@ import { safeNext, SIGNIN_COOKIE } from "@/server/session";
  * Starts sign-in. OpsAPI is the identity provider for every method:
  *
  * - `?provider=apple` → OpsAPI's Sign in with Apple (/auth/apple)
- * - `?provider=opsapi` → OpsAPI's hosted page (password + 2FA, or Google)
+ * - `?provider=opsapi` → OpsAPI's hosted page (password + 2FA, or Google; Google
+ *   only while Apple is on, see App Store guideline 4.8 below)
  * - no provider → the /signin chooser when Apple is enabled, else the hosted page
  *
  * `?reauth=1` (with next=/account/delete): a deliberate fresh sign-in to delete
@@ -45,6 +46,10 @@ export function GET(request: Request) {
   target.searchParams.set("frontend_url", new URL(env().APP_URL).origin);
   target.searchParams.set("from", nonce);
   if (reauth) target.searchParams.set("prompt", "login");
+  // App Store guideline 4.8: an iOS app that offers Google sign-in must also offer
+  // Sign in with Apple. Until Apple is set up, ask OpsAPI for its password-only page
+  // (its other apps keep Google); turning Apple on brings Google back with it.
+  if (!apple) target.searchParams.set("providers", "password");
 
   const res = NextResponse.redirect(target, 303);
   res.cookies.set(SIGNIN_COOKIE, `${nonce}|${next}${reauth ? "|reauth" : ""}`, {

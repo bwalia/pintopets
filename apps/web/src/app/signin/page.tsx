@@ -3,6 +3,8 @@ import { Card, CardContent } from "@pintopets/ui/components/card";
 import { Mail, PawPrint } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { env } from "@/env";
 import { safeNext } from "@/server/session";
 
 export const metadata: Metadata = { title: "Sign in", robots: { index: false } };
@@ -27,6 +29,8 @@ export default async function SignInPage({ searchParams }: PageProps<"/signin">)
   const next =
     encodeURIComponent(safeNext(String(params.next ?? "/"))) +
     (params.reauth === "1" ? "&reauth=1" : "");
+  // No chooser without Apple: its Apple button would lead nowhere.
+  if (!env().APPLE_SIGNIN_ENABLED) redirect(`/auth/signin?next=${next}`);
   return (
     <div className="mx-auto max-w-md">
       <Card>
