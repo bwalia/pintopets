@@ -12,7 +12,7 @@ test.describe("privacy, terms and support", () => {
       await page.goto(path);
       await expect(page.getByRole("heading", { level: 1, name: heading })).toBeVisible();
       await expect(
-        page.getByRole("main").getByRole("link", { name: "support@pintopets.app" }).first(),
+        page.getByRole("main").getByRole("link", { name: "support@workstation.co.uk" }).first(),
       ).toBeVisible();
       await expectNoA11yViolations(page);
     });

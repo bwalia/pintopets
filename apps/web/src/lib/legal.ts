@@ -7,7 +7,7 @@ export const LEGAL = {
   /** Data controller (UK GDPR) and operator of the service. */
   controllerName: "Balinder Walia",
   /** Support, privacy and data-protection requests. */
-  contactEmail: "support@pintopets.app",
+  contactEmail: "support@workstation.co.uk",
 } as const;
 
 /** Shown as "Last updated" on the policy pages. Change it whenever they change. */
