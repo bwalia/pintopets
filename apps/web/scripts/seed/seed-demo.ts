@@ -1,7 +1,9 @@
 /**
  * Demo data: a household of pets with photos, a year of health records timed
  * so reminders are overdue / due soon / coming up, a pet who has passed away,
- * and a lively community forum.
+ * one rehomed (archived), twelve community members with households of their
+ * own, and a lively community forum. Extra pets, member households and threads
+ * live in seed-more.ts; shared helpers in seed-lib.ts.
  *
  * Local (the shared demo account):
  *   pnpm --filter @pintopets/web seed:demo
@@ -12,7 +14,7 @@
  * int (a real account, via scripts/seed/seed-int.sh):
  *   APP_ENV=int SEED_OWNER_ID=<OpsAPI user uuid>. Only replaces what an
  *   earlier seed made: the owner's pets with the seeded names, and the seeded
- *   members with their threads (replies cascade) and votes. Anything else,
+ *   members with their pets, threads (replies cascade) and votes. Anything else,
  *   including the owner's own pets and other people's posts, is left alone.
  *   Never runs on acc, and on prod only in review mode (below).
  *
@@ -27,7 +29,7 @@ import { readFile } from "node:fs/promises";
 import { PetInput, ThreadInput } from "@pintopets/api-contract";
 import { expect, test } from "vitest";
 import { env } from "@/env";
-import { type Actor, DEMO_USER_ID } from "@/server/auth";
+import { DEMO_USER_ID } from "@/server/auth";
 import {
   acceptAnswer,
   createReply,
@@ -39,63 +41,36 @@ import { setProfilePhoto, uploadPhoto } from "@/server/media/photos";
 import { deleteRow, listAll, updateRow } from "@/server/opsapi/client";
 import { createRecord } from "@/server/pets/records";
 import { changePetStatus, createPet, deletePet, listPets } from "@/server/pets/service";
-
-type Who = Pick<Actor, "id" | "role" | "displayName">;
+import {
+  dan,
+  day,
+  emergency,
+  megan,
+  members,
+  oliver,
+  priya,
+  type SeedPet,
+  type SeedThread,
+  sarah,
+  tom,
+  vet,
+  weighIns,
+  type Who,
+  years,
+} from "./seed-lib";
+import { HOUSEHOLDS, MORE_PETS, MORE_THREADS } from "./seed-more";
 
 const target =
   process.env.SEED_TARGET === "review" ? "review" : process.env.APP_ENV === "int" ? "int" : "local";
 /** Whose household the pets join: the demo account locally, a real account on int / prod review. */
 const demo: Who = {
   id: target === "local" ? DEMO_USER_ID : (process.env.SEED_OWNER_ID ?? ""),
-  role: target === "review" ? "member" : "moderator",
+  role: target === "review" ? "owner" : "moderator",
   displayName: "Demo owner",
 };
-
-/** Fixed ids so re-running replaces the same community members. */
-const member = (n: number, displayName: string): Who => ({
-  id: `5eed0000-0000-4000-8000-${String(n).padStart(12, "0")}`,
-  role: "owner",
-  displayName,
-});
-const priya = member(1, "Priya R");
-const tom = member(2, "Tom the horse guy");
-const sarah = member(3, "Sarah (RVN)");
-const dan = member(4, "Dan W");
-const megan = member(5, "Megan and Pickle");
-const oliver = member(6, "Oliver K");
-const members = [priya, tom, sarah, dan, megan, oliver];
-
-/** yyyy-mm-dd, `days` from today (negative = in the past). */
-function day(days: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() + days);
-  return d.toLocaleDateString("en-CA");
-}
-const years = (n: number) => day(-Math.round(n * 365.25));
 const photo = (name: string) => readFile(new URL(`./photos/${name}.jpg`, import.meta.url));
 
-interface SeedPet {
-  input: PetInput;
-  photos: { file: string; caption: string; altText: string }[];
-  records: [kind: Parameters<typeof createRecord>[2], input: Record<string, unknown>][];
-  deceasedOn?: string;
-}
-
-const vet = { vetPracticeName: "Riverside Veterinary Centre", vetPracticePhone: "020 7946 0321" };
-const emergency = { emergencyContactName: "Priya Patel", emergencyContactPhone: "07700 900123" };
-
-/** Monthly-ish weigh-ins following a curve. */
-function weighIns(points: [daysAgo: number, grams: number][], note?: [number, string]) {
-  return points.map(
-    ([ago, grams]) =>
-      [
-        "weights",
-        { measuredOn: day(-ago), weightGrams: grams, notes: note?.[0] === ago ? note[1] : null },
-      ] as SeedPet["records"][number],
-  );
-}
-
-const PETS: SeedPet[] = [
+const CORE_PETS: SeedPet[] = [
   {
     input: {
       name: "Biscuit",
@@ -633,14 +608,9 @@ const PETS: SeedPet[] = [
   },
 ];
 
-interface SeedThread {
-  author: Who;
-  input: Record<string, unknown>;
-  replies: { author: Who; body: string; votes?: Who[]; accepted?: true }[];
-  votes?: Who[];
-}
+const PETS = [...CORE_PETS, ...MORE_PETS];
 
-const THREADS: SeedThread[] = [
+const CORE_THREADS: SeedThread[] = [
   {
     author: priya,
     input: {
@@ -851,6 +821,14 @@ const THREADS: SeedThread[] = [
   },
 ];
 
+/** Both thread lists, alternating, newest first. */
+const THREADS = Array.from(
+  { length: Math.max(CORE_THREADS.length, MORE_THREADS.length) },
+  (_, i) => [CORE_THREADS[i], MORE_THREADS[i]],
+)
+  .flat()
+  .filter((t): t is SeedThread => t !== undefined);
+
 function assertTarget() {
   const url = new URL(env().OPSAPI_URL);
   if (target === "review") {
@@ -883,9 +861,17 @@ async function clearSeededPets() {
   }
 }
 
+/** Members are seed-only accounts: all their pets go. */
+async function clearMemberPets() {
+  for (const m of members)
+    for (const status of ["active", "archived", "deceased"] as const)
+      for (const pet of await listPets(m, status)) await deletePet(m, pet.id);
+}
+
 /** int: remove only what a previous seed created, so real data is untouched. */
 async function clearSeededData() {
   await clearSeededPets();
+  await clearMemberPets();
   const seedIds = new Set(members.map((m) => m.id));
   const mine = (row: Record<string, unknown>, col: string) => seedIds.has(String(row[col]));
   for (const row of await listAll("forum-votes", {}, 100))
@@ -899,6 +885,7 @@ async function clearSeededData() {
 }
 
 async function clearDemoData() {
+  await clearMemberPets();
   for (const status of ["active", "archived", "deceased"] as const) {
     for (const pet of await listPets(demo, status)) await deletePet(demo, pet.id);
   }
@@ -915,22 +902,24 @@ async function clearDemoData() {
   }
 }
 
-async function seedPets() {
-  for (const seed of PETS) {
-    const pet = await createPet(demo, PetInput.parse(seed.input));
+async function seedPets(owner: Who, pets: SeedPet[]) {
+  for (const seed of pets) {
+    const pet = await createPet(owner, PetInput.parse(seed.input));
     let first: string | undefined;
     for (const p of seed.photos) {
-      const uploaded = await uploadPhoto(demo, pet.id, {
+      const uploaded = await uploadPhoto(owner, pet.id, {
         bytes: await photo(p.file),
         caption: p.caption,
         altText: p.altText,
       });
       first ??= uploaded.id;
     }
-    if (first) await setProfilePhoto(demo, first);
-    for (const [kind, input] of seed.records) await createRecord(demo, pet.id, kind, input);
+    if (first) await setProfilePhoto(owner, first);
+    for (const [kind, input] of seed.records) await createRecord(owner, pet.id, kind, input);
     if (seed.deceasedOn) {
-      await changePetStatus(demo, pet.id, { status: "deceased", deceasedOn: seed.deceasedOn });
+      await changePetStatus(owner, pet.id, { status: "deceased", deceasedOn: seed.deceasedOn });
+    } else if (seed.archived) {
+      await changePetStatus(owner, pet.id, { status: "archived", deceasedOn: null });
     }
   }
 }
@@ -965,10 +954,13 @@ test("seed demo data", async () => {
   assertTarget();
   if (target === "review") await clearSeededPets();
   else await (target === "int" ? clearSeededData() : clearDemoData());
-  await seedPets();
-  if (target !== "review") await seedCommunity();
+  await seedPets(demo, PETS);
+  if (target !== "review") {
+    for (const [owner, pets] of HOUSEHOLDS) await seedPets(owner, pets);
+    await seedCommunity();
+  }
   // Something to look at on the home page straight away.
   const names = new Set(PETS.map((p) => p.input.name));
   const seeded = (await listPets(demo)).filter((p) => names.has(p.name));
-  expect(seeded.length).toBe(PETS.length - 1);
+  expect(seeded.length).toBe(PETS.filter((p) => !p.deceasedOn && !p.archived).length);
 });
