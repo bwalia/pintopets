@@ -115,6 +115,11 @@ the repo; follow `docs/environments.md` → "One-off setup (PROD)".
 
 ### B4. Sign in with Apple keys (Certificates, IDs & Profiles)
 
+**Optional for 1.0.** While `appleSignIn` is false, PintoPets asks OpsAPI for its
+password-only sign-in page (`providers=password`), so the app offers no Google sign-in and
+guideline 4.8 does not apply. Doing B4 and setting `appleSignIn: true` brings back both
+"Continue with Apple" and "Continue with Google".
+
 Done on the web through OpsAPI, so **the app's App ID, entitlements and provisioning profile
 stay unchanged**. To keep it that way, use a separate primary App ID:
 
@@ -161,8 +166,8 @@ Apple ID password). The build shows in App Store Connect → TestFlight after pr
 
 On the production host, create an account that App Review can use:
 
-- an email you control (e.g. `appreview@<your domain>`) with a password, signing in through
-  "Continue with Google or email";
+- an email you control (e.g. `appreview@<your domain>`) with a password (email-and-password
+  sign-in);
 - two-factor sign-in **off**, and no email code required at sign-in;
 - filled with a demo household (a few pets with photos, records, upcoming reminders) and a
   couple of forum posts, like `scripts/seed-int.sh` does for int;
@@ -239,9 +244,9 @@ Expected rating: **13+**.
 
   > PintoPets keeps pets' health records and care reminders, with a moderated community forum.
   > To sign in, tap Account → Sign in. Sign-in opens our website in a secure browser sheet
-  > (ASWebAuthenticationSession) and returns to the app; choose "Continue with Google or email"
-  > and use the demo account above (two-factor sign-in is off for it). Sign in with Apple is
-  > also offered on the same screen.
+  > (ASWebAuthenticationSession) and returns to the app; enter the demo account's email and
+  > password above (two-factor sign-in is off for it). Sign-in is email and password only: the
+  > app offers no third-party or social login.
   > My Pets shows the demo household; Reminders lists due care; Community is a moderated forum
   > (report any post from its menu). Account → "Delete account and data" opens the deletion
   > flow on our website, which removes the user's pets, records, photos and posts.

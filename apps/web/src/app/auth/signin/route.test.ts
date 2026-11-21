@@ -38,6 +38,13 @@ describe("GET /auth/signin", () => {
     expect(next).toBe("/pets");
   });
 
+  it("asks OpsAPI for password sign-in only while Apple is off (guideline 4.8)", () => {
+    expect(location(signin()).searchParams.get("providers")).toBe("password");
+    expect(location(signin("?reauth=1&next=/account/delete")).searchParams.get("providers")).toBe(
+      "password",
+    );
+  });
+
   it("ignores provider=apple when Apple is off", () => {
     const target = location(signin("?provider=apple"));
     expect(target.pathname).toBe("/auth/signin");
@@ -67,6 +74,7 @@ describe("GET /auth/signin", () => {
     settings.apple = true;
     const target = location(signin("?provider=opsapi"));
     expect(target.pathname).toBe("/auth/signin");
+    expect(target.searchParams.get("providers")).toBeNull();
   });
 
   it("never redirects to another site after sign-in", () => {
