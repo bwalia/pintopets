@@ -12,15 +12,18 @@ name: Build and deploy PintoPets to k3s1
 # it shows for a ring is always the one running there and can be promoted on.
 #
 # Per ring the chain is:
-#   browser → <host> --(Cloudflare CNAME, DNS-only, TTL 60)--> lon1.pop0.uk
-#             (or lon2.pop0.uk after a DNS failover) → wslproxy (TLS, VPN access
-#             profile on non-prod) → k3s1 ingress → pintopets Service
+#   browser → <host> --(Cloudflare CNAME, DNS-only, static)--> edge.pop0.uk
+#             --(flipped lon1 ↔ lon2 on health)--> lon1.pop0.uk / lon2.pop0.uk
+#             → wslproxy (TLS, VPN access profile on non-prod) → k3s1 ingress
+#             → pintopets Service
 #
-# DNS failover: the nebula-dns-failover Cloudflare writer on ns1/ns2
-# (diy-tax-return-infra, instance pintopets-app) owns the CNAME target and flips
-# it lon1 ↔ lon2 on health. This workflow therefore only CREATES the record when
-# it is missing (with the controller's comment marker, so the controller adopts
-# it) and never "corrects" its target.
+# DNS failover (since 2026-11-22, diy-tax-return-infra bed72d6): one switch,
+# edge.pop0.uk, flipped by the pop0-uk writer on ns1. Every wslproxy host is a
+# static CNAME to it with the comment "edge-failover static -> edge.pop0.uk …"
+# (scripts/edge-failover/repoint-to-edge.py). The per-zone pintopets-app writer
+# and its nebula-dns-failover marker are retired. This workflow therefore only
+# CREATES the record when it is missing, and otherwise only CHECKS it: it never
+# changes an existing record's target, TTL, proxy setting or comment.
 #
 # Runners: GitHub-hosted for anything that only needs the internet (tests,
 # Cloudflare, Docker Hub, Ring Promoter). Self-hosted (label `pintopets`) for the
@@ -74,7 +77,7 @@ env:
   RELEASE: pintopets
   DNS_ZONE: pintopets.app
   # Initial target only; the failover controller owns it afterwards.
-  DNS_TARGET: lon1.pop0.uk
+  DNS_TARGET: edge.pop0.uk
   RP_URL: https://rp.workstation.co.uk
   TARGET_ENV: ${{ github.event.inputs.TARGET_ENV || 'int' }}
   # A push is a build (plus seed); Ring Promoter does the deploy.
@@ -164,27 +167,24 @@ jobs:
           [ -z "$other" ] || { echo "::error::$HOST already has $other record(s); not touching it"; exit 1; }
           rec=$(echo "$records" | jq -c '[.result[] | select(.type == "CNAME")][0] // empty')
           if [ -z "$rec" ]; then
-            # The failover controller only manages records whose comment carries
-            # its marker; an unmarked CNAME would block it (Cloudflare rejects a
-            # second CNAME on the same name), so create it already marked.
-            comment="nebula-dns-failover | hostname=$HOST | policy=lon1-primary | v=1"
+            # Same shape as repoint-to-edge.py writes: a static, DNS-only CNAME to
+            # the edge switch (TTL 300; edge.pop0.uk itself has TTL 60).
+            comment="edge-failover static -> edge.pop0.uk (created by pintopets deploy-k3s)"
             body=$(jq -nc --arg name "$HOST" --arg content "$DNS_TARGET" --arg comment "$comment" \
-              '{type:"CNAME",name:$name,content:$content,ttl:60,proxied:false,comment:$comment}')
+              '{type:"CNAME",name:$name,content:$content,ttl:300,proxied:false,comment:$comment}')
             curl -fsS "${auth[@]}" -X POST "$api/zones/$zone_id/dns_records" --data "$body" >/dev/null
-            echo "created CNAME $HOST -> $DNS_TARGET (TTL 60, DNS-only, failover-managed)"
+            echo "created CNAME $HOST -> $DNS_TARGET (TTL 300, DNS-only, edge-failover static)"
             exit 0
           fi
-          content=$(echo "$rec" | jq -r .content); proxied=$(echo "$rec" | jq -r .proxied)
+          # From here on read-only: report what is there, never change it.
+          content=$(echo "$rec" | jq -r '.content | rtrimstr(".")'); proxied=$(echo "$rec" | jq -r .proxied)
           case "$(echo "$rec" | jq -r '.comment // ""')" in
-            *nebula-dns-failover*) ;;
-            *) echo "::error::$HOST CNAME has no nebula-dns-failover marker, so lon1/lon2 failover cannot manage it. Add the marker comment in Cloudflare (see docs/environments.md)."; exit 1 ;;
+            *"edge-failover static"*) ;;
+            *) echo "::error::$HOST CNAME has no 'edge-failover static' comment, so it is not the edge-failover record; not touching it (see diy-tax-return-infra scripts/edge-failover/repoint-to-edge.py)"; exit 1 ;;
           esac
-          case "$content" in
-            lon1.pop0.uk|lon2.pop0.uk) ;;
-            *) echo "::error::$HOST is a CNAME to $content, expected lon1.pop0.uk or lon2.pop0.uk; not touching it"; exit 1 ;;
-          esac
+          [ "$content" = "$DNS_TARGET" ] || { echo "::error::$HOST is a CNAME to $content, expected $DNS_TARGET; not touching it"; exit 1; }
           [ "$proxied" = false ] || { echo "::error::$HOST is proxied through Cloudflare; wslproxy needs it DNS-only"; exit 1; }
-          echo "CNAME $HOST -> $content in place (failover controller owns the target)"
+          echo "CNAME $HOST -> $content in place (edge-failover static; edge.pop0.uk does the lon1/lon2 failover)"
 
   # ─── 3. wslproxy vhost on pop0 (lon1, mirrored to lon2) ────────────────────
   # Must exist before traffic arrives, else the host resolves to an edge with no
