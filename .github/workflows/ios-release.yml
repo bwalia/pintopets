@@ -1,0 +1,90 @@
+name: iOS release (TestFlight)
+
+# Archive, sign and upload the PintoPets iOS app to TestFlight from this repo's
+# self-hosted Mac runner, the same way CloseKnitty and kubepilot release:
+# the runner unlocks the team's persistent signing keychain (kubepilot-signing,
+# password in ~/.secrets/kubepilot/keychain-password) so nobody has to set the
+# keychain up by hand. Signing and upload are apps/ios/scripts/testflight.sh.
+#
+#   ring=prod  builds against https://pintopets.app (App Review / external)
+#   ring=int   builds against int.pintopets.app (internal testers only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      ring:
+        description: "Server the build talks to (prod for App Store builds)"
+        type: choice
+        options: [prod, int]
+        default: prod
+
+concurrency:
+  group: pintopets-ios-release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Archive & upload to TestFlight
+    runs-on: [self-hosted, macOS, ARM64, pintopets]
+    timeout-minutes: 60
+    env:
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+      # Apple Distribution certificate in kubepilot-signing and the App Store
+      # profile made with it.
+      SIGN_IDENTITY: FC5DC91E30942E90257EBDA0B39B7B55C1D083F2
+      PROFILE_NAME: PintoPets App Store FC5D
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          set -euo pipefail
+          # App Store Connect requires the iOS 26 SDK. DEVELOPER_DIR, not sudo xcode-select.
+          selected=""
+          for candidate in /Applications/Xcode-26.5.0.app /Applications/Xcode-26.4.0.app /Applications/Xcode.app; do
+            if [ -d "$candidate/Contents/Developer" ]; then selected="$candidate"; break; fi
+          done
+          [ -n "$selected" ] || { echo "::error::No Xcode.app found under /Applications"; exit 1; }
+          echo "DEVELOPER_DIR=$selected/Contents/Developer" >> "$GITHUB_ENV"
+          DEVELOPER_DIR="$selected/Contents/Developer" xcodebuild -version
+
+      - name: Configure signing keychain
+        run: |
+          set -euo pipefail
+          kc="$HOME/Library/Keychains/kubepilot-signing.keychain-db"
+          pass_file="$HOME/.secrets/kubepilot/keychain-password"
+          [ -f "$kc" ] || { echo "::error::$kc missing: run kubepilot's iOS release once"; exit 1; }
+          [ -s "$pass_file" ] || { echo "::error::$pass_file missing"; exit 1; }
+          kc_pass="$(cat "$pass_file")"
+          echo "::add-mask::$kc_pass"
+          # Put the keychain on the user search list without dropping the
+          # others already there (list-keychains -s replaces the whole list).
+          current=()
+          while IFS= read -r line; do
+            line="$(echo "$line" | sed -e 's/^ *"//' -e 's/"$//')"
+            [ -n "$line" ] && [ "$line" != "$kc" ] && current+=("$line")
+          done < <(security list-keychains -d user)
+          security list-keychains -d user -s "$kc" "${current[@]}"
+          security unlock-keychain -p "$kc_pass" "$kc"
+          security set-keychain-settings -t 3600 "$kc"
+          security find-identity -v -p codesigning "$kc" | grep -q "$SIGN_IDENTITY" ||
+            { echo "::error::Signing identity $SIGN_IDENTITY not in $kc"; exit 1; }
+          echo "BUILD_KEYCHAIN_PATH=$kc" >> "$GITHUB_ENV"
+
+      - name: Install XcodeGen
+        run: command -v xcodegen >/dev/null 2>&1 || brew install xcodegen
+
+      - name: Archive and upload
+        env:
+          PINTOPETS_API_URL: ${{ inputs.ring == 'prod' && 'https://pintopets.app' || '' }}
+        run: apps/ios/scripts/testflight.sh
+
+      - name: Lock signing keychain
+        if: always()
+        run: |
+          [ -n "${BUILD_KEYCHAIN_PATH:-}" ] && security lock-keychain "$BUILD_KEYCHAIN_PATH" 2>/dev/null || true
+          rm -rf apps/ios/build/testflight
