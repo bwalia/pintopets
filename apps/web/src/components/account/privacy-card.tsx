@@ -14,29 +14,22 @@ import { useState } from "react";
 import { updatePreferencesAction } from "@/app/account/actions";
 import { useStepUp } from "./step-up";
 
-export function PrivacyCard({
-  consentAiLearning,
-  consentMarketing,
-}: {
-  consentAiLearning: boolean;
-  consentMarketing: boolean;
-}) {
+export function PrivacyCard({ consentMarketing }: { consentMarketing: boolean }) {
   const router = useRouter();
   const { withStepUp, dialog } = useStepUp();
   const [error, setError] = useState<string | null>(null);
 
-  const toggle =
-    (key: "consentAiLearning" | "consentMarketing") => (e: React.ChangeEvent<HTMLInputElement>) => {
-      const box = e.currentTarget;
-      const value = box.checked;
-      void updatePreferencesAction({ [key]: value }).then((r) => {
-        if (!r.ok) {
-          box.checked = !value;
-          setError(r.message);
-        }
-        router.refresh();
-      });
-    };
+  const toggle = (key: "consentMarketing") => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const box = e.currentTarget;
+    const value = box.checked;
+    void updatePreferencesAction({ [key]: value }).then((r) => {
+      if (!r.ok) {
+        box.checked = !value;
+        setError(r.message);
+      }
+      router.refresh();
+    });
+  };
 
   async function exportData() {
     setError(null);
@@ -65,7 +58,7 @@ export function PrivacyCard({
       <CardHeader>
         <CardTitle>Privacy and your data</CardTitle>
         <CardDescription>
-          You choose how your information is used. Both are off unless you turn them on.
+          You choose how your information is used. Email updates are off unless you turn them on.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -74,19 +67,6 @@ export function PrivacyCard({
             {error}
           </p>
         ) : null}
-        <label className="flex items-start gap-3 text-sm">
-          <input
-            type="checkbox"
-            className="accent-primary mt-0.5 size-5 shrink-0"
-            defaultChecked={consentAiLearning}
-            onChange={toggle("consentAiLearning")}
-          />
-          <span>
-            <span className="font-semibold">Help improve the pet assistant.</span> Vets may review
-            anonymised questions (names, contact details and pet names removed) to improve the
-            knowledge base.
-          </span>
-        </label>
         <label className="flex items-start gap-3 text-sm">
           <input
             type="checkbox"

@@ -24,6 +24,7 @@
 		A9293710D3C6F93BA57B5219 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EDE03AED76EDDFC0A941CA /* Session.swift */; };
 		ACC5586A19F39A3FFCD33097 /* PintoPetsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F55F1AB499C52E54707CBB /* PintoPetsTests.swift */; };
 		C0FBA20A9CC78E4864D0769B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D888EC92097D205A487287CB /* Assets.xcassets */; };
+		D3F16CC89EA05E33FC19294E /* BlockedPeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DCADE87A5D171CD7C28CAC /* BlockedPeopleView.swift */; };
 		D6CBECE41C31F03F8FE1E184 /* RecordKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4432246CFDF0779EAFC79D7C /* RecordKind.swift */; };
 		D82BF37702DCDB8632E10AB3 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93C64686D50DF638E1AC731 /* ImageLoader.swift */; };
 		DB89425B72800D20374F93D5 /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8CD4C4D665226F4D25221 /* Formatting.swift */; };
@@ -57,6 +58,7 @@
 		8ADFCEAD47E094B6790CED10 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		8C65877F3271541A07CA39AE /* NewThreadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewThreadView.swift; sourceTree = "<group>"; };
 		925FD47F676EA4BF9D4B8D0D /* PetFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetFormView.swift; sourceTree = "<group>"; };
+		93DCADE87A5D171CD7C28CAC /* BlockedPeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedPeopleView.swift; sourceTree = "<group>"; };
 		A038866D1A123ECCCD923CF2 /* PintoPetsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PintoPetsApp.swift; sourceTree = "<group>"; };
 		A1A30DD6B4B5760EADE039C7 /* RecordListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordListView.swift; sourceTree = "<group>"; };
 		A9DB7DF8CC0AB686AE7C3FEA /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 		84181B101BB3ED8A6FB84BA0 /* Community */ = {
 			isa = PBXGroup;
 			children = (
+				93DCADE87A5D171CD7C28CAC /* BlockedPeopleView.swift */,
 				7FE7BE52CD49C2D1003FE451 /* CommunityView.swift */,
 				8C65877F3271541A07CA39AE /* NewThreadView.swift */,
 				F53F8898EB8478FB3845DF99 /* ThreadView.swift */,
@@ -305,6 +308,7 @@
 			files = (
 				7A2E95EB353A2C96DD3660B2 /* APIClient.swift in Sources */,
 				6BA6CBF048A7482DCD1BE7B4 /* AccountView.swift in Sources */,
+				D3F16CC89EA05E33FC19294E /* BlockedPeopleView.swift in Sources */,
 				4D4FECFF44E35EB69FA80856 /* CommunityView.swift in Sources */,
 				846ED3ED24C31986360AE964 /* Components.swift in Sources */,
 				DB89425B72800D20374F93D5 /* Formatting.swift in Sources */,

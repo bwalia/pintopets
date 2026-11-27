@@ -318,6 +318,19 @@ struct ReportInput: Encodable {
     let details: String?
 }
 
+/// Block the author of a thread or reply (POST /api/v1/community/blocks).
+struct BlockInput: Encodable {
+    let targetType: String
+    let targetId: String
+}
+
+/// Someone you have blocked. `id` is the block's id, used to unblock.
+struct BlockedMember: Codable, Identifiable, Hashable {
+    let id: String
+    let name: String
+    let blockedAt: String
+}
+
 /// Mirrors FORUM_CATEGORIES in packages/api-contract/src/routes/community.ts.
 struct ForumCategory: Identifiable, Hashable {
     let slug: String

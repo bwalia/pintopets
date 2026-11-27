@@ -13,7 +13,7 @@
   "nav": {
     "home": "Home",
     "pets": "My Pets",
-    "ask": "Ask AI",
+    "ask": "Ask a question",
     "community": "Community",
     "reminders": "Reminders",
     "account": "Account",
@@ -36,20 +36,20 @@
     "featurePetsTitle": "My Pets",
     "featurePetsBody": "Profiles, photos, health records, diet and microchip details for every pet you care for.",
     "featureAskTitle": "Everyday questions",
-    "featureAskBody": "Plain-English answers based on articles reviewed by vets and vet nurses.",
+    "featureAskBody": "Write down what's worrying you and see the urgent signs that mean you should call a vet now.",
     "featureCommunityTitle": "Community",
-    "featureCommunityBody": "Talk to other owners about the same worries, with answers from verified vet professionals."
+    "featureCommunityBody": "Talk to other owners about the same worries, in a moderated community with clear guidelines."
   },
   "ask": {
-    "title": "Ask AI",
+    "title": "Ask a question",
     "yourQuestion": "Your question",
-    "comingTitle": "The pet assistant is on its way",
-    "comingBody": "Soon you'll get an answer here, starting with a check for urgent signs. For now, if you're worried, please contact your vet."
+    "comingTitle": "Answers aren't available here yet",
+    "comingBody": "For now, ask other owners in the Community. If you're worried about your pet, please contact your vet."
   },
   "placeholder": {
     "comingSoon": "Coming soon",
     "pets": "Add your pets and keep their profiles, photos, health records and microchip details together.",
-    "community": "Forums for every kind of pet, with answers from verified vets and vet nurses.",
+    "community": "Forums for every kind of pet, moderated to keep them kind and safe.",
     "reminders": "Vaccinations, flea and worm treatments, medicines and document expiry dates, all in one list.",
     "account": "Sign-in, security (including authenticator app codes) and your plan will live here."
   },

@@ -2,12 +2,15 @@ import SwiftUI
 
 struct ThreadView: View {
     @Environment(Session.self) private var session
+    @Environment(\.dismiss) private var dismiss
     let threadId: String
     @State private var thread: Loadable<ForumThread> = .idle
     @State private var reply = ""
     @State private var sending = false
     @State private var error: String?
     @State private var reporting: ReportTarget?
+    @State private var blocking: BlockTarget?
+    @State private var blockedName: String?
     @FocusState private var replyFocused: Bool
 
     var body: some View {
@@ -21,6 +24,25 @@ struct ThreadView: View {
         .navigationTitle("Discussion")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $reporting) { ReportSheet(target: $0) }
+        .confirmationDialog(
+            blocking.map { "Block \($0.name)?" } ?? "",
+            isPresented: Binding(get: { blocking != nil }, set: { if !$0 { blocking = nil } }),
+            titleVisibility: .visible,
+            presenting: blocking
+        ) { target in
+            Button("Block", role: .destructive) { Task { await block(target) } }
+            Button("Report \(target.name) instead") { reporting = ReportTarget(type: target.type, id: target.id) }
+        } message: { _ in
+            Text("You won't see their discussions or replies anywhere in the community. They aren't told. You can unblock them in Account › Blocked people.")
+        }
+        .alert(
+            blockedName.map { "\($0) is blocked" } ?? "",
+            isPresented: Binding(get: { blockedName != nil }, set: { if !$0 { blockedName = nil } })
+        ) {
+            Button("OK") {}
+        } message: {
+            Text("Their posts are hidden from you. If they broke the community guidelines, please report them too.")
+        }
         .task(id: session.isSignedIn) { await load() }
         .refreshable { await load() }
     }
@@ -44,7 +66,8 @@ struct ThreadView: View {
                 }
                 actions(score: t.score, voted: t.viewerVoted, isYou: t.author.isYou,
                         onVote: { await vote(type: "thread", id: t.id, voted: !t.viewerVoted) },
-                        onReport: { reporting = ReportTarget(type: "thread", id: t.id) })
+                        onReport: { reporting = ReportTarget(type: "thread", id: t.id) },
+                        onBlock: { blocking = BlockTarget(type: "thread", id: t.id, name: t.author.name) })
 
                 Divider()
                 Text(t.replies.count == 1 ? "1 reply" : "\(t.replies.count) replies")
@@ -59,7 +82,8 @@ struct ThreadView: View {
                         PostView(author: r.author, createdAt: r.createdAt, editedAt: r.editedAt, text: r.body)
                         actions(score: r.score, voted: r.viewerVoted, isYou: r.author.isYou,
                                 onVote: { await vote(type: "reply", id: r.id, voted: !r.viewerVoted) },
-                                onReport: { reporting = ReportTarget(type: "reply", id: r.id) })
+                                onReport: { reporting = ReportTarget(type: "reply", id: r.id) },
+                                onBlock: { blocking = BlockTarget(type: "reply", id: r.id, name: r.author.name) })
                     }
                     .padding()
                     .background(r.isAccepted ? Color.green.opacity(0.08) : Color.secondary.opacity(0.06),
@@ -102,7 +126,8 @@ struct ThreadView: View {
     }
 
     private func actions(score: Int, voted: Bool, isYou: Bool,
-                         onVote: @escaping () async -> Void, onReport: @escaping () -> Void) -> some View {
+                         onVote: @escaping () async -> Void, onReport: @escaping () -> Void,
+                         onBlock: @escaping () -> Void) -> some View {
         HStack(spacing: 16) {
             Button {
                 Task { await onVote() }
@@ -118,6 +143,10 @@ struct ThreadView: View {
                 Button(action: onReport) { Label("Report", systemImage: "flag") }
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                Button(action: onBlock) { Label("Block", systemImage: "hand.raised.slash") }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityHint("Stop seeing this person's posts")
             }
         }
     }
@@ -144,6 +173,23 @@ struct ThreadView: View {
                 t.replies[i].score = r.data.score; t.replies[i].viewerVoted = r.data.voted
             }
             thread = .loaded(t)
+        } catch {
+            self.error = error.localizedDescription
+        }
+    }
+
+    /// Blocks the post's author. Blocking a discussion's author closes it (it's hidden now).
+    private func block(_ target: BlockTarget) async {
+        do {
+            let r: DataEnvelope<BlockedMember> = try await session.api.send(
+                "POST", "/api/v1/community/blocks", body: BlockInput(targetType: target.type, targetId: target.id))
+            session.blocksChanged += 1
+            if target.type == "thread" {
+                dismiss()
+            } else {
+                blockedName = r.data.name
+                await load()
+            }
         } catch {
             self.error = error.localizedDescription
         }
@@ -187,6 +233,12 @@ struct PostView: View {
 struct ReportTarget: Identifiable {
     let type: String
     let id: String
+}
+
+struct BlockTarget: Identifiable {
+    let type: String
+    let id: String
+    let name: String
 }
 
 struct ReportSheet: View {

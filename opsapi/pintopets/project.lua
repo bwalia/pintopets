@@ -2,7 +2,7 @@
 return {
     code = "pintopets",          -- stable id: keys migrations + RBAC; never rename
     name = "PintoPets",
-    version = "0.2.0",
+    version = "0.3.0",
     description = "Pet records, health history, reminders and a community forum for PintoPets (pintopets.app)",
     sdk_version = 1,            -- helper.plugin-sdk version this plugin targets
 
@@ -31,6 +31,7 @@ return {
         { machine_name = "pintopets_forum_votes", name = "Community votes", category = "PintoPets Community" },
         { machine_name = "pintopets_forum_reports", name = "Community reports", category = "PintoPets Community" },
         { machine_name = "pintopets_forum_mod_actions", name = "Moderation log", category = "PintoPets Community" },
+        { machine_name = "pintopets_forum_blocks", name = "Community blocks", category = "PintoPets Community" },
         -- opsapi:modules (make:resource adds entries above this line)
     },
 
@@ -65,6 +66,7 @@ return {
         { label = "Community votes", resource = "forum-votes", module = "pintopets_forum_votes", icon = "ThumbsUp" },
         { label = "Community reports", resource = "forum-reports", module = "pintopets_forum_reports", icon = "Flag" },
         { label = "Moderation log", resource = "forum-mod-actions", module = "pintopets_forum_mod_actions", icon = "Gavel" },
+        { label = "Community blocks", resource = "forum-blocks", module = "pintopets_forum_blocks", icon = "UserX" },
         -- opsapi:menu (make:resource adds entries above this line)
     },
 

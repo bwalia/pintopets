@@ -67,20 +67,16 @@ export default function PrivacyPage() {
           service and, for security and moderation, our legitimate interest in keeping PintoPets and
           its members safe.
         </p>
-        <p>Two optional uses happen only if you turn them on. Both are off by default:</p>
+        <p>One optional use happens only if you turn it on. It is off by default:</p>
         <ul>
-          <li>
-            <strong>Help improve the pet assistant:</strong> vets may review anonymised questions
-            (names, contact details and pet names removed) to improve the knowledge base.
-          </li>
           <li>
             <strong>News and tips by email:</strong> occasional updates. You can unsubscribe at any
             time.
           </li>
         </ul>
         <p>
-          You can change either choice whenever you like on your{" "}
-          <Link href="/account">account page</Link>. Our basis for these is your consent.
+          You can change this choice whenever you like on your{" "}
+          <Link href="/account">account page</Link>. Our basis for it is your consent.
         </p>
       </LegalSection>
 

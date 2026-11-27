@@ -11,7 +11,7 @@ export const LEGAL = {
 } as const;
 
 /** Shown as "Last updated" on the policy pages. Change it whenever they change. */
-export const POLICIES_UPDATED = "2026-11-16";
+export const POLICIES_UPDATED = "2026-11-26";
 
 export function formatPolicyDate(iso: string = POLICIES_UPDATED): string {
   return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-GB", {

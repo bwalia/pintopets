@@ -3,7 +3,7 @@ import { expectNoA11yViolations } from "./a11y";
 
 const SECTIONS = [
   { name: "My Pets", path: "/pets" },
-  { name: "Ask AI", path: "/ask" },
+  { name: "Ask a question", path: "/ask" },
   { name: "Community", path: "/community" },
   { name: "Reminders", path: "/reminders" },
 ] as const;

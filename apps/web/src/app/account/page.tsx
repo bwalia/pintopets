@@ -76,10 +76,7 @@ export default async function AccountPage() {
               recoveryCodesLeft: security.recoveryCodesLeft,
             }}
           />
-          <PrivacyCard
-            consentAiLearning={security.consentAiLearning}
-            consentMarketing={security.consentMarketing}
-          />
+          <PrivacyCard consentMarketing={security.consentMarketing} />
         </>
       ) : (
         <p className="text-muted-foreground text-sm">

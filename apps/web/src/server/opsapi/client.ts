@@ -47,7 +47,8 @@ export type Resource =
   | "forum-replies"
   | "forum-votes"
   | "forum-reports"
-  | "forum-mod-actions";
+  | "forum-mod-actions"
+  | "forum-blocks";
 
 /** OpsAPI failures → PintoPets' standard API errors. */
 export function toHttpError(error: unknown): unknown {

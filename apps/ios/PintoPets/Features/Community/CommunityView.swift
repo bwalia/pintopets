@@ -13,7 +13,9 @@ struct CommunityView: View {
     @State private var state: Loadable<Void> = .idle
     @State private var composing = false
 
-    private struct Key: Hashable { let q: String; let category: String?; let sort: ForumSort; let signedIn: Bool }
+    private struct Key: Hashable {
+        let q: String; let category: String?; let sort: ForumSort; let signedIn: Bool; let blocks: Int
+    }
 
     var body: some View {
         List {
@@ -89,7 +91,8 @@ struct CommunityView: View {
         }
         .onChange(of: session.isSignedIn) { _, signedIn in if signedIn { composing = false } }
         .navigationDestination(item: $pendingOpen) { ThreadView(threadId: $0) }
-        .task(id: Key(q: submittedQuery, category: category, sort: sort, signedIn: session.isSignedIn)) {
+        .task(id: Key(q: submittedQuery, category: category, sort: sort, signedIn: session.isSignedIn,
+                      blocks: session.blocksChanged)) {
             await load(reset: true)
         }
         .refreshable { await load(reset: true) }

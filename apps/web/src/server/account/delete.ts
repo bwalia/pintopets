@@ -25,6 +25,7 @@ import { RECORDS } from "../pets/records";
  *   is unlinked from them (author set to a random UUID). Their helpful votes are
  *   withdrawn (scores recounted), reports they filed are unlinked and their
  *   free-text details dropped (the report itself still counts for moderators),
+ *   blocks they made, and blocks other people made of them, are deleted,
  *   and their community profile (display name) is deleted. Exception: if a
  *   moderator has paused their posting, the profile is kept (renamed to a
  *   neutral name) until the pause ends, so it can't be dodged by deleting and
@@ -45,6 +46,7 @@ export interface DeletionSummary {
   replies: number;
   votes: number;
   reports: number;
+  blocks: number;
   communityProfile: boolean;
   securitySettings: number;
 }
@@ -111,12 +113,14 @@ async function deletePets(actor: Pick<Actor, "id">, counts: DeletionSummary): Pr
 }
 
 async function deleteCommunity(actor: Pick<Actor, "id">, counts: DeletionSummary): Promise<void> {
-  const [threads, replies, votes, reports, members] = await Promise.all([
+  const [threads, replies, votes, reports, members, blocksMade, blocksOfThem] = await Promise.all([
     listAll("forum-threads", { author_user_uuid: actor.id }),
     listAll("forum-replies", { author_user_uuid: actor.id }),
     listAll("forum-votes", { user_uuid: actor.id }),
     listAll("forum-reports", { reporter_user_uuid: actor.id }),
     listAll("forum-members", { user_uuid: actor.id }),
+    listAll("forum-blocks", { blocker_user_uuid: actor.id }),
+    listAll("forum-blocks", { blocked_user_uuid: actor.id }),
   ]);
 
   // Votes first, while the posts they count towards are unchanged. Withdrawing
@@ -189,6 +193,11 @@ async function deleteCommunity(actor: Pick<Actor, "id">, counts: DeletionSummary
     counts.reports++;
   });
 
+  await mapLimit([...blocksMade, ...blocksOfThem], 2, async (b) => {
+    await gone(deleteRow("forum-blocks", b.uuid));
+    counts.blocks++;
+  });
+
   for (const m of members) {
     const until = str(m.suspended_until);
     if (until && Date.parse(pgTimestampToIso(until)) > Date.now()) {
@@ -234,6 +243,7 @@ export async function deleteMyData(actor: Pick<Actor, "id" | "demo">): Promise<D
     replies: 0,
     votes: 0,
     reports: 0,
+    blocks: 0,
     communityProfile: false,
     securitySettings: 0,
   };

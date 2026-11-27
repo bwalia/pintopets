@@ -133,6 +133,29 @@ export const ReportInput = z
   })
   .meta({ id: "ForumReportInput" });
 
+/**
+ * Blocking: you stop seeing someone's threads and replies. You choose them by
+ * one of their posts, so nobody's account id is ever exposed. They aren't told.
+ */
+export const BlockInput = z
+  .object({ targetType: ForumTargetType, targetId: Uuid })
+  .meta({ id: "ForumBlockInput" });
+
+export const BlockedMember = z
+  .object({
+    id: Uuid.meta({ description: "The block's id (use it to unblock)." }),
+    name: z.string(),
+    blockedAt: z.iso.datetime(),
+  })
+  .meta({ id: "ForumBlockedMember" });
+export type BlockedMember = z.infer<typeof BlockedMember>;
+
+export const BlockResponse = z.object({ data: BlockedMember }).meta({ id: "ForumBlockResponse" });
+export const BlockListResponse = z
+  .object({ data: z.array(BlockedMember) })
+  .meta({ id: "ForumBlockListResponse" });
+export const BlockIdParams = z.object({ blockId: Uuid });
+
 export const CommunityNameInput = z
   .object({
     displayName: z
@@ -316,5 +339,44 @@ registry.registerPath({
     401: err("Not signed in"),
     404: err("Not found"),
     429: err("Too many reports"),
+  },
+});
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/community/blocks",
+  operationId: "listForumBlocks",
+  tags,
+  summary: "People you have blocked",
+  responses: {
+    200: { description: "Blocked people", ...json(BlockListResponse) },
+    401: err("Not signed in"),
+  },
+});
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/community/blocks",
+  operationId: "blockForumMember",
+  tags,
+  summary: "Block the author of a thread or reply (you stop seeing their posts)",
+  request: { body: json(BlockInput) },
+  responses: {
+    201: { description: "Blocked (also when already blocked)", ...json(BlockResponse) },
+    400: err("That's your own post"),
+    401: err("Not signed in"),
+    404: err("Not found"),
+    429: err("Too many blocks"),
+  },
+});
+registry.registerPath({
+  method: "delete",
+  path: "/api/v1/community/blocks/{blockId}",
+  operationId: "unblockForumMember",
+  tags,
+  summary: "Unblock someone",
+  request: { params: BlockIdParams },
+  responses: {
+    204: { description: "Unblocked" },
+    401: err("Not signed in"),
+    404: err("Not found"),
   },
 });

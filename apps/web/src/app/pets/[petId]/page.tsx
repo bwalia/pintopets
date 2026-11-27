@@ -57,7 +57,7 @@ export default async function PetOverviewPage({ params }: PageProps<"/pets/[petI
     },
     {
       href: `/ask?pet=${pet.id}`,
-      label: `Ask AI about ${pet.name}`,
+      label: `Ask a question about ${pet.name}`,
       icon: MessageCircleQuestion,
       show: !memorial,
     },
