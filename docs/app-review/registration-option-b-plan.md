@@ -36,8 +36,9 @@ needed for sending mail, code storage or throttling.
    - inputs: name, email, password (12+), `accepted_terms=true`;
    - if the email belongs to an **active** account, return "You already have an account, please
      sign in" (no new account, no information about whether it's verified);
-   - if it belongs to an **unverified** account made in the last 24 hours, update the password
-     and send a new code (so people can retry);
+   - if it belongs to an **unverified** account, change nothing and say "sign in with the
+     password you chose and we'll send a new code" (updating the password here would let anyone
+     take over someone else's pending sign-up);
    - otherwise create the user with `active = false`, send a code with
      `OTP.sendToEmail(user, { app_name = "PintoPets", support_email = … })`, and return
      `{ requires_verification, session_token, email }`.
