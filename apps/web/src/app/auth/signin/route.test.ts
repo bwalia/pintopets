@@ -45,6 +45,15 @@ describe("GET /auth/signin", () => {
     );
   });
 
+  it("offers OpsAPI's create-account option, but not on the re-sign-in to delete", () => {
+    expect(location(signin()).searchParams.get("signup")).toBe("1");
+    // provider=apple is ignored while Apple is off, so the hosted page (and sign-up) shows.
+    expect(location(signin("?provider=apple")).searchParams.get("signup")).toBe("1");
+    expect(
+      location(signin("?reauth=1&next=/account/delete")).searchParams.get("signup"),
+    ).toBeNull();
+  });
+
   it("ignores provider=apple when Apple is off", () => {
     const target = location(signin("?provider=apple"));
     expect(target.pathname).toBe("/auth/signin");

@@ -4,11 +4,13 @@ import { HttpError } from "../http";
 import { getRow } from "../opsapi/client";
 import {
   acceptAnswer,
+  block,
   communityPosts,
   communityProfile,
   createReply,
   createThread,
   getThread,
+  listBlocks,
   listThreads,
   moderate,
   moderationLog,
@@ -17,6 +19,7 @@ import {
   report,
   setDisplayName,
   suspendMember,
+  unblock,
   updateThread,
   vote,
 } from "./service";
@@ -212,5 +215,83 @@ describe.skipIf(!hasOpsApi)("community forum on OpsAPI (integration)", () => {
     expect((await createReply(author, thread.id, "Thanks, back again")).body).toBe(
       "Thanks, back again",
     );
+  });
+
+  describe("blocking", () => {
+    const ids = (list: { data: { id: string }[] }) => list.data.map((t) => t.id);
+    const byAuthor = (authorId: string) => ({ sort: "new", page: 1, authorId }) as const;
+
+    it("hides a blocked person's threads and replies from the blocker only", async () => {
+      const me = person("owner", "Blair Blocker");
+      const { author: troll, thread: trollThread } = await newThread(person("owner", "Tam Troll"));
+      const { thread: myThread } = await newThread(me);
+      await createReply(troll, myThread.id, `Rude reply from someone ${unique()}`);
+      const friend = person("owner", "Fran Friend");
+      await createReply(friend, myThread.id, `A kind and useful reply ${unique()}`);
+
+      const blocked = await block(me, { targetType: "thread", targetId: trollThread.id });
+      expect(blocked.name).toMatch(/\S/);
+
+      // Their threads leave my lists and their thread can't be opened by me.
+      expect(ids(await listThreads(me, byAuthor(troll.id)))).toEqual([]);
+      await expectCode(getThread(me, trollThread.id), "not_found");
+      // Their reply is gone from my own thread; other people's stay.
+      const mine = await getThread(me, myThread.id);
+      expect(mine.replies).toHaveLength(1);
+      expect(mine.replies[0]?.author.isYou).toBe(false);
+      expect(mine.replies[0]?.body).toMatch(/kind and useful/);
+
+      // Nobody else is affected: signed out, a third person, or the blocked person.
+      expect(ids(await listThreads(null, byAuthor(troll.id)))).toEqual([trollThread.id]);
+      expect(ids(await listThreads(friend, byAuthor(troll.id)))).toEqual([trollThread.id]);
+      expect((await getThread(friend, myThread.id)).replies).toHaveLength(2);
+      expect((await getThread(troll, myThread.id)).replies).toHaveLength(2);
+
+      // Listed for the blocker; unblocking brings everything back.
+      expect((await listBlocks(me)).map((b) => b.id)).toEqual([blocked.id]);
+      await unblock(me, blocked.id);
+      expect(await listBlocks(me)).toEqual([]);
+      expect(ids(await listThreads(me, byAuthor(troll.id)))).toEqual([trollThread.id]);
+      expect((await getThread(me, myThread.id)).replies).toHaveLength(2);
+    });
+
+    it("blocks from a reply, is idempotent and refuses blocking yourself", async () => {
+      const me = person();
+      const { thread } = await newThread(me);
+      const other = person();
+      const reply = await createReply(other, thread.id, `Reply to be blocked ${unique()}`);
+
+      const first = await block(me, { targetType: "reply", targetId: reply.id });
+      const again = await block(me, { targetType: "reply", targetId: reply.id });
+      expect(again.id).toBe(first.id);
+      expect(await listBlocks(me)).toHaveLength(1);
+
+      await expectCode(block(me, { targetType: "thread", targetId: thread.id }), "bad_request");
+      await expectCode(
+        block(me, { targetType: "reply", targetId: crypto.randomUUID() }),
+        "not_found",
+      );
+    });
+
+    it("only the blocker can see or remove their block", async () => {
+      const me = person();
+      const { thread } = await newThread();
+      const mine = await block(me, { targetType: "thread", targetId: thread.id });
+      const stranger = person();
+
+      expect(await listBlocks(stranger)).toEqual([]);
+      await expectCode(unblock(stranger, mine.id), "not_found");
+      expect(await listBlocks(me)).toHaveLength(1);
+      await expectCode(unblock(me, crypto.randomUUID()), "not_found");
+    });
+
+    it("a suspended member can still block", async () => {
+      const me = person();
+      const mod = person("moderator", "Morgan Mod");
+      await newThread(me); // creates their community profile
+      await suspendMember(mod, { userId: me.id, days: 7, reason: "Cooling off" });
+      const { thread } = await newThread();
+      await expect(block(me, { targetType: "thread", targetId: thread.id })).resolves.toBeTruthy();
+    });
   });
 });

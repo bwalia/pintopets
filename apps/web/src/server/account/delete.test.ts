@@ -225,8 +225,23 @@ describe("deleteMyData", () => {
       replies: 0,
       votes: 0,
       reports: 0,
+      blocks: 0,
       communityProfile: false,
       securitySettings: 0,
     });
+  });
+
+  it("deletes blocks they made and blocks other people made of them", async () => {
+    const mine = insert("forum-blocks", { blocker_user_uuid: ME, blocked_user_uuid: OTHER });
+    const ofMe = insert("forum-blocks", { blocker_user_uuid: OTHER, blocked_user_uuid: ME });
+    const unrelated = insert("forum-blocks", {
+      blocker_user_uuid: OTHER,
+      blocked_user_uuid: crypto.randomUUID(),
+    });
+    const summary = await deleteMyData(me);
+    expect(summary.blocks).toBe(2);
+    expect(table("forum-blocks").has(mine.uuid)).toBe(false);
+    expect(table("forum-blocks").has(ofMe.uuid)).toBe(false);
+    expect(table("forum-blocks").has(unrelated.uuid)).toBe(true);
   });
 });

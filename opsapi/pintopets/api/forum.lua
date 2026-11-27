@@ -3,7 +3,8 @@
 -- query is filtered by namespace_id (PLUGINS.md §5.2). PintoPets' server
 -- decides who may see or do what; these routes only shape the data.
 --
---   GET  /forum/threads                    visible threads: ?category=&species=&q=&sort=latest|top|unanswered&author_uuid=&page=&per_page=
+--   GET  /forum/threads                    visible threads: ?category=&species=&q=&sort=latest|top|unanswered&author_uuid=&viewer=&page=&per_page=
+--                                          (viewer: leaves out threads by people the viewer has blocked)
 --   GET  /forum/threads/:uuid              one thread (any status) + author name + ?viewer= vote
 --   GET  /forum/threads/:uuid/replies      its replies (any status) + author names + ?viewer= votes
 --   POST /forum/threads/:uuid/refresh      recount replies and last activity
@@ -11,6 +12,7 @@
 --   GET  /forum/users/:user_uuid/activity  ?minutes= → counts of recent posts, votes and reports (rate limits)
 --   GET  /forum/reports/queue              open reports grouped by target, with the content
 --   POST /forum/reports/resolve            { target_type, target_uuid, status, resolver_uuid }
+--   GET  /forum/users/:user_uuid/blocks    people this user has blocked, with their community names
 local sdk = require("helper.plugin-sdk")
 local unpack = table.unpack or unpack
 
@@ -47,11 +49,11 @@ return function(app)
     app:get("/forum/threads", sdk.handler({ permission = "pintopets_forum_threads.read" }, function(self)
         local p = self.params
         local category, species = slug_or_blank(p.category), slug_or_blank(p.species)
-        local author = uuid_or_blank(p.author_uuid)
+        local author, viewer = uuid_or_blank(p.author_uuid), uuid_or_blank(p.viewer)
         local sort = p.sort or "latest"
         local q = type(p.q) == "string" and p.q:sub(1, 200) or ""
-        if not category or not species or not author or not ORDER[sort] then
-            return sdk.error(400, "category/species must be slugs, author_uuid a UUID, sort latest|top|unanswered|new")
+        if not category or not species or not author or not viewer or not ORDER[sort] then
+            return sdk.error(400, "category/species must be slugs, author_uuid and viewer UUIDs, sort latest|top|unanswered|new")
         end
         local per_page = int_param(p.per_page, 20, 1, 50)
         local page = int_param(p.page, 1, 1, 500)
@@ -61,12 +63,15 @@ return function(app)
             AND (? = '' OR t.category = ?)
             AND (? = '' OR t.species = ?)
             AND (? = '' OR t.author_user_uuid = NULLIF(?, '')::uuid)
+            AND (? = '' OR NOT EXISTS (SELECT 1 FROM pintopets_forum_blocks b
+                     WHERE b.namespace_id = t.namespace_id AND b.blocker_user_uuid = NULLIF(?, '')::uuid
+                       AND b.blocked_user_uuid = t.author_user_uuid))
             AND (? = '' OR to_tsvector('english', t.title || ' ' || t.body || ' ' || coalesce(t.tags, ''))
                            @@ plainto_tsquery('english', ?)
                        OR t.title ILIKE '%' || ? || '%')
         ]] .. (sort == "unanswered" and " AND t.reply_count = 0" or "")
         local like = q:gsub("[%%_\\]", "\\%0")
-        local args = { ns, category, category, species, species, author, author, q, q, like }
+        local args = { ns, category, category, species, species, author, author, viewer, viewer, q, q, like }
         local rows = sdk.db.query([[
             SELECT t.uuid, t.author_user_uuid, t.category, t.species, t.title, left(t.body, 280) AS excerpt,
                    t.tags, t.status, t.is_locked, t.is_pinned, t.score, t.reply_count, t.accepted_reply_uuid,
@@ -232,6 +237,21 @@ return function(app)
         return sdk.ok({ resolved = res.affected_rows or 0 })
     end))
 
+    app:get("/forum/users/:user_uuid/blocks", sdk.handler({ permission = "pintopets_forum_blocks.read" }, function(self)
+        local user = uuid_or_blank(self.params.user_uuid)
+        if not user or user == "" then return sdk.error(400, "user_uuid must be a UUID") end
+        local ns = sdk.namespace_id(self)
+        local rows = sdk.db.query([[
+            SELECT b.uuid, b.blocked_user_uuid, b.created_at, m.display_name AS blocked_name
+              FROM pintopets_forum_blocks b
+              LEFT JOIN pintopets_forum_members m ON m.namespace_id = b.namespace_id AND m.user_uuid = b.blocked_user_uuid
+             WHERE b.namespace_id = ? AND b.blocker_user_uuid = ?::uuid
+             ORDER BY b.created_at DESC
+             LIMIT 1000
+        ]], ns, user)
+        return sdk.ok(sdk.array(rows))
+    end))
+
     local any = { type = "object", additionalProperties = true }
     local list = { type = "array", items = any }
     sdk.doc(app, "GET /forum/threads", { summary = "Visible community threads (filter, search, sort)",
@@ -239,6 +259,7 @@ return function(app)
         query = { category = { type = "string" }, species = { type = "string" }, q = { type = "string" },
                   sort = { type = "string", enum = { "latest", "top", "unanswered", "new" } },
                   author_uuid = { type = "string", format = "uuid" },
+                  viewer = { type = "string", format = "uuid" },
                   page = { type = "integer" }, per_page = { type = "integer" } },
         response = list })
     sdk.doc(app, "GET /forum/threads/:uuid", { summary = "A thread with author name and the viewer's vote",
@@ -262,4 +283,7 @@ return function(app)
         permission = "pintopets_forum_reports.read", response = list })
     sdk.doc(app, "POST /forum/reports/resolve", { summary = "Close every open report on a post",
         permission = "pintopets_forum_reports.update", body = any, response = any })
+    sdk.doc(app, "GET /forum/users/:user_uuid/blocks", { summary = "People a user has blocked, with community names",
+        permission = "pintopets_forum_blocks.read",
+        path = { user_uuid = { type = "string", format = "uuid" } }, response = list })
 end

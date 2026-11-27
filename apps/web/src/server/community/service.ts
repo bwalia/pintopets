@@ -1,11 +1,13 @@
 import "server-only";
 import {
+  type BlockedMember,
   type ForumCategorySlug,
   type Reply,
   type Thread,
   type ThreadInputParsed,
   type ThreadSummary,
   type ThreadUpdateParsed,
+  type BlockInput,
   type ReportInput,
   type VoteInput,
 } from "@pintopets/api-contract";
@@ -14,6 +16,7 @@ import { type Actor, isModerator } from "../auth";
 import { HttpError } from "../http";
 import {
   createRow,
+  deleteRow,
   getRow,
   listAll,
   listPage,
@@ -46,6 +49,7 @@ import {
  *    rate limited per person;
  *  - only authors edit their posts; authors and moderators remove them;
  *  - enough reports hide a post until a moderator reviews it;
+ *  - people someone has blocked don't appear in that person's community at all;
  *  - moderators' actions are written to an audit log.
  */
 type Viewer = Pick<Actor, "id" | "role"> | null;
@@ -225,6 +229,7 @@ export async function listThreads(viewer: Viewer, query: ThreadQuery) {
     page: query.page,
     per_page: 20,
     author_uuid: query.authorId ?? "",
+    viewer: viewer?.id ?? "",
   });
   return {
     data: (data ?? []).map((r) => toSummary(r, viewer)),
@@ -255,6 +260,10 @@ export async function getThread(viewer: Viewer, threadId: string): Promise<Threa
   if (!canSee(row.status, row.author_user_uuid, viewer)) {
     throw new HttpError("not_found", "We couldn't find that discussion.");
   }
+  const blocked = await blockedIds(viewer);
+  if (blocked.has(String(row.author_user_uuid))) {
+    throw new HttpError("not_found", "You've blocked the person who started this discussion.");
+  }
   const { data: replyRows } = await pluginGet<OpsRow[]>(`/forum/threads/${threadId}/replies`, {
     viewer: viewer?.id ?? "",
   });
@@ -265,6 +274,7 @@ export async function getThread(viewer: Viewer, threadId: string): Promise<Threa
 
   const replies: Reply[] = (replyRows ?? [])
     .filter((r) => canSee(r.status, r.author_user_uuid, viewer))
+    .filter((r) => !blocked.has(String(r.author_user_uuid)))
     .map((r) => {
       const mine = Boolean(viewer && r.author_user_uuid === viewer.id);
       return {
@@ -537,6 +547,80 @@ export async function report(actor: Who, input: z.output<typeof ReportInput>): P
   if (new Set(open.map((r) => r.reporter_user_uuid)).size >= AUTO_HIDE_REPORTS) {
     await updateRow(TARGET[input.targetType], input.targetId, { status: "hidden" });
     if (input.targetType === "reply") await pluginPost(`/forum/threads/${threadId}/refresh`);
+  }
+}
+
+// --- blocking ---------------------------------------------------------------
+
+/** Most blocks one person can hold (a guard against scripted abuse). */
+export const MAX_BLOCKS = 500;
+
+async function blockRows(actor: Pick<Actor, "id">): Promise<OpsRow[]> {
+  const { data } = await pluginGet<OpsRow[]>(`/forum/users/${actor.id}/blocks`);
+  return data ?? [];
+}
+
+/** Ids of the people the viewer has blocked (empty when signed out). */
+async function blockedIds(viewer: Viewer): Promise<Set<string>> {
+  if (!viewer) return new Set();
+  return new Set((await blockRows(viewer)).map((r) => String(r.blocked_user_uuid)));
+}
+
+function toBlocked(row: OpsRow): BlockedMember {
+  return {
+    id: row.uuid,
+    name: str(row.blocked_name) ?? "Former member",
+    blockedAt: String(iso(row.created_at)),
+  };
+}
+
+export async function listBlocks(actor: Pick<Actor, "id">): Promise<BlockedMember[]> {
+  return (await blockRows(actor)).map(toBlocked);
+}
+
+/**
+ * Blocks the author of a thread or reply: the blocker stops seeing their posts
+ * everywhere in the community. Blocking twice is harmless. The blocked person
+ * isn't told. Suspended members can still block (it only protects them).
+ */
+export async function block(
+  actor: Pick<Actor, "id">,
+  input: z.output<typeof BlockInput>,
+): Promise<BlockedMember> {
+  const row = await getRow(TARGET[input.targetType], input.targetId);
+  if (!row || row.status === "removed")
+    throw new HttpError("not_found", "We couldn't find that post.");
+  const authorId = String(row.author_user_uuid);
+  if (authorId === actor.id) throw new HttpError("bad_request", "You can't block yourself.");
+  const existing = await blockRows(actor);
+  const already = existing.find((r) => r.blocked_user_uuid === authorId);
+  if (already) return toBlocked(already);
+  if (existing.length >= MAX_BLOCKS) {
+    throw new HttpError(
+      "rate_limited",
+      `You can block up to ${MAX_BLOCKS} people. Unblock someone first.`,
+    );
+  }
+  try {
+    await createRow("forum-blocks", { blockerUserUuid: actor.id, blockedUserUuid: authorId });
+  } catch (error) {
+    if (!(error instanceof HttpError && error.code === "conflict")) throw error;
+  }
+  const saved = (await blockRows(actor)).find((r) => r.blocked_user_uuid === authorId);
+  if (!saved) throw new Error(`Block of ${authorId} missing after create`);
+  return toBlocked(saved);
+}
+
+/** Removes one of the actor's own blocks; anyone else's is "not found". */
+export async function unblock(actor: Pick<Actor, "id">, blockId: string): Promise<void> {
+  const row = await getRow("forum-blocks", blockId);
+  if (!row || row.blocker_user_uuid !== actor.id) {
+    throw new HttpError("not_found", "We couldn't find that block.");
+  }
+  try {
+    await deleteRow("forum-blocks", blockId);
+  } catch (error) {
+    if (!(error instanceof HttpError && error.code === "not_found")) throw error;
   }
 }
 

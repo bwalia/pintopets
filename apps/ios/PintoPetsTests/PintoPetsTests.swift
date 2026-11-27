@@ -26,6 +26,19 @@ final class DecodingTests: XCTestCase {
         XCTAssertEqual(e.errorDescription, "Some of the information sent was not valid.\nPlease enter a name")
     }
 
+    func testDecodesBlockedPeople() throws {
+        let json = #"{"data":[{"id":"6f1c2b9e-1d2a-4c3b-9e8f-0a1b2c3d4e5f","name":"Tam","blockedAt":"2026-11-26T16:00:00.000Z"}]}"#
+        let r = try JSONDecoder().decode(DataEnvelope<[BlockedMember]>.self, from: Data(json.utf8))
+        XCTAssertEqual(r.data.first?.name, "Tam")
+        XCTAssertEqual(r.data.first?.id, "6f1c2b9e-1d2a-4c3b-9e8f-0a1b2c3d4e5f")
+    }
+
+    func testEncodesBlockInputLikeTheApiContract() throws {
+        let data = try JSONEncoder().encode(BlockInput(targetType: "reply", targetId: "abc"))
+        let object = try JSONSerialization.jsonObject(with: data) as? [String: String]
+        XCTAssertEqual(object, ["targetType": "reply", "targetId": "abc"])
+    }
+
     func testFallsBackForNonJsonErrors() {
         let e = APIClient.apiError(status: 502, data: Data("<html>".utf8))
         XCTAssertEqual(e.status, 502)

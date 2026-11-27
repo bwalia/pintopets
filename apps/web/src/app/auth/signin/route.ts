@@ -12,6 +12,11 @@ import { safeNext, SIGNIN_COOKIE } from "@/server/session";
  *   only while Apple is on, see App Store guideline 4.8 below)
  * - no provider → the /signin chooser when Apple is enabled, else the hosted page
  *
+ * The hosted page also offers "Create an account" (`signup=1`): OpsAPI shows it
+ * only for hosts in its HOSTED_SIGNUP_HOSTS, emails a code and activates the
+ * account only once it is entered, so an unverified account never signs in here.
+ * Not on the re-sign-in before deleting an account.
+ *
  * `?reauth=1` (with next=/account/delete): a deliberate fresh sign-in to delete
  * the account. OpsAPI is asked to show its form even if the user is already
  * signed in there (`prompt=login`), so its token has a fresh `auth_time`, and
@@ -42,10 +47,12 @@ export function GET(request: Request) {
 
   const nonce = randomBytes(24).toString("hex");
   const opsapi = env().OPSAPI_PUBLIC_URL ?? env().OPSAPI_URL;
-  const target = new URL(apple && provider === "apple" ? "/auth/apple" : "/auth/signin", opsapi);
+  const hosted = !(apple && provider === "apple");
+  const target = new URL(hosted ? "/auth/signin" : "/auth/apple", opsapi);
   target.searchParams.set("frontend_url", new URL(env().APP_URL).origin);
   target.searchParams.set("from", nonce);
   if (reauth) target.searchParams.set("prompt", "login");
+  else if (hosted) target.searchParams.set("signup", "1");
   // App Store guideline 4.8: an iOS app that offers Google sign-in must also offer
   // Sign in with Apple. Until Apple is set up, ask OpsAPI for its password-only page
   // (its other apps keep Google); turning Apple on brings Google back with it.

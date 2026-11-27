@@ -13,6 +13,8 @@ final class Session {
 
     private(set) var state: State = .loading
     let api: APIClient
+    /// Bumped when someone is blocked or unblocked, so community lists reload.
+    var blocksChanged = 0
     /// The verifier for a sign-in in progress (memory only).
     private var pending: PKCE?
 

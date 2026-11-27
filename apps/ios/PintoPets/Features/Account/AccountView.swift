@@ -37,6 +37,7 @@ struct AccountView: View {
                     }
                 }
                 Section {
+                    NavigationLink("Blocked people") { BlockedPeopleView() }
                     web("Community name, two-factor sign-in and your data", "/account")
                     if me.isModerator { web("Moderation queue", "/moderation") }
                 } header: {

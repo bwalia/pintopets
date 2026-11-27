@@ -178,6 +178,7 @@ export const AccountDeletionResponse = z
         replies: z.number().int(),
         votes: z.number().int(),
         reports: z.number().int(),
+        blocks: z.number().int(),
         communityProfile: z.boolean(),
         securitySettings: z.number().int(),
       }),
